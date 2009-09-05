@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>YouTubeLooper</title>
+    <style type="text/css">
+      * {
+      font-size: 40px;
+      padding: 0px;
+      margin: 0px;
+      }
+      div.box {
+      float: left;
+      width: 425px;
+      height: 356px;
+      }
+      div.pad {
+      background-color: 0;
+      }
+      button.stop {
+      display: none;
+      }
+      div.info {
+        padding: 10px;
+      }
+    </style>
+
+    <script type="text/javascript" src="/js/swfobject.js"></script>
+    <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript" src="/js/youtube_looper.js"></script>
+
+    <body>
+      <div id="video_container"></div>
+      <div class="pad box"></div>
+      <div class="info box">
+        <form>
+          id:<input type="text" size="11" name="v">
+        </form>
+        <button class="stop">cancel</button>
+      </div>
+    </body>
+</html>

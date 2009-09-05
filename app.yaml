@@ -1,0 +1,22 @@
+application: hitode909
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+
+- url: (.*)/
+  static_files: htdocs\1/index.html
+  upload: htdocs(.*)/index.html
+
+- url: /(.*\.py)
+  script: \1
+
+- url: /favicon.ico
+  static_files: htdocs/favicon.ico
+  upload: htdocs/favicon.ico
+  mime_type: image/x-icon
+
+- url: /(.*)
+  static_files: htdocs/\1
+  upload: htdocs/(.*)

@@ -49,6 +49,14 @@ var gotDescription = function(element, response) {
         });
         ul.append(li);
     }
+    ul.append($("<li>").append(addElement(element, data.word.name)));
+    el.append(ul);
+    $(element).empty().append(el);
+};
+
+var addElement = function(element, name) {
+    if (!name) return null;
+    var form = $("<form>");
     var input = $("<input>").attr({name: "body"});
     var add_button = $("<img>").attr("src", RootURI + "image/add.png").css({cursor: "pointer"});
     add_button.click(function(){
@@ -56,7 +64,7 @@ var gotDescription = function(element, response) {
         GM_xmlhttpRequest({
                 method: "POST",
                 url: api("word"),
-            data: ["word=", data.word.name, "&description=", encodeURIComponent(body)].join(""),
+            data: ["word=", name, "&description=", encodeURIComponent(body)].join(""),
                 headers: {'Content-type': 'application/x-www-form-urlencoded'},
                 onload: function(response) {
                     if (response.status == 200) {
@@ -66,14 +74,17 @@ var gotDescription = function(element, response) {
             });
         input.val("");
     });
-    ul.append($("<li>").append(input).append(add_button));
-    el.append(ul);
-    $(element).empty().append(el);
-};
+    form.append(input);
+    form.append(add_button);
+    return form;
+};;
 
 var descriptionElement = function(element, name) {
-    var el = $("<div>");
     $(element).empty().append($("<h3>").text(name));
+    var ul = $("<ul>");
+    ul.append($("<li>").append(addElement(element, name)));
+    $(element).append(ul);
+
     GM_xmlhttpRequest({
             method: "GET",
             url: api("word?word=" + name),

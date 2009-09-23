@@ -7,7 +7,7 @@ from dic.controller.api import WordPage,WordsPage
 application = webapp.WSGIApplication(
                                      [
                                       ('/dic/api/words', WordsPage),
-                                      ('/dic/api/word/', WordPage),
+                                      ('/dic/api/word', WordPage),
                                      ],
                                      debug=True)
 

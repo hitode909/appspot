@@ -35,10 +35,9 @@ var gotDescription = function(element, response) {
         del_button.data("key", description.key);
         del_button.click(function(){
             var el = $(this);
-            console.log(api("word" + ["?word=", data.word.name, "&description_key=", el.data("key")].join("")));
             GM_xmlhttpRequest({
                 method: "DELETE",
-                url: api("word") + ["?word=", data.word.name, "&description_key=", el.data("key")].join(""),
+                url: api("word") + ["?word=", data.word.name, "&key=", el.data("key")].join(""),
                 onload: function(response) {
                     if (response.status == 200) {
                         gotDescription(element, response);
@@ -93,7 +92,6 @@ var getWordsObject = function() {
 var gotWords = function(words) {
     var html = document.body.innerHTML;
     $.each(words, function() {
-        console.log(this);
         // 正規表現これでよいのか検討すべき
         // TODO: this.nameが正規表現っぽいときバグるので，エスケープしたい
         html = html.replace(new RegExp(["(>[^><]*)(", this, ")([^><]*<)"].join(""), "ig"),
@@ -131,7 +129,6 @@ jQuery(document).mouseup(function(){
     var range = selection.getRangeAt(0);
     if (range.startOffset == range.endOffset || range.startContainer != range.endContainer || range.collapsed) return;
     var name = selection.toString();
-    console.log(name);
     if (name.length) {
         gotWords([name]);
     }

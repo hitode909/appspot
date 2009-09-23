@@ -48,10 +48,10 @@ class WordPage(webapp.RequestHandler):
       self.response.set_status(404)
       self.response.out.write('word is empty')
       return 
-    description_key = self.request.get('description_key')
+    description_key = self.request.get('key')
     if not description_key:
       self.response.set_status(404)
-      self.response.out.write('description_key is empty')
+      self.response.out.write('key is empty')
       return
     word = Word.get_by_name(word_name)
     if not word:

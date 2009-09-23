@@ -15,6 +15,18 @@ var api = function(path) {
     return RootURI + "api/" + path;
 };
 
+var filterTextNode = function(element, filter) {
+    if (element.nodeType == 3 && !/^(textarea|script|style)$/i.test(element.parentNode.tagName) ) {
+        filter(element);
+    }
+
+    if (!element || !element.hasChildNodes) return null;
+    var children = element.childNodes;
+    for (var i=0; i < children.length; i++){
+        filterTextNode(children[i], filter);
+    }
+};
+    
 var gotDescription = function(element, response) {
     if (response.status != 200) return;
     try {
@@ -99,16 +111,18 @@ var getWordsObject = function() {
     return eval("("+words+")");
 };
 
-    // XXX: documentのrootを渡したい
 var gotWords = function(words) {
-    var html = document.body.innerHTML;
-    $.each(words, function() {
-        // 正規表現これでよいのか検討すべき
-        // TODO: this.nameが正規表現っぽいときバグるので，エスケープしたい
-        html = html.replace(new RegExp(["(>[^><]*)(", this, ")([^><]*<)"].join(""), "ig"),
-            "$1<span class='select-wiki-keyword-new'>$2</span>$3");
+    filterTextNode(document.body, function(elem) {
+        var nodeValue = elem.nodeValue;
+        $.each(words, function() {
+            nodeValue = nodeValue.replace(new RegExp("(" + this + ")", "ig"),
+                "<span class='select-wiki-keyword-new'>$1</span>");
+        });
+        // nodeValueに戻すだけではだめだった
+        // もとのnodeのあとに，キーワードをかこったエレメントと，残りのtextNodeをくっつける，という処理が必要
+        // 残りのエレメントに再帰的に降りていってしまわないように気をつけよう
+        elem.nodeValue = nodeValue;
     });
-        document.body.innerHTML = html; // イベント取れる!!!!!
     var elems = $(".select-wiki-keyword-new").removeClass("select-wiki-keyword-new").addClass("select-wiki-keyword");
 
     var self = this;

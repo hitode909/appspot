@@ -1,5 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.ext import db
+from google.appengine.api import memcache
 from django.utils import simplejson
 from dic.model import Word,Description
 
@@ -18,7 +19,11 @@ class WordPage(webapp.RequestHandler):
       self.response.set_status(404)
       self.response.out.write('word is empty')
       return
-    word = Word.get_by_name(word_name)
+    word = memcache.get("word-" + word_name)
+    if word is None:
+      word = Word.get_by_name(word_name)
+      memcache.add("word-" + word_name, word)
+    
     if not word:
       self.response.set_status(404)
       self.response.out.write('word not found')
@@ -34,10 +39,13 @@ class WordPage(webapp.RequestHandler):
       self.response.out.write('word is empty')
       return
     description_body = self.request.get('description')
-    word = Word.get_or_insert_by_name(word_name)
+    word = memcache.get("word-" + word_name)
+    if not word:
+      word = Word.get_or_insert_by_name(word_name)
 
     if description_body:
       word.add_description(description_body)
+      memcache.add("word-" + word_name, word)
 
     self.response.content_type = "application/json"
     simplejson.dump({"word": word.to_hash()}, self.response.out, ensure_ascii=False)
@@ -53,7 +61,9 @@ class WordPage(webapp.RequestHandler):
       self.response.set_status(404)
       self.response.out.write('key is empty')
       return
-    word = Word.get_by_name(word_name)
+    word = memcache.get("word-" + word_name)
+    if not word:
+      word = Word.get_by_name(word_name)
     if not word:
       self.response.set_status(404)
       self.response.out.write('word not found')
@@ -66,6 +76,7 @@ class WordPage(webapp.RequestHandler):
       return
 
     desc.delete()
+    memcache.add("word-" + word_name, word)
 
     self.response.content_type = "application/json"
     simplejson.dump({"word": word.to_hash()}, self.response.out, ensure_ascii=False)

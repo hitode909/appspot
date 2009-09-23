@@ -1,3 +1,4 @@
+import logging
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.api import memcache
@@ -6,11 +7,16 @@ from dic.model import Word,Description
 
 class WordsPage(webapp.RequestHandler):
   def get(self):
-    self.response.content_type = "application/json"
-    simplejson.dump( {"words": [ w.name for w in Word.all().fetch(1000) ]},
-        self.response.out,
+    result = memcache.get("words")
+    if not result:
+      result = simplejson.dumps(
+        {"words": [ w.name for w in Word.all().fetch(1000) ]},
         ensure_ascii=False)
-
+      memcache.add("words", result)
+    
+    self.response.content_type = "application/json"
+    self.response.out.write(result)
+    return
 
 class WordPage(webapp.RequestHandler):
   def get(self):
@@ -19,18 +25,19 @@ class WordPage(webapp.RequestHandler):
       self.response.set_status(404)
       self.response.out.write('word is empty')
       return
-    word = memcache.get("word-" + word_name)
-    if word is None:
+    result = memcache.get("word-" + word_name)
+    if not result:
       word = Word.get_by_name(word_name)
-      memcache.add("word-" + word_name, word)
+      if not word:
+        self.response.set_status(404)
+        self.response.out.write('word not found')
+        return
+      result = simplejson.dumps({"word": word.to_hash()}, ensure_ascii=False)
+      memcache.add("word-" + word_name, result)
     
-    if not word:
-      self.response.set_status(404)
-      self.response.out.write('word not found')
-      return
-
     self.response.content_type = "application/json"
-    simplejson.dump({"word": word.to_hash()}, self.response.out, ensure_ascii=False)
+    self.response.out.write(result)
+    return
 
   def post(self):
     word_name = self.request.get('word')
@@ -39,16 +46,23 @@ class WordPage(webapp.RequestHandler):
       self.response.out.write('word is empty')
       return
     description_body = self.request.get('description')
-    word = memcache.get("word-" + word_name)
+    word = Word.get_or_insert_by_name(word_name)
     if not word:
-      word = Word.get_or_insert_by_name(word_name)
+      self.response.set_status(404)
+      self.response.out.write('word not found')
+      return
 
     if description_body:
       word.add_description(description_body)
-      memcache.add("word-" + word_name, word)
+      memcache.delete("words")
 
+    result = simplejson.dumps({"word": word.to_hash()}, ensure_ascii=False)
+    memcache.add("word-" + word_name, result)
+
+    logging.info("description add(%s, %s)" % (word.name, description_body))
     self.response.content_type = "application/json"
-    simplejson.dump({"word": word.to_hash()}, self.response.out, ensure_ascii=False)
+    self.response.out.write(result)
+    return
 
   def delete(self):
     word_name = self.request.get('word')
@@ -61,9 +75,7 @@ class WordPage(webapp.RequestHandler):
       self.response.set_status(404)
       self.response.out.write('key is empty')
       return
-    word = memcache.get("word-" + word_name)
-    if not word:
-      word = Word.get_by_name(word_name)
+    word = Word.get_by_name(word_name)
     if not word:
       self.response.set_status(404)
       self.response.out.write('word not found')
@@ -75,9 +87,11 @@ class WordPage(webapp.RequestHandler):
       self.response.out.write('description not found')
       return
 
+    logging.info("description delete(%s, %s)" % (word.name, desc.body))
     desc.delete()
-    memcache.add("word-" + word_name, word)
-
+    result = simplejson.dumps({"word": word.to_hash()}, ensure_ascii=False)
+    memcache.add("word-" + word_name, result)
+    
     self.response.content_type = "application/json"
-    simplejson.dump({"word": word.to_hash()}, self.response.out, ensure_ascii=False)
-
+    self.response.out.write(result)
+    return

@@ -116,8 +116,8 @@ var gotWords = function(words) {
         var w = new Ten.SubWindow;
         descriptionElement(w.container, $(this).text());
         $(w.container).attr('id', 'ten-subwindow-container');
-        var pos = $(this).position();
-        w.show({x: pos.left + $(this).width(), y: pos.top + $(this).height() });
+        var pos = Ten.Geometry.getElementPosition(this);
+        w.show({x: pos.x + $(this).width(), y: pos.y + $(this).height() });
     });
 };
 

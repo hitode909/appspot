@@ -7,7 +7,7 @@ class Word(db.Model):
 
   def to_hash(self):
     return { "name": self.name,
-        "description" : [d.to_hash() for d in self.descriptions()] }
+        "descriptions" : [d.to_hash() for d in self.descriptions()] }
 
   def descriptions(self):
     return Description.gql("WHERE word = :1", self.key()).fetch(1000) #XXX limit 1000 descriptions
@@ -20,7 +20,7 @@ class Word(db.Model):
   def get_description(self, key):
     desc = Description.get(db.Key(key)) #XXX db.get?
     if not desc: return None
-    if desc.word == self:
+    if desc.word.key() == self.key():
       return desc
     else:
       return None

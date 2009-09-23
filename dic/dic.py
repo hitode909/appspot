@@ -8,7 +8,7 @@ from dic.controller.index import IndexPage
 application = webapp.WSGIApplication(
                                      [
                                       ('/dic/api/words', WordsPage),
-                                      ('/dic/api/word/', WordPage),
+                                      ('/dic/api/word', WordPage),
                                       ('/dic/', IndexPage),
                                      ],
                                      debug=True)

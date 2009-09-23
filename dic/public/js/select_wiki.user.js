@@ -8,7 +8,8 @@
 // @require        http://www.hatena.ne.jp/js/Ten/Ten/SubWindow.js
 // ==/UserScript==
 
-var RootURI = "http://localhost:7000/";
+var RootURI = "http://hitode909.appspot.com/dic/";
+//var RootURI = "http://localhost:8080/dic/";
 
 var api = function(path) {
     return RootURI + "api/" + path;
@@ -31,17 +32,17 @@ var gotDescription = function(element, response) {
         var li = $("<li>").text(description.body);
         var del_button = $("<img>").attr("src", RootURI + "image/delete.png").css({cursor: "pointer"});
         li.append(del_button);
-        del_button.data("id", description.id);
+        del_button.data("key", description.key);
         del_button.click(function(){
             var el = $(this);
             GM_xmlhttpRequest({
-                method: "POST",
-                url: api("word/delete"),
-                data: ["word=", data.word.name, "&id=", el.data("id")].join(""),
-                headers: {'Content-type': 'application/x-www-form-urlencoded'},
+                method: "DELETE",
+                url: api("word") + ["?word=", data.word.name, "&key=", el.data("key")].join(""),
                 onload: function(response) {
                     if (response.status == 200) {
                         gotDescription(element, response);
+                    } else {
+                        document.write(uneval(response));
                     }
                 }
             });
@@ -54,7 +55,7 @@ var gotDescription = function(element, response) {
         var body = input.val();
         GM_xmlhttpRequest({
                 method: "POST",
-                url: api("word/add"),
+                url: api("word"),
             data: ["word=", data.word.name, "&description=", encodeURIComponent(body)].join(""),
                 headers: {'Content-type': 'application/x-www-form-urlencoded'},
                 onload: function(response) {
@@ -75,7 +76,7 @@ var descriptionElement = function(element, name) {
     $(element).empty().append($("<h3>").text(name));
     GM_xmlhttpRequest({
             method: "GET",
-            url: api("word/?word=" + name),
+            url: api("word?word=" + name),
             onload: function(response) {
                 gotDescription(element, response);
             }
@@ -91,7 +92,6 @@ var getWordsObject = function() {
 var gotWords = function(words) {
     var html = document.body.innerHTML;
     $.each(words, function() {
-        console.log(this);
         // 正規表現これでよいのか検討すべき
         // TODO: this.nameが正規表現っぽいときバグるので，エスケープしたい
         html = html.replace(new RegExp(["(>[^><]*)(", this, ")([^><]*<)"].join(""), "ig"),
@@ -129,7 +129,6 @@ jQuery(document).mouseup(function(){
     var range = selection.getRangeAt(0);
     if (range.startOffset == range.endOffset || range.startContainer != range.endContainer || range.collapsed) return;
     var name = selection.toString();
-    console.log(name);
     if (name.length) {
         gotWords([name]);
     }
@@ -139,7 +138,7 @@ var words = GM_getValue("words");
 if (typeof(words) == "undefined" || true) {
     GM_xmlhttpRequest({
         method: "GET",
-        url: api("words/"),
+        url: api("words"),
         onload: function(response) {
             GM_setValue("words", response.responseText);
             var data = eval("("+response.responseText+")");

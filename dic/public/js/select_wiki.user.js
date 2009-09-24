@@ -71,7 +71,7 @@ var addElement = function(element, name) {
     var form = $("<form>");
     var input = $("<input>").attr({name: "body"});
     var add_button = $("<img>").attr("src", RootURI + "image/add.png").css({cursor: "pointer"});
-    add_button.click(function(){
+    var submit = function(){
         var body = input.val();
         GM_xmlhttpRequest({
                 method: "POST",
@@ -83,9 +83,12 @@ var addElement = function(element, name) {
                         gotDescription(element, response);
                     }
                 }
-            });
+        });
         input.val("");
-    });
+        return false;
+    };
+    add_button.click(submit);
+    form.submit(submit);
     form.append(input);
     form.append(add_button);
     return form;

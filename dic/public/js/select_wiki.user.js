@@ -195,8 +195,7 @@ var style = $("<style>").html(
     [
     ".select-wiki-keyword {",
     "text-decoration: underline;",
-    "cursor: pointer;",
-    "background-color: #ffa;",
+    "background-color: #ffc;",
     "}",
     "#ten-subwindow-container {",
     "font-color: #000;",

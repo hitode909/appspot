@@ -145,7 +145,6 @@ var gotWords = function(words) {
     }
     var elems = $(".select-wiki-keyword-new").removeClass("select-wiki-keyword-new").addClass("select-wiki-keyword");
 
-    var self = this; //XXX:使ってない気がする
     elems.mouseover(function() {
         var w = new Ten.SubWindow;
         descriptionElement(w.container, $(this).text());
@@ -155,17 +154,15 @@ var gotWords = function(words) {
     });
 };
 
-//
-
 with (Ten.SubWindow) {
     showScreen = false;
     draggable = true;
     style = {
         zIndex: 2000,
         width: "20em",
-        height: "20em"
+        height: "20em",
+        textAlign: "left"
     };
-    style.textAlign = "left";
 };
 
 jQuery(document).mouseup(function(){

@@ -118,7 +118,7 @@ var getWordsObject = function() {
 var gotWords = function(words) {
     //XXX: wordsのescape! が必要
     console.log("(" + words.join('|') + ")");
-    var regex = new RegExp("(" + words.join('|') + ")", "ig");
+    var regex = new RegExp("(" + words.join('|') + ")", "g");
     var tmp = [];
     filterTextNode(document.body, function(textNode) {
         var parent = textNode.parentNode;

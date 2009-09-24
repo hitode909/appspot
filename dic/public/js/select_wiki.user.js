@@ -42,7 +42,7 @@ var gotDescription = function(element, response) {
     for (var i=0; i < data.word.descriptions.length; i++) {
         var description = data.word.descriptions[i];
         var li = $("<li>").text(description.body);
-        var del_button = $("<img>").attr("src", RootURI + "image/delete.png").css({cursor: "pointer"});
+        var del_button = $("<img>").attr("src", RootURI + "image/delete.png").addClass("button");
         li.append(del_button);
         del_button.data("key", description.key);
         del_button.click(function(){
@@ -70,7 +70,7 @@ var addElement = function(element, name) {
     if (!name) return null;
     var form = $("<form>");
     var input = $("<input>").attr({name: "body"});
-    var add_button = $("<img>").attr("src", RootURI + "image/add.png").css({cursor: "pointer"});
+    var add_button = $("<img>").attr("src", RootURI + "image/add.png").addClass("button");
     var submit = function(){
         var body = input.val();
         GM_xmlhttpRequest({
@@ -162,7 +162,7 @@ with (Ten.SubWindow) {
     draggable = true;
     style = {
         zIndex: 2000,
-        width: "18em",
+        width: "20em",
         height: "20em"
     };
     style.textAlign = "left";
@@ -213,8 +213,8 @@ var style = $("<style>").html(
     "#ten-subwindow-container h3{",
     "font-size: 20px;",
     "font-color: #000;",
-    "margin: 10px;",
-    "padding: 5px;",
+    "margin: 0px;",
+    "padding: 5px 0px;",
     "offset: 0px;",
     "font-weight: bold;",
     "border-width: 0px;",
@@ -222,16 +222,36 @@ var style = $("<style>").html(
     "#ten-subwindow-container ul{",
     "font-color: #000;",
     "margin:  0px;",
-    "padding: 20px 4px;",
+    "padding: 5px 0px;",
     "offset: 0px;",
+    "width: 100%;",
+    "line-height:1.0;",
+    "list-style-image : none;",
     "}",
     "#ten-subwindow-container li{",
     "list-style-type: none;",
-    "font-size: 14px;",
+    "font-size: 12px;",
     "font-color: #000;",
-    "margin:  2px;",
-    "padding: 2px;",
+    "margin:  0px;",
+    "padding: 3px;",
     "offset: 0px;",
+    "width: 100%;",
+    "}",
+    "#ten-subwindow-container input{",
+    "font-size: 12px;",
+    "font-color: #000;",
+    "margin: 0px;",
+    "padding: 0px;",
+    "offset: 0px;",
+    "font-weight: normal;",
+    "width: 80%;",
+    "}",
+    "#ten-subwindow-container .button{",
+    "cursor: pointer;",
+    "margin: 0px 0px 0px 2px;",
+    "padding: 0px;",
+    "offset: 0px;",
+    "vertical-align: middle;",
     "}"
     ].join("\n"));
 $("head").append(style);

@@ -16,14 +16,14 @@ var api = function(path) {
 };
 
 var filterTextNode = function(element, filter) {
+    if (!element) return null;
     if (element.nodeType == 3 && !/^(textarea|script|style)$/i.test(element.parentNode.tagName) ) {
         filter(element);
-    }
-
-    if (!element || !element.hasChildNodes) return null;
-    var children = element.childNodes;
-    for (var i=0; i < children.length; i++){
-        filterTextNode(children[i], filter);
+    } else {
+        var children = element.childNodes;
+        for (var i=0; i < children.length; i++){
+            filterTextNode(children[i], filter);
+        }
     }
 };
     
@@ -111,21 +111,38 @@ var getWordsObject = function() {
     return eval("("+words+")");
 };
 
+
 var gotWords = function(words) {
-    filterTextNode(document.body, function(elem) {
-        var nodeValue = elem.nodeValue;
-        $.each(words, function() {
-            nodeValue = nodeValue.replace(new RegExp("(" + this + ")", "ig"),
-                "<span class='select-wiki-keyword-new'>$1</span>");
-        });
-        // nodeValueに戻すだけではだめだった
-        // もとのnodeのあとに，キーワードをかこったエレメントと，残りのtextNodeをくっつける，という処理が必要
-        // 残りのエレメントに再帰的に降りていってしまわないように気をつけよう
-        elem.nodeValue = nodeValue;
-    });
+    //XXX: wordsのescape! が必要
+    console.log("(" + words.join('|') + ")");
+    var regex = new RegExp("(" + words.join('|') + ")", "ig");
+    var tmp = [];
+    filterTextNode(document.body, function(textNode) {
+        var parent = textNode.parentNode;
+        var df = document.createDocumentFragment();
+        var text = textNode.nodeValue;
+        //XXX:IEでは動く気がしない
+        var flag = false;
+        var x = text.split(regex);
+        for(var i = 0; i< x.length; i++) {
+            flag = !flag;
+            if(flag) {
+                df.appendChild(document.createTextNode(x[i]));
+            } else {
+                var e = document.createElement('span');
+                e.className = 'select-wiki-keyword-new';
+                e.appendChild(document.createTextNode(x[i]));
+                df.appendChild(e);
+            }
+        }
+        tmp.push([df, textNode]);
+    } );
+    for(var i=0; i<tmp.length; i++) {
+        tmp[i][1].parentNode.replaceChild(tmp[i][0], tmp[i][1]);
+    }
     var elems = $(".select-wiki-keyword-new").removeClass("select-wiki-keyword-new").addClass("select-wiki-keyword");
 
-    var self = this;
+    var self = this; //XXX:使ってない気がする
     elems.mouseover(function() {
         var w = new Ten.SubWindow;
         descriptionElement(w.container, $(this).text());

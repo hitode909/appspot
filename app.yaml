@@ -6,6 +6,21 @@ api_version: 1
 
 handlers:
 
+- url: /dic/js/(.*)
+  static_files: dic/public/js/\1
+  upload: dic/public/js/(.*)  
+
+- url: /dic/image/(.*)
+  static_files: dic/public/image/\1
+  upload: dic/public/image/(.*)  
+
+- url: /dic/css/(.*)
+  static_files: dic/public/css/\1
+  upload: dic/public/css/(.*)  
+
+- url: /dic/.*
+  script: dic/dic.py
+
 - url: (.*)/
   static_files: htdocs\1/index.html
   upload: htdocs(.*)/index.html

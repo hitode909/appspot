@@ -21,6 +21,9 @@ handlers:
 - url: /dic/.*
   script: dic/dic.py
 
+- url: /glitch/api.*
+  script: glitch/glitch.py
+
 - url: (.*)/
   static_files: htdocs\1/index.html
   upload: htdocs(.*)/index.html

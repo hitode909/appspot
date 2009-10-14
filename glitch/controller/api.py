@@ -81,7 +81,7 @@ class ApiPage(webapp.RequestHandler):
     def save_image(self, uri, image):
         save = image.copy()
         save["content"] = base64.standard_b64encode(image["content"])
-        memcache.set(uri, simplejson.dumps(save), 600, 0, "fetched_image")
+        memcache.set(uri, simplejson.dumps(save), 3600, 0, "fetched_image")
         logging.info("image cache set(%s)" % (uri))
 
     def random_glitch_rule(self):

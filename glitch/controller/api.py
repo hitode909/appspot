@@ -87,7 +87,7 @@ class ApiPage(webapp.RequestHandler):
     def random_glitch_rule(self):
         rule = {}
         seed = hashlib.sha1(str(random.random())).hexdigest()
-        for i in range(int(random.random()*2+1)):
+        for i in range(int(random.random()*3+1)):
             a = int(random.random()*3+1)
             b = int(random.random()*3+1)
             rule[seed[:a]] = seed[a:a+b]

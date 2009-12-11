@@ -1,4 +1,12 @@
 $.extend({
+    api: {
+        groups: function(callback) {
+            callback({
+                music: ["kohmi", "mochilon", "hirasawa"],
+                fse:   ["isano", "hakobe"]
+            });
+        }
+    },
     newMember: function(group, name) {
         var ge = $.groupElement(group);
         var already = ge.find(".member").filter(function() {return $(this).find(".user-name").text() == name;});
@@ -67,13 +75,16 @@ $(function() {
         $.groupElement(name);
         return false;
     });
-      
-    try {
-        $.newMember("music", "kohmi");
-        $.newMember("music", "mochilon");
-        $.newMember("music", "motemen");
-        $.newMember("fse", "hakobe");
-    } catch(e) {
-        console.log(e);
-    }
+
+    $.api.groups(function(data) {
+        $.each(data, function(group, members) {
+            $.each(members, function(index, member) {
+                try {
+                    $.newMember(group, member);
+                } catch(e) {
+                    console.log(e);
+                }
+            });
+        });
+    });
 });

@@ -1,0 +1,45 @@
+body {
+    color:#333;
+    line-height:1.4;
+    font-size:0.9em;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+img.profile-icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
+
+ul.members {
+    list-style-type: none;
+}
+
+li.member {
+    min-height: 26px;
+}
+.create-list, .create-list input {
+    font-size: 20px;
+}
+
+.add-member input, .create-list input {
+    width: 12em;
+}
+
+.clickable-image {
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 4px;
+}
+
+a {
+  color: #000;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+.user-name {
+    margin-left: 2px;
+}

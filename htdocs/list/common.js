@@ -1,6 +1,10 @@
 $.extend({
     newMember: function(group, name) {
         ge = $.groupElement(group);
+        var already = ge.find(".member").filter(function() {return $(this).find(".user-name").text() == name;});
+        if (already.length > 0) {
+            return already;
+        }
         var ue = $.userElement(name);
         ge.find(".add-member").before(ue);
         return ue;

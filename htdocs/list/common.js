@@ -1,6 +1,6 @@
 $.extend({
     newMember: function(group, name) {
-        ge = $.groupElement(group);
+        var ge = $.groupElement(group);
         var already = ge.find(".member").filter(function() {return $(this).find(".user-name").text() == name;});
         if (already.length > 0) {
             return already;
@@ -53,7 +53,8 @@ $.extend({
 
 $(function() {
     $(".member .delete").live("click", function() {
-        $(this).closest(".member").remove();
+        if (confirm("delete?"))
+            $(this).closest(".member").remove();
     });
     $(".submit").live("click", function() {
         $(this).closest("form").submit();

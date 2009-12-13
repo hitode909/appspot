@@ -24,6 +24,9 @@ handlers:
 - url: /glitch/api.*
   script: glitch/glitch.py
 
+- url: /public_list/.+
+  script: public_list/public_list.py
+
 - url: (.*)/
   static_files: htdocs\1/index.html
   upload: htdocs(.*)/index.html

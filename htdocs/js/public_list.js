@@ -137,7 +137,6 @@ $(function() {
                 try {
                     if(!group_element) group_element = groups.theGroup(group);
                     group_element.appendMember(member);
-                    //$.public_list.controller.newMember(group, member);
                 } catch(e) {
                     console.log(e);
                 }

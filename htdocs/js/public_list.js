@@ -61,31 +61,6 @@ var public_lis_object = {
             element.data("name", name);
             return element;
         }
-    },
-    // API呼び出し，エレメントappend，ガード
-    controller: {
-        newMember: function(group, name) {
-            var ge = $.public_list.controller.group(group);
-            var already = ge.find(".member").filter(function() {return $(this).data("name") == name;});
-            if (already.length > 0) {
-                return already;
-            };
-            $.public_list.api.add(group, name, function() {
-                var ue = $.public_list.element.member(name);
-                ge.find(".add-member").before(ue);
-                return ue;
-            });
-            return true;
-        },
-        group: function(name) {
-            var already = $(".group").filter(function() {return $(this).data("name") == name;});
-            if (already.length > 0) {
-                return already;
-            }
-            var ge = $.public_list.element.group(name);
-            $(".groups").append(ge);
-            return ge;
-        }
     }
 };
 
@@ -150,11 +125,11 @@ $(function() {
         var name = $(this).find(":test:first").val();
         $(this).find(":test:first").val("");
         if (name.length == 0) return false;
-        $.public_list.controller.group(name);
+        $(".groups").theGroup(name);
         return false;
     });
 
-      var groups = $(".groups");
+    var groups = $(".groups");
     $.public_list.api.groups(function(data) {
         $.each(data, function(group, members) {
             var group_element = undefined;

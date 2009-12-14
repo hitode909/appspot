@@ -48,6 +48,8 @@ class OperationApiPage(webapp.RequestHandler):
         users = groups.setdefault(group, [])
         if user in users:
             users.remove(user)
+            if len(users) == 0:
+                del groups[group]
             logging.debug('delete ' + user + ' from ' + group)
         dumped_cache = simplejson.dumps(groups, ensure_ascii=False)
         memcache.set('groups', dumped_cache, time=0, namespace="public_list")

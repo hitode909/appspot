@@ -24,6 +24,9 @@ handlers:
 - url: /glitch/api.*
   script: glitch/glitch.py
 
+- url: /proxy/.*
+  script: proxy/proxy.py
+
 - url: /public_list/.+
   script: public_list/public_list.py
 

@@ -11,7 +11,7 @@ import urllib
 import base64
 from django.utils import simplejson
 
-class Helper(webapp.RequestHandler):
+class ProxyHelper(webapp.RequestHandler):
     def get_resource(self, uri):
         resource = self.load_resource(uri)
         if resource: return resource
@@ -41,7 +41,7 @@ class Helper(webapp.RequestHandler):
         memcache.set(uri, simplejson.dumps(save), 3600, 0, "fetched_resource")
         logging.info("resource cache set(%s)" % (uri))
 
-class ProxyPage(Helper):
+class ProxyPage(ProxyHelper):
     def get(self, path):
         path = urllib.unquote(path)
         resource = self.get_resource(path)

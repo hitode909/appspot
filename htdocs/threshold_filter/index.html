@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>canvas threshold filter</title>
+  <body>
+    <h1>canvas threshold filter</h1>
+    <form onsubmit="loadImage(); return false;">
+      image path<input type="text" name="url" size="50" value="http://hitode909.appspot.com/image/boy.jpg" />
+      threshold(r+g+b)<input type="text" name="threshold" size="2" value="600" />
+      <input type="submit" value="filter!" />
+    </form>
+    <canvas width="400px" height="400px">
+    </canvas>
+    <h2>log</h2>
+    <pre id="log"></pre>
+    <script src="/js/threshold_filter.js"></script>
+    <a href="/">index</a>
+  </body>
+</html>

@@ -2,7 +2,25 @@ import os
 import logging
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util, template
+from google.appengine.api import images
 from models import *
+from proxy.proxy import ProxyHelper
+
+class PreviewPage(ProxyHelper):
+    def get(self):
+        url = self.request.get('url')
+        if not url:
+            self.error(400)
+            self.response.out.write('url is required')
+            return
+
+        resource = self.get_resource(url)
+        converter = images.Image(resource['content'])
+        converter.resize(width=300, height=300)
+        resource['headers']['content-type'] = 'image/jpeg'
+        for k, v in resource["headers"].iteritems():
+            self.response.headers[k] = v
+        self.response.out.write(converter.execute_transforms(output_encoding=images.JPEG))
 
 class AlbumPage(webapp.RequestHandler):
     def get(self, album_name):

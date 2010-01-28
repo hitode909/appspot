@@ -5,6 +5,7 @@ from album.handlers import *
 def main():
     application = webapp.WSGIApplication(
         [
+            ('/album/preview', PreviewPage),
             ('/album/(.+)/api', ApiPage),
             ('/album/(.+)/', AlbumPage),
             ],

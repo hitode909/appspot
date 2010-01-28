@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript">
+      $.extend({
+      albumName: "{{ album_name|escape }}"
+      });
+    </script>
+    <script type="text/javascript" src="/js/album.js"></script>
+  </head>
+  <body>
+    <h1>{{ album_name|escape }}</h1>
+    <form id="post-photo" method="post" action="/album/{{ album_name|escape }}/api">
+      <input type="text" name="photo_url" size="60" />
+      <input type="submit" value="Post" />
+    </form>
+    <div id="album"></div>
+  </body>
+</html>

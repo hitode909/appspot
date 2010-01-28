@@ -5,7 +5,8 @@ from album.handlers import *
 def main():
     application = webapp.WSGIApplication(
         [
-            ('/album/api', ApiPage),
+            ('/album/(.+)/api', ApiPage),
+            ('/album/(.+)/', AlbumPage),
             ],
         debug=True)
     run_wsgi_app(application)

@@ -21,20 +21,28 @@ class PreviewPage(ProxyHelper):
             size = int(size)
         else:
             size = 100
+        resized_key = url + '-resized-' + str(size)
+        resource = self.load_resource(resized_key)
+        if resource:
+            logging.info('load resized resource')
+        else:
+            resource = self.get_resource(url)
+            converter = images.Image(resource['content'])
+            converter.resize(width=size, height=size)
+            try:
+                logging.info('resizing')
+                content = converter.execute_transforms(output_encoding=images.JPEG)
+                resource['content'] = content
+                self.save_resource(resized_key, resource)
+                logging.info('save resized resource')
+            except apiproxy_errors.OverQuotaError, message:
+                logging.error(message)
+                logging.info('avoid error')
 
-        resource = self.get_resource(url)
-        converter = images.Image(resource['content'])
-        converter.resize(width=size, height=size)
         resource['headers']['content-type'] = 'image/jpeg'
         for k, v in resource["headers"].iteritems():
             self.response.headers[k] = v
-        try:
-            content = converter.execute_transforms(output_encoding=images.JPEG)
-        except apiproxy_errors.OverQuotaError, message:
-            logging.error(message)
-            logging.info('avoid error')
-            content = resource['content']
-        self.response.out.write(content)
+        self.response.out.write(resource['content'])
 
 class AlbumPage(webapp.RequestHandler):
     def get(self, album_name):

@@ -56,15 +56,19 @@ class ApiPage(ProxyHelper):
         if not url:
             self.error(400)
             self.response.out.write('url is required')
+            logging.info("failed posting to %s because no url" % (album_name))
             return
         resource = self.get_resource(url)
-        if not re.compile("^image").match(resource['headers']['content-type']):
+        if resource['status_code'] != 200 or not re.compile("^image").match(resource['headers']['content-type']):
             resource = self.fetch_resource(url) # try again
-            if not re.compile("^image").match(resource['headers']['content-type']):
+            if resource['status_code'] != 200 or not re.compile("^image").match(resource['headers']['content-type']):
                 self.response.set_status(400)
                 self.response.out.write("not image")
+                logging.info("failed posting to %s %s because not image" % (album_name, url))
+                logging.info(resource['status_code'])
+                logging.info(resource['headers']['content-type'])
                 return
-        
+        logging.info("post %s to %s" % (url, album_name))
         photo = Photo.get_or_insert(self.photo_key(album_name, url), url = url, album = album)
         self.response.out.write("ok")
         
@@ -80,4 +84,5 @@ class ApiPage(ProxyHelper):
             self.error(404)
             return
         photo.delete()
+        logging.info("delege %s from %s" % (url, album_name))
         self.response.out.write("ok")

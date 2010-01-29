@@ -15,7 +15,7 @@
   <body>
     <h1>{{ album_name|escape }}</h1>
     <form id="post-photo" method="post" action="/album/{{ album_name|escape }}/api">
-      <input type="text" name="photo_url" size="60" />
+      <input type="text" name="url" size="60" />
       <input type="submit" value="Post" />
     </form>
     <div id="album"></div>

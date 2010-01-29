@@ -40,8 +40,8 @@ class AlbumPage(webapp.RequestHandler):
 
 
 class ApiPage(ProxyHelper):
-    def photo_key(self, album_name, photo_url):
-        return album_name + '-' + photo_url
+    def photo_key(self, album_name, url):
+        return album_name + '-' + url
 
     def get(self, album_name):
         album = Album.get_by_key_name(album_name)
@@ -52,29 +52,29 @@ class ApiPage(ProxyHelper):
 
     def post(self, album_name):
         album = Album.get_or_insert(album_name, name = album_name)
-        photo_url = self.request.get('photo_url')
-        if not photo_url:
+        url = self.request.get('url')
+        if not url:
             self.error(400)
-            self.response.out.write('photo_url is required')
+            self.response.out.write('url is required')
             return
-        resource = self.get_resource(photo_url)
+        resource = self.get_resource(url)
         if not re.compile("^image").match(resource['headers']['content-type']):
-            resource = self.fetch_resource(photo_url) # try again
+            resource = self.fetch_resource(url) # try again
             if not re.compile("^image").match(resource['headers']['content-type']):
                 self.response.set_status(400)
                 self.response.out.write("not image")
                 return
         
-        photo = Photo.get_or_insert(self.photo_key(album_name, photo_url), url = photo_url, album = album)
+        photo = Photo.get_or_insert(self.photo_key(album_name, url), url = url, album = album)
         self.response.out.write("ok")
         
     def delete(self, album_name):
-        photo_url = self.request.get('photo_url')
-        if not photo_url:
-            self.response.out.write('photo_url is required')
+        url = self.request.get('url')
+        if not url:
+            self.response.out.write('url is required')
             self.error(400)
             return
-        photo = Photo.get_by_key_name(self.photo_key(album_name, photo_url))
+        photo = Photo.get_by_key_name(self.photo_key(album_name, url))
         if not photo:
             self.response.out.write('not found')
             self.error(404)

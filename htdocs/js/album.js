@@ -39,7 +39,7 @@ $.extend({
         var elem = $.photos[url];
         $.ajax({
             type: 'delete',
-            url: $.apiPath() + '?photo_url=' + url,
+            url: $.apiPath() + '?url=' + url,
             success: function() {
                 $.photos[url] = null;
                 elem.remove();
@@ -53,7 +53,7 @@ $.extend({
         $.ajax({
             type: 'post',
             url: $.apiPath(),
-            data: {photo_url: url},
+            data: {url: url},
             success: function() {
                 $.loadPhoto(url);
             },
@@ -80,11 +80,11 @@ $.extend({
 $(function() {
     $.loadAlbum();
     $('form#post-photo').submit(function() {
-        var url = $('input[name=photo_url]', this).attr('value');
+        var url = $('input[name=url]', this).attr('value');
         $.postPhoto(url);
         return false;
     });
-    $('input[name=photo_url]').focus(function(){
+    $('input[name=url]').focus(function(){
         $(this).select();
     });
 });

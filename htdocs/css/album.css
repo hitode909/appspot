@@ -12,13 +12,16 @@ input {
     border:1px solid #666;
 }
 
+img {
+    border: none;
+}
+
 a {
+    border: none;
     color: #eee;
-    border-style: none;
     text-decoration: none;
 }
 a:hover {
-    border-style: none;
     text-decoration: underline;
 }
 

@@ -73,7 +73,7 @@ class ApiPage(ProxyHelper):
         if not album:
             self.response.out.write("")
             return
-        self.response.out.write("\n".join([photo.url for photo in album.photos]))
+        self.response.out.write("\n".join([photo.url for photo in album.photos_in_order()]))
 
     def post(self, album_name):
         album = Album.get_or_insert(album_name, name = album_name)

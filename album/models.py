@@ -8,6 +8,10 @@ class Album(db.Model):
     def root_url(self):
         return '/album/' + urllib.quote(self.name) + '/'
 
+    def photos_in_order(self):
+        return Photo.gql("where album = :1 order by created_on asc", self.key())
+
+
 class Photo(db.Model):
     album      = db.ReferenceProperty(Album,
                                       required=True,

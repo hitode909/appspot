@@ -15,19 +15,24 @@ $.extend({
         if ($.photos[url]) return false;
         var photo = $.appendPhoto(url);
         photo.data('url', url);
-        $(photo).click(function() {
-            if (confirm('really?')) {
-                $.deletePhoto(url);
-            }
-        });
         $.photos[url] = photo;
         return true;
     },
     appendPhoto: function(url) {
         var img = $('<span>').addClass('photo').append(
-            $('<img>').attr('src', $.thumbnailPath(url))
+            $('<a>').attr({href: url, rel: 'lightbox'}).append(
+                $('<img>').attr('src', $.thumbnailPath(url))
+            )
         );
         $('#album').append(img);
+        $('a[rel=lightbox]').lightBox({
+            imageLoading:  '/jquery-lightbox-0.5/images/lightbox-ico-loading.gif',
+            imageLoading:  '/jquery-lightbox-0.5/images/lightbox-ico-loading.gif',
+            imageBtnPrev:  '/jquery-lightbox-0.5/images/lightbox-btn-prev.gif',
+            imageBtnNext:  '/jquery-lightbox-0.5/images/lightbox-btn-next.gif',
+            imageBtnClose: '/jquery-lightbox-0.5/images/lightbox-btn-close.gif',
+            imageBlank:    '/jquery-lightbox-0.5/images/lightbox-blank.gif'
+        });
         return img;
     },
     deletePhoto: function(url) {

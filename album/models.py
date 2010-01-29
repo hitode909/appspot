@@ -11,6 +11,9 @@ class Album(db.Model):
     def photos_in_order(self):
         return Photo.gql("where album = :1 and available = TRUE order by created_on asc", self.key())
 
+    def deleted_photos_in_order(self):
+        return Photo.gql("where album = :1 and available = FALSE order by created_on asc", self.key())
+
 
 class Photo(db.Model):
     album      = db.ReferenceProperty(Album,

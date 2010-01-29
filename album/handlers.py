@@ -7,6 +7,7 @@ from models import *
 import re
 from proxy.proxy import ProxyHelper
 from google.appengine.runtime import apiproxy_errors
+from datetime import datetime
 
 class AlbumsPage(webapp.RequestHandler):
     def get(self):
@@ -55,6 +56,8 @@ class PreviewPage(ProxyHelper):
 
 class AlbumPage(webapp.RequestHandler):
     def get(self, album_name):
+        if album_name:
+            album_name = album_name.lower()
         template_values = {
             'album_name':   album_name,
             'posting_url':  self.request.get('post')
@@ -66,9 +69,13 @@ class AlbumPage(webapp.RequestHandler):
 
 class ApiPage(ProxyHelper):
     def photo_key(self, album_name, url):
+        if album_name:
+            album_name = album_name.lower()
         return album_name + '-' + url
 
     def get(self, album_name):
+        if album_name:
+            album_name = album_name.lower()
         album = Album.get_by_key_name(album_name)
         if not album:
             self.response.out.write("")
@@ -81,6 +88,8 @@ class ApiPage(ProxyHelper):
         self.response.out.write("\n".join([photo.url for photo in photos]))
 
     def post(self, album_name):
+        if album_name:
+            album_name = album_name.lower()
         album = Album.get_or_insert(album_name, name = album_name)
         url = self.request.get('url')
         if not url:
@@ -106,13 +115,18 @@ class ApiPage(ProxyHelper):
                 logging.info(resource['headers']['content-type'])
                 return
         logging.info("post %s to %s" % (url, album_name))
-        photo = Photo.get_or_insert(self.photo_key(album_name, url), url = url, album = album, availeble = True)
+        photo = Photo.get_or_insert(self.photo_key(album_name, url), url = url, album = album)
+        photo.available = True
+        photo.created_on = datetime.now()
+        photo.put()
         if self.request.get('redirect'):
             self.redirect(album.root_url)
         else:
             self.response.out.write("ok")
         
     def delete(self, album_name):
+        if album_name:
+            album_name = album_name.lower()
         url = self.request.get('url')
         if not url:
             self.response.out.write('url is required')

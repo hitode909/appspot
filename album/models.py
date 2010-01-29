@@ -6,7 +6,7 @@ class Album(db.Model):
     created_on = db.DateTimeProperty(auto_now_add = 1)
 
     def root_url(self):
-        return '/album/' + urllib.quote(self.name) + '/'
+        return '/album/' + urllib.quote(self.name).lower + '/'
 
     def photos_in_order(self):
         return Photo.gql("where album = :1 and available = TRUE order by created_on asc", self.key())

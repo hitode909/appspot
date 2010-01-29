@@ -6,6 +6,7 @@ from google.appengine.api import images, urlfetch
 from models import *
 import re
 from proxy.proxy import ProxyHelper
+from google.appengine.runtime import apiproxy_errors
 
 class PreviewPage(ProxyHelper):
     def get(self):
@@ -27,7 +28,13 @@ class PreviewPage(ProxyHelper):
         resource['headers']['content-type'] = 'image/jpeg'
         for k, v in resource["headers"].iteritems():
             self.response.headers[k] = v
-        self.response.out.write(converter.execute_transforms(output_encoding=images.JPEG))
+        try:
+            content = converter.execute_transforms(output_encoding=images.JPEG)
+        except apiproxy_errors.OverQuotaError, message:
+            logging.error(message)
+            logging.info('avoid error')
+            content = resource['content']
+        self.response.out.write(content)
 
 class AlbumPage(webapp.RequestHandler):
     def get(self, album_name):

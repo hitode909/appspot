@@ -67,7 +67,7 @@ $.extend({
         $.hideError();
         $.ajax({
             type: 'delete',
-            url: $.apiPath() + '?url=' + url,
+            url: $.apiPath() + '?url=' + encodeURI(url),
             success: function() {
                 $.photos[url] = null;
                 elem.remove();

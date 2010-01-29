@@ -38,7 +38,7 @@ class ProxyHelper(webapp.RequestHandler):
     def save_resource(self, uri, resource):
         save = resource.copy()
         save["content"] = base64.standard_b64encode(resource["content"])
-        memcache.set(uri, simplejson.dumps(save), 3600, 0, "fetched_resource")
+        memcache.set(uri, simplejson.dumps(save), 3600 * 6, 0, "fetched_resource")
         logging.info("resource cache set(%s)" % (uri))
 
 class ProxyPage(ProxyHelper):

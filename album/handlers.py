@@ -14,9 +14,15 @@ class PreviewPage(ProxyHelper):
             self.response.out.write('url is required')
             return
 
+        size = self.request.get('size')
+        if size:
+            size = int(size)
+        else:
+            size = 100
+
         resource = self.get_resource(url)
         converter = images.Image(resource['content'])
-        converter.resize(width=300, height=300)
+        converter.resize(width=size, height=size)
         resource['headers']['content-type'] = 'image/jpeg'
         for k, v in resource["headers"].iteritems():
             self.response.headers[k] = v

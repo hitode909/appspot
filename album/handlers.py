@@ -101,7 +101,7 @@ class ApiPage(ProxyHelper):
                 logging.info(resource['headers']['content-type'])
                 return
         logging.info("post %s to %s" % (url, album_name))
-        photo = Photo.get_or_insert(self.photo_key(album_name, url), url = url, album = album)
+        photo = Photo.get_or_insert(self.photo_key(album_name, url), url = url, album = album, availeble = True)
         if self.request.get('redirect'):
             self.redirect(album.root_url)
         else:
@@ -119,6 +119,7 @@ class ApiPage(ProxyHelper):
             logging.info("failed to delete %s %s because not found" % (album_name, url))
             self.error(404)
             return
-        photo.delete()
+        photo.available = False
+        photo.put()
         logging.info("delege %s from %s" % (url, album_name))
         self.response.out.write("ok")

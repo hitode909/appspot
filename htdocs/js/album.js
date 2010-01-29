@@ -117,11 +117,19 @@ $.extend({
     fileName: function(url) {
         var nodes = url.split('/');
         return nodes[nodes.length-1];
+    },
+    showPostBox: function() {
+        $('.post-photo-box-button').hide(500);
+        $('.post-photo-box').show(1000);
     }
 });
 
 $(function() {
     $.loadAlbum();
+      $('.post-photo-box-button').click(function() {
+          $.showPostBox();
+          return false;
+      });
     $('form#post-photo').submit(function() {
         var url = $('input[name=url]', this).attr('value');
         $.postPhoto(url, this);
@@ -130,4 +138,7 @@ $(function() {
     $('input[name=url]').focus(function(){
         $(this).select();
     });
+    if ($('input[name=url]', this).attr('value')) {
+        setTimeout($.showPostBox, 1000);
+    }
 });

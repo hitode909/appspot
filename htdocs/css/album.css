@@ -98,3 +98,7 @@ form#post-photo.loading .indicator{
 form#post-photo.loading .submit {
     display: none;
 }
+
+.post-photo-box {
+    display: none;
+}

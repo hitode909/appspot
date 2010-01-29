@@ -15,11 +15,15 @@
   </head>
   <body>
     <h1>{{ album_name|escape }}</h1>
-    <form id="post-photo" method="post" action="/album/{{ album_name|escape }}/api">
-      <input type="text" name="url" size="60" />
-      <input type="submit" value="Post" class="submit" />
-      <img src="/image/loading-big.gif" class="indicator" />
-    </form>
+    <a class="post-photo-box-button" href=".">Post</a>
+    <div class="post-photo-box">
+      <form id="post-photo" method="post" action="/album/{{ album_name|escape }}/api">
+        <input type="text" name="url" size="60" value="{{posting_url|escape}}"/>
+        <input type="submit" value="Post" class="submit" />
+        <img src="/image/loading-big.gif" class="indicator" />
+      </form>
+      <a href="javascript:location.href='http://hitode909.moe.hm/album/{{album_name|escape}}/?post=' + encodeURIComponent(location.href);">Bookmarklet</a>
+    </div>
     <div id="error" class="message"></div>
     <div id="album"><ul class="photos"></ul></div>
     <div id="footer"><a href="/album/{{ album_name|escape }}/api">API</a></div>

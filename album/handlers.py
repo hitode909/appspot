@@ -47,7 +47,8 @@ class PreviewPage(ProxyHelper):
 class AlbumPage(webapp.RequestHandler):
     def get(self, album_name):
         template_values = {
-            'album_name':   album_name
+            'album_name':   album_name,
+            'posting_url':  self.request.get('post')
             }
         path = os.path.join(os.path.dirname(__file__), 'view', 'index.html')
         result = template.render(path, template_values)
@@ -92,7 +93,10 @@ class ApiPage(ProxyHelper):
                 return
         logging.info("post %s to %s" % (url, album_name))
         photo = Photo.get_or_insert(self.photo_key(album_name, url), url = url, album = album)
-        self.response.out.write("ok")
+        if self.request.get('redirect'):
+            self.redirect(album.root_url)
+        else:
+            self.response.out.write("ok")
         
     def delete(self, album_name):
         url = self.request.get('url')

@@ -4,6 +4,9 @@ class Album(db.Model):
     name       = db.StringProperty(required=True)
     created_on = db.DateTimeProperty(auto_now_add = 1)
 
+    def root_url(self):
+        return '/album/' + urllib.quote(name) + '/'
+
 class Photo(db.Model):
     album      = db.ReferenceProperty(Album,
                                       required=True,

@@ -9,7 +9,7 @@ $.extend({
         $('#error').hide().text('Error: ' + e.responseText).show('midiam');
         $.errorTimer = setTimeout(function() {
             $('#error').hide('slow');
-        }, 4000);
+        }, 8000);
     },
     hideError: function() {
         clearTimeout($.errorTimer);

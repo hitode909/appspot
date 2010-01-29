@@ -7,7 +7,6 @@ $.extend({
         $.get($.apiPath(), function(res) {
             if (!res) return;
             $.each(res.split("\n"), function() {
-                console.log(this);
                 $.loadPhoto(this);
             });
         });
@@ -68,8 +67,8 @@ $.extend({
     apiPath: function() {
         return ['/album/', $.albumName, '/api'].join('');
     },
-    thumbnailPath: function(url) {
-        return url;  
+    thumbnailPath: function(url, size) {
+        return 'http://hitode909.appspot.com/album/preview?size=' + (size || 120) + '&url=' + url;  
     }
 });
 

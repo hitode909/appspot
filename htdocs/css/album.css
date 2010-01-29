@@ -1,0 +1,15 @@
+body {
+    color: #ddd;
+    background: #000;
+    line-height: 1.4;
+    font-size: 0.9em;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.photo {
+    margin: 10px;
+}
+.photo img {
+    max-width: 120px;
+    max-height: 120px;
+}

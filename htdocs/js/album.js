@@ -88,6 +88,7 @@ $.extend({
             url: $.apiPath(),
             data: {url: url},
             success: function() {
+                $('input[name=url]').attr('value', '');
                 $.loadPhoto(url);
             },
             error: function(e) {
@@ -138,7 +139,7 @@ $(function() {
     $('input[name=url]').focus(function(){
         $(this).select();
     });
-    if ($('input[name=url]', this).attr('value')) {
+    if ($('input[name=url]').attr('value')) {
         setTimeout($.showPostBox, 1000);
     }
 });

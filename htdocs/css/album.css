@@ -1,9 +1,25 @@
 body {
-    color: #ddd;
+    color: #eee;
     background: #000;
     line-height: 1.4;
-    font-size: 0.9em;
+    font-size: 22px;
     font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+input {
+    font-size: 22px;
+    background: #333;
+    color: #eee;
+    border:1px solid #666;
+}
+
+a {
+    color: #eee;
+    border-style: none;
+    text-decoration: none;
+}
+a:hover {
+    border-style: none;
+    text-decoration: underline;
 }
 
 .photo {
@@ -12,4 +28,8 @@ body {
 .photo img {
     max-width: 120px;
     max-height: 120px;
+    cursor: pointer;
+}
+#footer {
+    margin-top: 60px;
 }

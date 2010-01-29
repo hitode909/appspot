@@ -79,4 +79,7 @@ $(function() {
         $.postPhoto(url);
         return false;
     });
+    $('input[name=photo_url]').focus(function(){
+        $(this).select();
+    });
 });

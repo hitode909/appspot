@@ -47,6 +47,11 @@ $.extend({
             )
         );
         $('#album .photos').prepend(img);
+        $('.delete a', img).click(function() {
+            if(confirm('delete?')) {
+                $.deletePhoto(url);
+            }
+        });
         $('a[rel=lightbox]').lightBox({
             imageLoading:  '/jquery-lightbox-0.5/images/lightbox-ico-loading.gif',
             imageLoading:  '/jquery-lightbox-0.5/images/lightbox-ico-loading.gif',

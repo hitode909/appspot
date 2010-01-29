@@ -72,7 +72,7 @@ a:hover {
 }
 
 form#post-photo {
-    margin: 0px 10px 0px 10px;
+    margin: 0px;
 }
 
 .message{
@@ -101,4 +101,21 @@ form#post-photo.loading .submit {
 
 .post-photo-box {
     display: none;
+    margin-left: 10px;
+}
+
+.post-photo-box a {
+    margin-right: 1em;
+}
+
+.post-photo-box-button {
+    margin-left: 10px;
+}
+
+.post-photo-box .util {
+    font-size: 80%;
+}
+
+h1 {
+    margin-left: 10px;
 }

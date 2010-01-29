@@ -6,7 +6,7 @@ $.extend({
     errorTimer: 0,
     error: function(e) {
         clearTimeout($.errorTimer);
-        $('#error').text('Error: ' + e.responseText).show();
+        $('#error').hide().text('Error: ' + e.responseText).show('midiam');
         $.errorTimer = setTimeout(function() {
             $('#error').hide('slow');
         }, 4000);

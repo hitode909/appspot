@@ -4,6 +4,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util, template
 from google.appengine.api import images
 from models import *
+import re
 from proxy.proxy import ProxyHelper
 
 class PreviewPage(ProxyHelper):
@@ -38,7 +39,7 @@ class AlbumPage(webapp.RequestHandler):
         self.response.out.write(result)
 
 
-class ApiPage(webapp.RequestHandler):
+class ApiPage(ProxyHelper):
     def photo_key(self, album_name, photo_url):
         return album_name + '-' + photo_url
 
@@ -56,6 +57,14 @@ class ApiPage(webapp.RequestHandler):
             self.error(400)
             self.response.out.write('photo_url is required')
             return
+        resource = self.get_resource(photo_url)
+        if not re.compile("^image").match(resource['headers']['content-type']):
+            resource = self.fetch_resource(photo_url) # try again
+            if not re.compile("^image").match(resource['headers']['content-type']):
+                self.response.set_status(400)
+                self.response.out.write("not image")
+                return
+        
         photo = Photo.get_or_insert(self.photo_key(album_name, photo_url), url = photo_url, album = album)
         self.response.out.write("ok")
         

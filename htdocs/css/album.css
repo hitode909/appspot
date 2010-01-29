@@ -30,15 +30,15 @@ a:hover {
 }
 .photo {
     margin: 20px;
-    width: 120px;
-    height: 170px;
+    width: 150px;
+/*     height: 170px; */
     display: inline-block;
     background: #fff;
     padding: 5px;
 }
 .photo .picture {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     text-align: center;
 }
 .photo img {
@@ -47,7 +47,7 @@ a:hover {
 }
 
 .photo input {
-    width: 120px;
+    width: 150px;
     font-size: 8px;
 }
 

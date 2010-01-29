@@ -32,17 +32,17 @@ $.extend({
     },
     appendPhoto: function(url) {
         var img = $('<li>').addClass('photo').append(
-            $('<a>').attr({href: url, rel: 'lightbox'}).append(
-                $('<div>').addClass('picture').append(
+            $('<div>').addClass('picture').append(
+                $('<a>').attr({href: url, rel: 'lightbox'}).append(
                     $('<img>').attr('src', $.thumbnailPath(url))
                 )
             )
         ).append(
-            $('<span>').addClass('detail').append(
+            $('<div>').addClass('detail').append(
                 $('<a>').attr({href: url, target: '_blank' }).text($.fileName(url))
             )
         ).append(
-            $('<span>').addClass('delete').append(
+            $('<div>').addClass('delete').append(
                 $('<a>').attr({href: url, target: '_blank' }).text('delete')
             )
         );
@@ -97,7 +97,7 @@ $.extend({
         return ['/album/', $.albumName, '/api'].join('');
     },
     thumbnailPath: function(url, size) {
-        return 'http://hitode909.appspot.com/album/preview?size=' + (size || 120) + '&url=' + url;  
+        return 'http://hitode909.appspot.com/album/preview?size=' + (size || 150) + '&url=' + url;  
     },
     fileName: function(url) {
         var nodes = url.split('/');

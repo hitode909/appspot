@@ -65,6 +65,7 @@ $.extend({
     deletePhoto: function(url) {
         var elem = $.photos[url];
         $.hideError();
+        $('form').addClass('loading');
         $.ajax({
             type: 'delete',
             url: $.apiPath() + '?url=' + encodeURI(url),
@@ -74,6 +75,9 @@ $.extend({
             },
             error: function(e) {
                 $.error(e);
+            },
+            complete: function() {
+                $('form').removeClass('loading');
             }
         });
     },
@@ -90,10 +94,16 @@ $.extend({
                 $.error(e);
             },
             complete: function() {
-                if (form) $(':input', form).attr('disabled', false);
+                if (form) {
+                    $(':input', form).attr('disabled', false);
+                    $('form').removeClass('loading');
+                }
             }
         });
-        if (form) $(':input', form).attr('disabled', true);
+        if (form) {
+            $(':input', form).attr('disabled', true);
+            $(form).addClass('loading');
+        }
         return false;
     },
     previewPhoto: function(url) {
@@ -114,7 +124,7 @@ $(function() {
     $.loadAlbum();
     $('form#post-photo').submit(function() {
         var url = $('input[name=url]', this).attr('value');
-        $.postPhoto(url);
+        $.postPhoto(url, this);
         return false;
     });
     $('input[name=url]').focus(function(){

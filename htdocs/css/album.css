@@ -84,3 +84,15 @@ form#post-photo {
 #album {
     margin: 80px 30px 20px 30px;
 }
+
+form#post-photo .indicator {
+     visibility: hidden;
+     vertical-align: middle;
+}
+form#post-photo.loading .indicator{
+     visibility: visible;
+}
+
+form#post-photo.loading .submit {
+    display: none;
+}

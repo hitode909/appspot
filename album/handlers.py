@@ -2,7 +2,7 @@ import os
 import logging
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util, template
-from google.appengine.api import images
+from google.appengine.api import images, urlfetch
 from models import *
 import re
 from proxy.proxy import ProxyHelper
@@ -58,7 +58,14 @@ class ApiPage(ProxyHelper):
             self.response.out.write('url is required')
             logging.info("failed posting to %s because no url" % (album_name))
             return
-        resource = self.get_resource(url)
+        try:
+            resource = self.get_resource(url)
+        except urlfetch.Error, e:
+            self.error(400)
+            self.response.out.write('failed to fetch')
+            logging.info("error %s, %s" % (url, e))
+            return
+            
         if resource['status_code'] != 200 or not re.compile("^image").match(resource['headers']['content-type']):
             resource = self.fetch_resource(url) # try again
             if resource['status_code'] != 200 or not re.compile("^image").match(resource['headers']['content-type']):

@@ -88,6 +88,7 @@ class ApiPage(ProxyHelper):
         photo = Photo.get_by_key_name(self.photo_key(album_name, url))
         if not photo:
             self.response.out.write('not found')
+            logging.info("failed to delete %s %s because not found" % (album_name, url))
             self.error(404)
             return
         photo.delete()

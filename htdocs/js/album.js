@@ -3,6 +3,18 @@ $.extend({
     log: function(message) {
         console.log(message);
     },
+    errorTimer: 0,
+    error: function(e) {
+        clearTimeout($.errorTimer);
+        $('#error').text('Error: ' + e.responseText).show();
+        $.errorTimer = setTimeout(function() {
+            $('#error').hide('slow');
+        }, 8000);
+    },
+    hideError: function() {
+        clearTimeout($.errorTimer);
+        $('#error').hide();
+    },
     loadAlbum: function() {
         $.get($.apiPath(), function(res) {
             if (!res) return;
@@ -19,12 +31,18 @@ $.extend({
         return true;
     },
     appendPhoto: function(url) {
-        var img = $('<span>').addClass('photo').append(
+        var img = $('<li>').addClass('photo').append(
             $('<a>').attr({href: url, rel: 'lightbox'}).append(
-                $('<img>').attr('src', $.thumbnailPath(url))
+                $('<div>').addClass('picture').append(
+                    $('<img>').attr('src', $.thumbnailPath(url))
+                )
+            )
+        ).append(
+            $('<span>').addClass('detail').append(
+                $('<a>').attr({href: url, target: '_blank' }).text($.fileName(url))
             )
         );
-        $('#album').append(img);
+        $('#album .photos').prepend(img);
         $('a[rel=lightbox]').lightBox({
             imageLoading:  '/jquery-lightbox-0.5/images/lightbox-ico-loading.gif',
             imageLoading:  '/jquery-lightbox-0.5/images/lightbox-ico-loading.gif',
@@ -37,6 +55,7 @@ $.extend({
     },
     deletePhoto: function(url) {
         var elem = $.photos[url];
+        $.hideError();
         $.ajax({
             type: 'delete',
             url: $.apiPath() + '?url=' + url,
@@ -45,11 +64,12 @@ $.extend({
                 elem.remove();
             },
             error: function(e) {
-                $.log(e);
+                $.error(e);
             }
         });
     },
     postPhoto: function(url, form) {
+        $.hideError();
         $.ajax({
             type: 'post',
             url: $.apiPath(),
@@ -58,7 +78,7 @@ $.extend({
                 $.loadPhoto(url);
             },
             error: function(e) {
-                $.log(e);
+                $.error(e);
             },
             complete: function() {
                 if (form) $(':input', form).attr('disabled', false);
@@ -74,6 +94,10 @@ $.extend({
     },
     thumbnailPath: function(url, size) {
         return 'http://hitode909.appspot.com/album/preview?size=' + (size || 120) + '&url=' + url;  
+    },
+    fileName: function(url) {
+        var nodes = url.split('/');
+        return nodes[nodes.length-1];
     }
 });
 

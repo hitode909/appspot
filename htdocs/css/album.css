@@ -5,7 +5,7 @@ body {
     font-size: 22px;
     font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
-input {
+#post-photo input {
     font-size: 22px;
     background: #333;
     color: #eee;
@@ -24,15 +24,59 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
+.photos{
+    margin: 0;
+    padding: 0;
+}
 .photo {
     margin: 10px;
+    width: 120px;
+    height: 160px;
+    display: inline-block;
+    background: #fff;
+    text-align: center;
+    padding: 5px;
+}
+.photo .picture {
+    width: 120px;
+    height: 120px;
 }
 .photo img {
     max-width: 120px;
     max-height: 120px;
     cursor: pointer;
+    display: block;
+    margin: auto;
+}
+
+.photo input {
+    width: 120px;
+    font-size: 8px;
+}
+
+.photo .detail, .photo .detail a {
+    display: inline-block;
+    font-size: 11px;
+    color: #333;
+    width: 120px;
+    overflow: hidden;
 }
 #footer {
     margin-top: 60px;
+}
+
+form#post-photo {
+    margin: 0px 10px 0px 10px;
+}
+
+.message{
+    font-size: 60%;
+    margin: 0px 20px 30px 10px;
+}
+#error {
+    display: none;
+}
+
+#album {
+    margin: 80px 30px 20px 30px;
 }

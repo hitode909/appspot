@@ -18,7 +18,8 @@
       <input type="text" name="url" size="60" />
       <input type="submit" value="Post" />
     </form>
-    <div id="album"></div>
+    <div id="error" class="message"></div>
+    <div id="album"><ul class="photos"></ul></div>
     <div id="footer"><a href="/album/{{ album_name|escape }}/api">API</a></div>
   </body>
 </html>

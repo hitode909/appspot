@@ -41,6 +41,10 @@ $.extend({
             $('<span>').addClass('detail').append(
                 $('<a>').attr({href: url, target: '_blank' }).text($.fileName(url))
             )
+        ).append(
+            $('<span>').addClass('delete').append(
+                $('<a>').attr({href: url, target: '_blank' }).text('delete')
+            )
         );
         $('#album .photos').prepend(img);
         $('a[rel=lightbox]').lightBox({

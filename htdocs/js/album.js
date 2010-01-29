@@ -51,6 +51,7 @@ $.extend({
             if(confirm('delete?')) {
                 $.deletePhoto(url);
             }
+            return false;
         });
         $('a[rel=lightbox]').lightBox({
             imageLoading:  '/jquery-lightbox-0.5/images/lightbox-ico-loading.gif',

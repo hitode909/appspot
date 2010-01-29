@@ -8,6 +8,15 @@ import re
 from proxy.proxy import ProxyHelper
 from google.appengine.runtime import apiproxy_errors
 
+class AlbumsPage(webapp.RequestHandler):
+    def get(self):
+        template_values = {
+            'albums': Album.all().order('-created_on').fetch(1000)
+            }
+        path = os.path.join(os.path.dirname(__file__), 'view', 'albums.html')
+        result = template.render(path, template_values)
+        self.response.out.write(result)
+
 class PreviewPage(ProxyHelper):
     def get(self):
         url = self.request.get('url')

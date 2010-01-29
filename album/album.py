@@ -8,6 +8,7 @@ def main():
             ('/album/preview', PreviewPage),
             ('/album/(.+)/api', ApiPage),
             ('/album/(.+)/', AlbumPage),
+            ('/album/', AlbumsPage),
             ],
         debug=True)
     run_wsgi_app(application)

@@ -27,7 +27,7 @@ handlers:
 - url: /proxy/.*
   script: proxy/proxy.py
 
-- url: /album/(.+)
+- url: /album/
   script: album/album.py
 
 - url: /public_list/.+

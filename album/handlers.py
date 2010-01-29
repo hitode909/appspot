@@ -67,7 +67,7 @@ class ApiPage(ProxyHelper):
             return
             
         if resource['status_code'] != 200 or not re.compile("^image").match(resource['headers']['content-type']):
-            resource = self.fetch_resource(url) # try again
+            # resource = self.fetch_resource(url) # try again
             if resource['status_code'] != 200 or not re.compile("^image").match(resource['headers']['content-type']):
                 self.response.set_status(400)
                 self.response.out.write("not image")

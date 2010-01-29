@@ -9,7 +9,7 @@ $.extend({
         $('#error').text('Error: ' + e.responseText).show();
         $.errorTimer = setTimeout(function() {
             $('#error').hide('slow');
-        }, 8000);
+        }, 4000);
     },
     hideError: function() {
         clearTimeout($.errorTimer);

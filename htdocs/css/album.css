@@ -42,6 +42,8 @@ a:hover {
     text-align: center;
 }
 .photo img {
+    max-width: 100%;
+    max-height: 100%;
     cursor: pointer;
     margin: auto;
 }

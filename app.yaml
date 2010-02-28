@@ -30,6 +30,9 @@ handlers:
 - url: /album/.*
   script: album/album.py
 
+- url: /color/random
+  script: color/color.py
+
 - url: /public_list/.+
   script: public_list/public_list.py
 

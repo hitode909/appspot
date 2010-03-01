@@ -1,4 +1,7 @@
 $.deferred.define();
+$.extend({
+    matrixSize: 16
+});
 
 var color = function() {
     var num = Math.floor(Math.random()*8);
@@ -33,7 +36,7 @@ var fillall = function(element) {
 var draw = function(element) {
     var canvas = element.getContext('2d');
     var size = element.height;
-    var per = parseInt(location.hash.replace(/^#/, '')) || 16;
+    var per = $.matrixSize;
     var length = size / per;
     var curcolor = color();
     var neibors = function(from) {
@@ -92,6 +95,8 @@ $(document).ready(function(){
             draw(this);
         }
         });
+        $.matrixSize = parseInt($(this).text());
+        return false;
     });
 
 $('a.refresh').click(function(){

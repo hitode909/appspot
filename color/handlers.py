@@ -9,12 +9,10 @@ import sys
 class RandomPage(webapp.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'image/png'
-        dic = self.data()
+        data = self.data()
         self.response.out.write(
             base64.standard_b64decode(
-                dic['pre'] +
-                dic['mid'][int(random.random()*len(dic['mid']))] +
-                dic['post']
+                data[int(random.random()*len(data))]
                 )
             )
 

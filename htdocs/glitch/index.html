@@ -7,12 +7,17 @@
         width: 80%;
         max-width: 800px;
       }
+      div.spacer{
+      height: 100px;
+      }
     </style>
+    <link rel="canonical" href="/glitch/">
   </head>
   <body>
     <div id="all">
       <h1>Glitch API</h1>
-      <p>Simple API to glitch images.</p>
+      <h2 id="api1" ><a href="#api1">(1)</a></h2>
+      <p>Simple API to glitch images(1).</p>
 
       <h2>Let's Try</h2>
       <form method="get" action="/glitch/api">
@@ -54,7 +59,42 @@
       </table>
       <h3>Response</h3>
       <p>JPEG</p>
-      <br><br><br>
+      <div class="spacer"></div>
+
+      <h2 id="api2" ><a href="#api2">(2)</a></h2>
+      <p>Simple API to glitch images(2).</p>
+
+      <h2>Let's Try</h2>
+      <form method="get" action="/glitch/api2">
+        uri of image: <input type="text" size="50" name="uri">
+        <input type="submit" value="try">
+      </form>
+
+      <h2>Example</h2>
+      <p>/glitch/<strong>api2</strong>?uri=URI to glitch.</p>
+      <a href="/glitch/api2?uri=http://hitode909.appspot.com/image/boy.jpg">
+        <img src="/glitch/api2?uri=http://hitode909.appspot.com/image/boy.jpg">
+      </a>
+      <h2>Specification</h2>
+      <h3>URI</h3>
+      <p>http://hitode909.appspot.com/glitch/api2</p>
+      <h3>Request</h3>
+      <table border="1px" style="border-style:solid">
+        <tr>
+          <th>Parameter</th>
+          <th>Value</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>uri</td>
+          <td>string (required)</td>
+          <td>The uri to be glitched.<br>JPEG, PNG, GIF, BMP, TIFF and ICO are acceptable. </td>
+        </tr>
+      </table>
+      <h3>Response</h3>
+      <p>JPEG</p>
+
+      <div class="spacer"></div>
       <h2>Glitch Book</h2>
       <p>Buy Now!!!!</p>
       <iframe src="http://rcm-jp.amazon.co.jp/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=hitode909-22&o=9&p=8&l=as1&m=amazon&f=ifr&md=1X69VDGQCMF7Z30FM082&asins=0979966663" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>

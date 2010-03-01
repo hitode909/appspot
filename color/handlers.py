@@ -7,7 +7,23 @@ import base64
 import sys
 from google.appengine.api import images
 
-class RandomPage(webapp.RequestHandler):
+class ColorHelper(webapp.RequestHandler):
+    def random_data(self):
+        colors = self.colors()
+        return base64.standard_b64decode(
+            colors[int(random.random()*len(colors))]
+            )
+
+    def colors(self):
+        return yaml.load(open('setting.yml').read())
+
+class VividPage(ColorHelper):
+    def get(self):
+        image = self.random_data()
+        self.response.headers['Content-Type'] = 'image/png'
+        self.response.out.write(image)
+
+class RandomPage(ColorHelper):
     def get(self):
         image_list = [(self.random_data(), 0, 0, 0.5 + (random.random()/2.0), images.TOP_LEFT,)]
 
@@ -21,8 +37,3 @@ class RandomPage(webapp.RequestHandler):
         self.response.headers['Content-Type'] = 'image/png'
         self.response.out.write(image)
 
-    def random_data(self):
-        list = yaml.load(open('setting.yml').read())
-        return base64.standard_b64decode(
-            list[int(random.random()*len(list))]
-            )

@@ -5,8 +5,8 @@ from color.handlers import *
 def main():
     application = webapp.WSGIApplication(
         [
-            ('/color', RandomPage),
-            ('/color/', RandomPage),
+            ('/color/random', RandomPage),
+            ('/color/vivid', VividPage),
             ],
         debug=True)
     run_wsgi_app(application)

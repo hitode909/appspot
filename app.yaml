@@ -27,6 +27,9 @@ handlers:
 - url: /proxy/.*
   script: proxy/proxy.py
 
+- url: /blogparts/.*
+  script: blogparts/main.py
+
 - url: /album/.*
   script: album/album.py
 

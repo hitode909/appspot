@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="{{ title|escape }}">
+  </ModulePrefs>
+  <Content type="html">
+     <![CDATA[
+<style>
+  body {
+    font-family:"arial","helvetica",sans-serif;
+    font-size: 12px;
+  }
+  div#count {
+    font-size: 40px;
+    right: 0.5em;
+    position: absolute;
+    font-weight:bold;
+  }
+  #create-page {
+    display: none;
+  }
+  input, button, submit {
+      font-size: 12px;
+  }
+  #new-link {
+      position: absolute;
+      right: 0.5em;
+      bottom: 0.5em;
+  }
+  #got-code {
+      font-size: 12px;
+      width: 100%;
+      height: 5em;
+  }
+  #input-title {
+      width: 100%;
+  }
+  iframe {
+    width: 1px;
+    height: 1px;
+  }
+  * {
+    margin: 0px;
+    pdding: 0px;
+  }
+</style>
+<div id="counter-page">
+  <div id="count">0</div>
+</div>
+<div id="create-page">
+  <p><input id="input-title" type="text" value="title" /></input></p>
+  <textarea id="got-code" type="text" onclick="this.select()"></textarea>
+</div>
+<a id="new-link" href="new">create your counter</a>
+
+<script>
+    Host = 'http://webmemcache.appspot.com/';
+    Key = '{{ title|escape }}';
+    Namespace = 'wmc_counter';
+    AlreadyInitialized = false;
+    function q(query) {
+        return document.querySelector(query);
+    }
+    function show(element) {
+        element.style.display = 'block';
+    }
+    function hide(element) {
+        element.style.display = 'none';
+    }
+    function jsonp(path, data) { // data should include callback
+        var new_script = document.createElement('script');
+        var query = [];
+        for(var key in data) if (data.hasOwnProperty(key)) {
+            query.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
+        }
+        new_script.setAttribute('src', path + (query.length ? '?' : '') + query.join('&'));
+        document.body.appendChild(new_script);
+    };
+    function increment() {
+        jsonp(Host + 'incr', { key: Key, namespace: Namespace, callback: 'gotCount' });
+    }
+    function none(){  };
+    function saveCount(count) {
+        var data = { namespace: Namespace, expire: 0, callback: 'none' };
+        data[Key] = count;
+        jsonp(Host + 'set', data);
+    };
+    var printCount = function(count) {
+        var elem = q("#count");
+        var timer = setInterval(function() {
+            var current_count = parseInt(elem.textContent);
+            if (current_count != count) {
+                var new_count = parseInt((current_count * 7 + count * 3) / 10);
+                if (current_count == new_count) new_count = count;
+                elem.textContent = new_count;
+            } else {
+                clearTimeout(timer);
+            }
+        }, 50);
+    }
+    function gotCount(json) {
+        var num = json.data[Key];
+        if (typeof num != 'number') {
+            num = 1;
+            initCounter();
+        }
+        printCount(num);
+        if (num%10 == 0) {
+            saveCount(num);
+        }
+    };
+    var initCounter = function() {
+        if (AlreadyInitialized) {
+            return;
+        }
+        var data = { namespace: Namespace, callback: 'gotCount', expire: 0 };
+        data[Key] = 1;
+        jsonp(Host + 'set', data);
+        AlreadyInitialized = true;
+    };
+    var setupGenerator = function() {
+        show(q("#create-page"));
+        hide(q("#counter-page"));
+        var current_title = null;
+        setInterval( function() {
+            var output = q('#got-code');
+            var title = q('#input-title').value;
+            var file_url = 'http://hitode909.appspot.com/blogparts/wmc_counter' + encodeURIComponent('?title=' + encodeURIComponent(title));
+            if (title != current_title) {
+                var source_url = 'http://www.gmodules.com/ig/ifr?url=' + file_url + '&amp;synd=open&amp;w=200&amp;h=100&amp;title=' + encodeURIComponent(title) + '&amp;border=' + escape('#ffffff|3px,1px+solid+#999999') + '&amp;output=js';
+                var code = '<scr' + 'ipt src="' + source_url + '"></scr' + 'ipt>';
+                current_title = title;
+                if (title.length > 0 ) {
+                    output.value = code;
+                    output.disabled = false;
+                } else {
+                    output.value = ''
+                    output.disabled = true;
+                }
+            }
+        }, 100);
+    };
+    increment();
+    q("a#new-link").addEventListener('click', function(ev) {
+        setupGenerator();
+        hide(q("a#new-link"));
+        ev.preventDefault();
+    }, true);
+</script>
+     ]]>
+</Content>
+</Module>

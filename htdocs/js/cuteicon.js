@@ -99,6 +99,13 @@ $(document).ready(function(){
         return false;
     });
 
+    $('a.save').click(function(){
+        $('#history').show().prepend(
+            $('<img>').attr('src', $('canvas')[0].toDataURL())
+        );
+        return false;
+    });
+
 $('a.refresh').click(function(){
         $('canvas').each(function(){
             $(this).data('filter', filtergenerator());

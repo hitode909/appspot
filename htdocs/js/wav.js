@@ -19,6 +19,7 @@ $.extend({
             signals = "";
 
             var canvas = $('canvas')[0];
+            $(canvas).attr({ width: window.innerWidth, height: window.innerHeight });
             var ctx = $('canvas')[0].getContext('2d');
             ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
             ctx.beginPath();
@@ -91,16 +92,11 @@ $.extend({
 });
 
 $(function(){
-    if (navigator.userAgent.indexOf('Firefox/') == -1) {
-        $('h1').text('Firefox only');
-        return;
-    }
     var canvas = $('canvas');
     if (!canvas) {
         canvas = $('<canvas>');
         $('<body>').append(canvas);
     }
-    canvas.attr({ width: window.innerWidth, height: window.innerHeight });
 
     var audio = null;
     var gotAxis = false;
@@ -112,7 +108,7 @@ $(function(){
         if (audio) audio.remove();
         audio = null;
         audio = new_audio;
-        $('h1').css({ top: (data.y * 50 + 50) + '%', left: (data.x * 50 + 50) + '%' });
+        $('h1').css({ top: (data.y * 40 + 50) + '%', left: (data.x * 40 + 50) + '%' });
     };
     
     window.addEventListener(

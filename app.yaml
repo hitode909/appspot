@@ -27,6 +27,12 @@ handlers:
 - url: /proxy/.*
   script: proxy/proxy.py
 
+- url: /tinyurl/
+  script: tinyurl/main.py
+
+- url: /png/.*
+  script: png/main.py
+
 - url: /blogparts/.*
   script: blogparts/main.py
 

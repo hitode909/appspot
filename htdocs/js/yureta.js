@@ -91,7 +91,7 @@ $(function() {
                                         $("#loading").hide();
                                     }, 5000);
                                     if (!tiny.match(/http/)) return;
-                                    postTwitter('揺れてます ' + tiny);
+                                    postTwitter('揺れてます ' + tiny + ' #yureta');
                                 }
                             );
                         }, 500);

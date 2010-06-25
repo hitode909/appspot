@@ -30,10 +30,26 @@ class PngPicture(db.Model):
 
 class Page(webapp.RequestHandler):
     def post(self):
+        if not self.request.get('data'):
+            logging.info('no data')
+            self.response.set_status(404)
+            self.response.out.write('no data')
+            return
+        
         record = PngPicture.from_data_uri(self.request.get('data'))
         logging.debug(record)
+        logging.debug(record.path())
         self.response.headers['Content-Type'] = "text/plain"
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'x-requested-with'
         self.response.out.write(record.path())
+
+    def options(self):
+        logging.debug("options")
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'x-requested-with'
+        self.response.out.write('options')
+        return
 
 class GetPage(webapp.RequestHandler):
     def get(self, key):

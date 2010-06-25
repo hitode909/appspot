@@ -1,0 +1,40 @@
+<html>
+  <body>
+    <title>画像一致チェックするやつ</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="/js/jquery-1.4.2.js"></script>
+    <script src="/js/same_image.js"></script>
+    <h1>画像一致チェックするやつ</h1>
+    <p>画像のURLを2つ入力して一致判定できる!!!!</p>
+    <form>
+      <div><input type="text" id="a" style="width: 100%;" value="http://a1.twimg.com/profile_images/522770656/user_bigger.jpg" /></div>
+      <div><input type="text" id="b" style="width: 100%;" value="http://www.st-hatena.com/users/na/naoya/profile.gif" /></div>
+      <div><input type="submit" value="一致判定" /></div>
+    </form>
+    <div></div>
+
+
+    <script>
+$(function() {
+    var isSame = function(urls) {
+        SameImageUtil.whenSameImage(urls,
+        function(urls, sim) {
+            $('body').append($("<img>").attr({ src: urls[0] }));
+            $('body').append($("<img>").attr({ src: urls[1] }));
+            $('body').append($("<p>").text("一致(" + sim + ")"));;
+        }, function(urls, sim) {
+            $('body').append($("<img>").attr({ src: urls[0] }));
+            $('body').append($("<img>").attr({ src: urls[1] }));
+            $('body').append($("<p>").text("不一致(" + sim + ")"));
+        });
+    }
+
+    $("form").submit(function() {
+        isSame([$("#a").val(), $("#b").val()]);
+        return false;
+    });
+});
+    </script>
+  </body>
+</html>
+

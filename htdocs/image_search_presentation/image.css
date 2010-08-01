@@ -1,0 +1,49 @@
+* {
+    font-family:"arial","helvetica",sans-serif;
+}
+
+a {
+    border: 0;
+    color: #000;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.slide h1 {
+    font-size: 500%;
+}
+
+img {
+    border: 0;
+}
+
+.slide {
+    margin-bottom: 300px;
+}
+
+.slide .box {
+    float: left;
+    padding: 5px;
+}
+
+.slide img {
+    max-width: 320px;
+    max-height: 320px;
+}
+
+textarea {
+    width: 60%;
+    height: 400px;
+}
+#padding {
+    padding-top: 1500px;
+}
+
+#branding {
+    position: fixed;
+    bottom: 0.5em;
+    right: 0.5em;
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Image Search Presentation</title>
+    <script src="http://www.google.com/jsapi?key=ABQIAAAA9zo6gDv1qbSijhp-laO8LhRtaEV2mWm6DEXnHoUWVBgk6yYnABTg47uTTr3vdw6iH57JplZ7uAlbDg" type="text/javascript"></script>
+    <script src="jquery-1.4.2.min.js"></script>
+    <script src="jquery.masonry.min.js"></script>
+    <script src="jquery.scrollTo-min.js"></script>
+    <script src="image.js"></script>
+    <link media="all" type="text/css" href="image.css" rel="stylesheet" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+  <body>
+    <div id="branding"></div>
+    <div id="slides"></div>
+    <div id="padding"></div>
+    <div id="editor">
+        <h1><a href=".">Image Search Presentation</a></h1>
+        <h2>これについて</h2>
+        <p>キーワードを入力するとGoogleイメージ検索を使ってプレゼンを作ります．</p>
+        <p>j, k，カーソルキー，クリックで操作できます．</p>
+        <p>URLを配布するとプレゼンを配布できます．</p>
+        <p>1行が1枚のスライドになります．</p>
+        <p><a href="?keywords=about this,旧来,Keynote Powerpoint,めんどくさい,これ,めんどくさくない,使い方,キーワードを入力,完成,仕組み,イメージ検索,並べる,プレゼンできる,便利,詳しく ページの一番下 見て,ありがとうございました">(サンプル)</a></p>
+        <h2>原稿</h2>
+        <form id="edit">
+          <textarea></textarea>
+          <br>
+          <input type="submit" value="生成"></input>
+        </form>
+      </form>
+    </div>
+  </body>
+</html>

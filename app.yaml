@@ -33,6 +33,9 @@ handlers:
 - url: /png/.*
   script: png/main.py
 
+- url: /text/.*
+  script: text/main.py
+
 - url: /blogparts/.*
   script: blogparts/main.py
 

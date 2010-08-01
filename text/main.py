@@ -12,6 +12,7 @@ import re
 
 class TextRecord(db.Model):
     data       = db.TextProperty()
+    created_on = db.DateTimeProperty(auto_now_add = 1)
 
     def path(self):
         return "http://hitode909.appspot.com/text/" + str(self.key())
@@ -27,15 +28,15 @@ class Page(webapp.RequestHandler):
         record = TextRecord()
         record.data = db.Text(self.request.get('data'))
         record.put()
-        logging.debug(record)
-        logging.debug(record.path())
+        logging.info('POST')
+        logging.info(self.request.get('data'))
+        logging.info(record.path())
         self.response.headers['Content-Type'] = "text/plain"
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.headers['Access-Control-Allow-Headers'] = 'x-requested-with'
         self.response.out.write(record.path())
 
     def options(self):
-        logging.debug("options")
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.headers['Access-Control-Allow-Headers'] = 'x-requested-with'
         self.response.out.write('options')
@@ -52,7 +53,6 @@ class GetPage(webapp.RequestHandler):
             self.response.set_status(404)
             self.response.out.write('404')
             return
-        logging.info(record)
 
         self.response.headers['Content-Type'] = "text/plain"
         self.response.out.write(record.data)

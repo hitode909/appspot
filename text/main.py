@@ -43,7 +43,11 @@ class Page(webapp.RequestHandler):
 
 class GetPage(webapp.RequestHandler):
     def get(self, key):
-        record = TextRecord.get(db.Key(key))
+        try:
+            record = TextRecord.get(db.Key(key))
+        except db.BadKeyError:
+            record = None
+
         if not record:
             self.response.set_status(404)
             self.response.out.write('404')

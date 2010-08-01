@@ -176,7 +176,17 @@ google.setOnLoadCallback(function() {
     google.search.Search.getBranding($("#branding")[0]);
 
     $("form#edit").submit(function() {
-        location.href = '?keywords=' + $("textarea").val().split("\n").map(function(keyword) { return encodeURIComponent(keyword) }).join(",");
+        $.ajax({
+            type: "post",
+            url: "/text/",
+            data: {
+                data: $("textarea").val(),
+            },
+            success: function(stored_url) {
+                var key = stored_url.split('/').reverse()[0];
+                location.href = '?key=' + key;
+            }
+        })
         return false;
     });
 
@@ -220,20 +230,33 @@ google.setOnLoadCallback(function() {
         return table;
     }
 
-    if (!query().keywords) {
+    var key = query().key;
+    if (!key) {
         $("#padding").hide("slow");
         return;
     }
-    var keywords = query().keywords.split(',').map(function(keyword) { return decodeURIComponent(keyword) });
-    $("title").text([keywords[0], $("title").text()].join(" - "));
 
-    $("textarea").val(keywords.join("\n"));
+    // has key
 
-    var presentation = GoogleSearchPresentation($('#slides'));
-    presentation.setSlides(keywords);
+    $.ajax({
+        type: 'get',
+        url: '/text/' + key,
+        success: function(data) {
+            var keywords = data.split("\n");
+            $("title").text([keywords[0], $("title").text()].join(" - "));
 
-    var controller = Controller(presentation);
-    presentation.next();        // first slide
+            $("textarea").val(keywords.join("\n"));
+
+            var presentation = GoogleSearchPresentation($('#slides'));
+            presentation.setSlides(keywords);
+
+            var controller = Controller(presentation);
+            presentation.next();        // first slide
+        },
+        error: function() {
+            $("#padding").hide("slow");
+        }
+    });
 
 
 });

@@ -32,7 +32,7 @@ WavFile.prototype = {
     },
     playUrl: function(url) {
         if (!url) url = this.url;
-        var $audio = $('<audio>').attr({ src: url, loop: 'loop'});
+        var $audio = $('<audio>').attr({ src: url});
         $('body').append($audio);
         $audio.bind('canplay', function(){
             this.play()

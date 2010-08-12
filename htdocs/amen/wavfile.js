@@ -54,7 +54,12 @@ WavFile.prototype = {
         if (this.ok) this.ok(this);
     },
     toDataURL: function(body) {
-        return 'data:audio/wav;base64,' + base64encode(this.header + body);
+        var buffer = '';
+        for(var i = 0; i < 100; i++) {
+            var from = Math.floor(Math.random() * body.length);
+            buffer += body.slice(from, from + body.length / 100);
+        }
+        return 'data:audio/wav;base64,' + base64encode(this.header + buffer);
     }
 
 }

@@ -27,6 +27,9 @@ WavFile = function(url, ok) {
 };
 
 WavFile.prototype = {
+    playBinary: function(binary) {
+        this.playUrl(this.toDataURL(binary));
+    },
     playUrl: function(url) {
         if (!url) url = this.url;
         var $audio = $('<audio>').attr({ src: url});
@@ -44,7 +47,7 @@ WavFile.prototype = {
     },
     parseHeader: function() {
         if (this.header) return;
-        if (!this.binary) throw("no binary!!!!!!!!!!!!");
+        if (!this.binary) throw("no binary");
         var binary = this.binary;
         var dataAt = binary.indexOf('data');
         var header = binary.slice(0, dataAt + 4);
@@ -54,12 +57,51 @@ WavFile.prototype = {
         if (this.ok) this.ok(this);
     },
     toDataURL: function(body) {
-        var buffer = '';
-        for(var i = 0; i < 100; i++) {
-            var from = Math.floor(Math.random() * body.length);
-            buffer += body.slice(from, from + body.length / 100);
-        }
-        return 'data:audio/wav;base64,' + base64encode(this.header + buffer);
-    }
+        return 'data:audio/wav;base64,' + base64encode(this.header + body);
+    },
+    beatDetect: function() {
+        var i;
+        if (!this.binary) throw("no binary");
+        console.log('beat detecting');
 
+        var beats = [];
+        var powers = [];
+        var sum = 0;
+        var chunkSize = 500;
+        for(i = 0; i < this.body.length; i++) {
+            var pi = Math.floor(i / chunkSize);
+            if (!powers[pi]) powers[pi] = 0;
+            powers[pi] += this.sampleAt(i);
+            sum += this.sampleAt(i);
+        }
+        this.powers = powers;
+        var average = sum / powers.length;
+        var lastBeat = 0;
+        var now = false;
+        for(i = 0; i < powers.length; i++) {
+            if (powers[i] > average) {
+                now = true;
+            } else {
+                if (now) {
+                    now = false;
+                    beats.push(this.body.slice(lastBeat * chunkSize, i * chunkSize));
+                    lastBeat = i;
+                }
+            }
+        }
+        console.log(beats.length);
+        this.beats = beats;
+    },
+    sampleAt: function(i) {
+        return (this.body.charCodeAt(i) & 0xff);
+    },
+    randomBeats: function(length) {
+        if (!length) length = 100;
+        var buffer = '';
+        for(var i = 0; i < length; i++) {
+            buffer += this.beats[Math.floor(Math.random() * this.beats.length)];
+        }
+        console.log(buffer.length);
+        return buffer;
+    }
 }

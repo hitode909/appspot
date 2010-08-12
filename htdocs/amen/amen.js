@@ -1,17 +1,27 @@
 $(function() {
-    console.log(1);
-    var wav = new WavFile('./amen_lq.wav', function(that) {
-        console.log('ok');
-        that.beatDetect();
-        // var i = 0;
-        // setTimeout(function() {
-        //     that.playUrl(that.toDataURL(that.beats[i]));
-        //     i++;
-        //     if (that.beats[i]) {
-        //         setTimeout(arguments.callee, 500);
-        //     }
-        // }, 500);
+    var canvas = document.querySelector('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-        that.playBinary(that.randomBeats());
+    var plotter = new Plotter(canvas);
+
+    var play = function(that) {
+        plotter.clear();
+        var samples = that.randomBeats(20);
+        that.playBinary(samples);
+
+
+        var sampleVars = [];
+        for(var i = 0; i < samples.length; i++) {
+            sampleVars.push(samples.charCodeAt(i) & 0xff);
+        }
+        plotter.plot(sampleVars);
+    };
+    var wav = new WavFile('./amen_lq.wav', function(that) {
+        that.beatDetect();
+        play(that);
+
+    }, function(that) {
+        play(that);
     });
 });

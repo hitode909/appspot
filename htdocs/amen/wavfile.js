@@ -17,10 +17,10 @@ function base64encode(data) {
 
 // ------------------------------------------------
 
-WavFile = function(url, ok) {
-    console.log(url);
+WavFile = function(url, ok, atEnd) {
     this.url = url;
     this.ok = ok;
+    this.atEnd = atEnd;
     var self = this;
     this.binary = load_binary_resource(url);
     this.parseHeader();
@@ -32,16 +32,16 @@ WavFile.prototype = {
     },
     playUrl: function(url) {
         if (!url) url = this.url;
-        var $audio = $('<audio>').attr({ src: url});
+        var $audio = $('<audio>').attr({ src: url, loop: 'loop'});
         $('body').append($audio);
         $audio.bind('canplay', function(){
-            console.log('play');
             this.play()
         });
 
+        var self = this;
         $audio.bind('ended', function(){
-            console.log('remove');
-            $(this).remove()
+            $(this).remove();
+            if (self.atEnd) self.atEnd(self);
         });
         return $audio;
     },
@@ -62,7 +62,6 @@ WavFile.prototype = {
     beatDetect: function() {
         var i;
         if (!this.binary) throw("no binary");
-        console.log('beat detecting');
 
         var beats = [];
         var powers = [];
@@ -89,7 +88,6 @@ WavFile.prototype = {
                 }
             }
         }
-        console.log(beats.length);
         this.beats = beats;
     },
     sampleAt: function(i) {
@@ -101,7 +99,6 @@ WavFile.prototype = {
         for(var i = 0; i < length; i++) {
             buffer += this.beats[Math.floor(Math.random() * this.beats.length)];
         }
-        console.log(buffer.length);
         return buffer;
     }
 }

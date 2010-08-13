@@ -1,8 +1,5 @@
 $(function() {
     var canvas = document.querySelector('canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
     var plotter = new Plotter(canvas, 255);
 
     // 用意されたaudioタグを再生 前のaudioがstopしたタイミングで呼ばれる
@@ -16,6 +13,8 @@ $(function() {
 
             // plot
             setTimeout(function() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
                 plotter.clear();
                 plotter.plot(that.current.vars);
             }, 0);

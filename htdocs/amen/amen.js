@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
+    if (navigator.userAgent.indexOf('Firefox/') == -1) {
+        var div = document.createElement('div');
+        div.id = 'banner';
+        div.innerHTML = "<a href='http://www.mozilla.com/?from=sfx&amp;uid=0&amp;t=572'><img src='http://sfx-images.mozilla.org/firefox/3.6/468x60_blue.png' alt='Spread Firefox Affiliate Button' border='0' /></a>";
+        document.body.appendChild(div);
+    }
+}, false);
+
+document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.querySelector('canvas');
     var plotter = new Plotter(canvas, 255);
 

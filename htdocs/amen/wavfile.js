@@ -28,32 +28,26 @@ WavFile = function(url, ok) {
 
 WavFile.prototype = {
     playBinary: function(binary) {
-        this.playUrl(this.toDataURL(binary));
+        return this.playUrl(this.toDataURL(binary));
     },
     playUrl: function(url) {
-        if (!url) url = this.url;
-        var $audio = $('<audio>').attr({ src: url});
-        $('body').append($audio);
-        $audio.bind('canplay', function(){
-            this.play()
-        });
+        var audio = this.URLAudio(url);
+        audio.addEventListener('canplay', function() {
+            e.target.play();
+        }, false);
 
-        var self = this;
-        $audio.bind('ended', function(){
-            $(this).remove();
-        });
-        return $audio;
+        audio.addEventListener('ended', function(e) {
+            e.target.parentNode.removeChild(e.target);
+        }, false);
+
+        return audio;
     },
     URLAudio: function(url) {
         if (!url) url = this.url;
-        var $audio = $('<audio>').attr({ src: url});
-        $('body').append($audio);
-
-        $audio.bind('ended', function(){
-            $(this).remove();
-        });
-
-        return $audio;
+        var audio = document.createElement('audio');
+        audio.src = url;
+        document.body.appendChild(audio);
+        return audio;
     },
     binaryAudio: function(binary) {
         if (!binary) throw("no binary");

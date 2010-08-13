@@ -2,6 +2,7 @@ Plotter = function(target, valueMax) {
     if (!target) target = document.querySelector('canvas');
     this.target = target;
     this.context = this.target.getContext('2d');
+    this.context.fillstyle = 'black';
     this.valueMax = valueMax;
 }
 
@@ -21,8 +22,6 @@ Plotter.prototype = {
             }
         }
 
-        this.context.fillstyle = 'black';
-
         for(var x = 0; x < width; x++) {
             var i = Math.floor(x * skip);
             var val = Math.pow(values[i] / valueMax, 2) * rateY;
@@ -31,6 +30,6 @@ Plotter.prototype = {
         this.context.stroke();
     },
     clear: function() {
-        this.context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        this.context.clearRect(0, 0, this.target.width, this.target.height);
     }
 }

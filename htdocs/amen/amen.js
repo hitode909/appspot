@@ -1,4 +1,4 @@
-$(function() {
+document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.querySelector('canvas');
     var plotter = new Plotter(canvas, 255);
 
@@ -9,7 +9,7 @@ $(function() {
         // 次があるとき再生
         if (that.next) {
             that.current = that.next;
-            that.current.audio[0].play();
+            that.current.audio.play();
 
             // plot
             setTimeout(function() {
@@ -42,10 +42,12 @@ $(function() {
             sampleVars.push(samples.charCodeAt(i) & 0xff);
         }
 
-        audio.bind('ended', function(){
+        audio.addEventListener('ended', function(e) {
             playNext(that);
-            $(this).remove();
-        });
+            setTimeout(function() {
+                e.target.parentNode.removeChild(e.target);
+            }, 0);
+        }, false);
 
         that.next = { audio: audio, vars: sampleVars };
     };
@@ -54,4 +56,4 @@ $(function() {
         that.beatDetect();
         playNext(that);
     });
-});
+}, false);

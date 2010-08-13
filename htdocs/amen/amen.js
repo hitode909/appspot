@@ -23,7 +23,7 @@ $(function() {
             // prepare next
             setTimeout(function() {
                 prepareNext(that);
-            }, 100);
+            }, 0);
         } else {
             // 次がないとき，同期的にprepareNextしてplayNextする
             prepareNext(that);

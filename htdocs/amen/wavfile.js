@@ -17,13 +17,13 @@ function base64encode(data) {
 
 // ------------------------------------------------
 
-WavFile = function(url, ok, atEnd) {
+WavFile = function(url, ok) {
     this.url = url;
     this.ok = ok;
-    this.atEnd = atEnd;
     var self = this;
     this.binary = load_binary_resource(url);
     this.parseHeader();
+    if (this.ok) this.ok(this);
 };
 
 WavFile.prototype = {
@@ -41,9 +41,23 @@ WavFile.prototype = {
         var self = this;
         $audio.bind('ended', function(){
             $(this).remove();
-            if (self.atEnd) self.atEnd(self);
         });
         return $audio;
+    },
+    URLAudio: function(url) {
+        if (!url) url = this.url;
+        var $audio = $('<audio>').attr({ src: url});
+        $('body').append($audio);
+
+        $audio.bind('ended', function(){
+            $(this).remove();
+        });
+
+        return $audio;
+    },
+    binaryAudio: function(binary) {
+        if (!binary) throw("no binary");
+        return this.URLAudio(this.toDataURL(binary));
     },
     parseHeader: function() {
         if (this.header) return;
@@ -54,7 +68,6 @@ WavFile.prototype = {
         var body = binary.slice(dataAt + 4, binary.length); // XXX
         this.header = header;
         this.body = body;
-        if (this.ok) this.ok(this);
     },
     toDataURL: function(body) {
         return 'data:audio/wav;base64,' + base64encode(this.header + body);

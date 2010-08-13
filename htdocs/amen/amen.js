@@ -3,10 +3,8 @@ $(function() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    var plotter = new Plotter(canvas);
+    var plotter = new Plotter(canvas, 255);
 
-    // append, play => (append audio)  => playEnd = playNext  => (append audio)  => playEnd = playNext
-    
     // 用意されたaudioタグを再生 前のaudioがstopしたタイミングで呼ばれる
     var playNext = function(that) {
         if (!that) throw('no that');
@@ -27,7 +25,7 @@ $(function() {
                 prepareNext(that);
             }, 100);
         } else {
-            // 次がないとき，同期的に，prepareNextしてplayNextする
+            // 次がないとき，同期的にprepareNextしてplayNextする
             prepareNext(that);
             playNext(that);
         }

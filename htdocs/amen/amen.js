@@ -35,7 +35,7 @@ $(function() {
     var prepareNext = function(that) {
         if (!that) throw('no that');
 
-        var samples = that.randomBeats(20);
+        var samples = that.randomBeats(4);
         var audio = that.binaryAudio(samples);
 
         var sampleVars = [];

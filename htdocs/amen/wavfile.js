@@ -1,12 +1,16 @@
-// glitchmonkey
-function load_binary_resource(url) {
-  var req = new XMLHttpRequest();
-  req.open('GET', url, false);
-  //XHR binary charset opt by Marcus Granado 2006 [http://mgran.blogspot.com]
-  req.overrideMimeType('text/plain; charset=x-user-defined');
-  req.send(null);
-  if (req.status != 200) return '';
-  return req.responseText;
+// see glitchmonkey
+function load_binary_resource(url, ok) {
+    var req = new XMLHttpRequest();
+    req.open('GET', url, true);
+    req.overrideMimeType('text/plain; charset=x-user-defined');
+    req.onreadystatechange = function (e) {
+        if (req.readyState == 4) {
+            if (req.status == 200) {
+                ok(req.responseText);
+            }
+        }
+    };
+    req.send(null);
 }
 
 function base64encode(data) {
@@ -21,9 +25,11 @@ WavFile = function(url, ok) {
     this.url = url;
     this.ok = ok;
     var self = this;
-    this.binary = load_binary_resource(url);
-    this.parseHeader();
-    if (this.ok) this.ok(this);
+    load_binary_resource(url, function(binary) {
+        self.binary = binary;
+        self.parseHeader();
+        if (self.ok) self.ok(self);
+    });
 };
 
 WavFile.prototype = {

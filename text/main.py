@@ -18,6 +18,11 @@ class TextRecord(db.Model):
         return "http://hitode909.appspot.com/text/" + str(self.key())
 
 class Page(webapp.RequestHandler):
+    def get(self):
+        path = os.path.join(os.path.dirname(__file__), 'index.html')
+        result = template.render(path, {  })
+        self.response.out.write(result)
+
     def post(self):
         if not self.request.get('data'):
             logging.info('no data')
@@ -57,6 +62,14 @@ class GetPage(webapp.RequestHandler):
         self.response.headers['Content-Type'] = "text/plain"
         self.response.out.write(record.data)
         return
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'x-requested-with'
+        self.response.out.write('options')
+        return
+
+
 
 application = webapp.WSGIApplication(
                                      [

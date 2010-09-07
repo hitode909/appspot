@@ -201,21 +201,40 @@ $.extend({
             line.append(input);
         });
 
-        var bar = $("<input>");
-        bar.attr({className: "volume", type: "range", min: 0, max: 100, value: 70 });
-        bar.css({ width: "8em"});
-        line.append(bar);
+        var volume_label = $("<label>");
+        volume_label.text("Volume");
+        var volume = $("<input>");
+        volume.attr({className: "volume", type: "range", min: 0, max: 100, value: 70 });
+        volume.css({ width: "8em"});
+        volume_label.append(volume);
+        line.append(volume_label);
+
+        // playbackRate..
+        if (false) {
+            var pitch_label = $("<label>");
+            pitch_label.text("Pitch");
+            var pitch = $("<input>");
+            pitch.attr({className: "pitch", type: "range", min: -200, max: 200, value: 100 });
+            pitch.css({ width: "8em"});
+            pitch_label.append(pitch);
+            line.append(pitch_label);
+        }
+
         $(".lines").append(line);
         line.setupLine();
     }
 });
 
 $.fn.extend({
-    playAudio: function(volume) {
-        var element = this[0];
-        element.volume = volume;
-        element.play();
-        element.currentTime = 0;
+    playAudio: function(args) {
+        try {
+            var element = this[0];
+            element.volume = args.volume;
+            element.currentTime = 0;
+            element.play();
+        } catch(e) {
+            console.log(e);
+        }
     },
     setupLine: function() {
         var audio = $("<audio>");
@@ -223,6 +242,7 @@ $.fn.extend({
         $("body").append(audio);
 
         var volumeInput = $(this).find(".volume");
+        var pitchInput = $(this).find(".pitch");
 
         var buttons = $(this).find("input");
         var self = this;
@@ -238,7 +258,7 @@ $.fn.extend({
             var current = buttons.get(step);
             $(current).css({opacity: 0.1}).animate({opacity: 1.0}, 100);
             if (current.checked)
-                audio.playAudio(volumeInput.val() / 100);
+                audio.playAudio({volume: volumeInput.val() / 100, pitch: pitchInput.val() / 100});
         });
     }
 });
@@ -254,11 +274,12 @@ $(function() {
 
     var step = 0;
     var bpm = 120;
+    var timer;
     var timer = setInterval(function() {
         $(".lines").trigger("tick", step);
 
         step++;
-        if (step == 16) {
+        if (step >= $("#length").val()) {
             step = 0;
         }
 

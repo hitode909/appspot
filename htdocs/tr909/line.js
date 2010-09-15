@@ -1,3 +1,5 @@
+var parts = ["kick", "snare", "lt", "mt", "ht", "rim", "handclp", "hh", "ride", "cs"];
+
 var samples = [
     [
         "BT0A0A7.WAV",
@@ -181,6 +183,48 @@ var samples = [
     ]
 ];
 
+var Reader = function(source) {
+    this.source = 0;
+    this.current = 0;
+};
+
+Reader.prototype = {
+    read: function(i) {
+        var result = this.source.slice(this.current, this.current + i);
+        current += i;
+        return result;
+    }
+};
+
+var inflate_hash = function() {
+// api version
+// bpm a0
+// length
+
+// -each parts
+// -- sample index
+// -- 1 or 0 * 16
+// -- volume
+
+    var source = new Reader(location.hash);
+    var api_version = source.read(1);
+    var bpm = source.read(2);
+    var length = source.read(1);
+    var part_settings = [];
+    parts.forEach(function(i) {
+        part_settings[i] = { };
+        part_settings[i]['volume'] = source.read(1);
+        for(var i = 0; i < 4; i++) {
+            var a = source.read(1);
+            // 一文字に4つずつ入ってるので，いれていく
+            for( var j = 0; j < 4; j++) {
+                
+            }
+        }
+    });
+
+};
+
 $.extend({
     newLine: function(srces) {
         var line = $("<div>");
@@ -222,6 +266,12 @@ $.extend({
 
         $(".lines").append(line);
         line.setupLine();
+    },
+    loadPermalink: function() {
+    },
+    getPermalink: function() {
+        var bpm = $("#bpm").val();
+        return "fooooooo";
     }
 });
 
@@ -260,6 +310,16 @@ $.fn.extend({
             if (current.checked)
                 audio.playAudio({volume: volumeInput.val() / 100, pitch: pitchInput.val() / 100});
         });
+    },
+    setAsPermalink: function() {
+        var permalink = $(this);
+        var url;
+        setInterval(function() {
+            url = '' + new Date();
+            permalink.text('permalink');
+            console.log($.getPermalink());
+            permalink.attr( { href: $.getPermalink() });
+        }, 1000);
     }
 });
 
@@ -290,5 +350,7 @@ $(function() {
             bpm = new_bpm;
         }
     }, getInterval(bpm));
+
+    $(".footer a").setAsPermalink();
 
 });

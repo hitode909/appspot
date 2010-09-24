@@ -266,12 +266,6 @@ $.extend({
 
         $(".lines").append(line);
         line.setupLine();
-    },
-    loadPermalink: function() {
-    },
-    getPermalink: function() {
-        var bpm = $("#bpm").val();
-        return "fooooooo";
     }
 });
 
@@ -310,16 +304,6 @@ $.fn.extend({
             if (current.checked)
                 audio.playAudio({volume: volumeInput.val() / 100, pitch: pitchInput.val() / 100});
         });
-    },
-    setAsPermalink: function() {
-        var permalink = $(this);
-        var url;
-        setInterval(function() {
-            url = '' + new Date();
-            permalink.text('permalink');
-            console.log($.getPermalink());
-            permalink.attr( { href: $.getPermalink() });
-        }, 1000);
     }
 });
 
@@ -344,13 +328,11 @@ $(function() {
         }
 
         var new_bpm = + $("#bpm").val();
-        if (new_bpm > 0 && bpm != new_bpm) {
+        if (new_bpm > bpm / 3 && bpm != new_bpm) {
             clearInterval(timer);
             timer = setInterval(arguments.callee, getInterval(new_bpm));
             bpm = new_bpm;
         }
     }, getInterval(bpm));
-
-    $(".footer a").setAsPermalink();
 
 });

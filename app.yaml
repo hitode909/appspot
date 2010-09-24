@@ -60,9 +60,9 @@ handlers:
   upload: htdocs/favicon.ico
   mime_type: image/x-icon
 
-- url: /tr909/TR909all/(.*)
-  static_files: htdocs/tr909/TR909all/\1
-  upload: htdocs/tr909/TR909all/(.*)
+- url: /html909/TR909all/(.*)
+  static_files: htdocs/html909/TR909all/\1
+  upload: htdocs/html909/TR909all/(.*)
   mime_type: audio/x-wav
 
 - url: /(.*)

@@ -19,7 +19,7 @@ $(function() {
 
     var current = null;
     setInterval(function() {
-        if (!current) current = document.querySelector('#drum-root');
+        if (!current) current = document.querySelector('#drum-root').children[0];
         var tagName = current.tagName.toLowerCase();
         drum.register(tagName, '/tr909/TR909all/' + drum.samples[hash(tagName, drum.samples.length)]);
         drum.play(tagName);
@@ -28,6 +28,11 @@ $(function() {
         })(current);
         current = current.children[0];
     }, 200);
+
+
+    $('#apply').click(function() {
+        $('#drum-root').html($('#editor').val());
+    });
 });
 
 

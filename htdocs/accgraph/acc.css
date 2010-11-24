@@ -1,0 +1,27 @@
+.acc {
+    font-size: 20px;
+    color: white;
+    height: 155px;
+    width: 0px;
+}
+body {
+    background: black;
+}
+#x {
+    background: #f00;
+}
+#y {
+    background: #0f0;
+}
+#z {
+    background: #00f;
+}
+#alpha {
+    background: #ff0;
+}
+#beta {
+    background: #0ff;
+}
+#gamma {
+    background: #f0f;
+}

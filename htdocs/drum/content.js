@@ -21,7 +21,7 @@ $(function() {
     setInterval(function() {
         if (!current) current = document.querySelector('#drum-root').children[0];
         var tagName = current.tagName.toLowerCase();
-        drum.register(tagName, '/tr909/TR909all/' + drum.samples[hash(tagName, drum.samples.length)]);
+        drum.register(tagName, '/html909/TR909all/' + drum.samples[hash(tagName, drum.samples.length)]);
         drum.play(tagName);
         (function(tag) {
             $(tag).css({opacity: 0.0}).animate({opacity: 1.0}, 100);

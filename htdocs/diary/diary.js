@@ -1,6 +1,6 @@
 $(function() {
     var viewData = function(data) {
-        $("#result").prepend($("<pre>").addClass('item').text(data.value));
+        $("#result").prepend($("<div>").addClass('item').text(data.value));
     };
 
     var postEntry = function() {
@@ -36,4 +36,6 @@ $(function() {
             viewData(item);
         });
     });
+
+    $('textarea').focus();
 });

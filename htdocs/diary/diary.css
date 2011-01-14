@@ -1,0 +1,12 @@
+body {
+	font: 20px/1.5 'Helvetica Neue', Arial, 'Liberation Sans', FreeSans, sans-serif;
+}
+
+textarea {
+    width: 100%;
+    height: 200px;
+}
+
+.item {
+    margin-bottom: 1em;
+}

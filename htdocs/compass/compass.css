@@ -1,0 +1,12 @@
+body {
+    background: white;
+}
+
+#compass {
+    display: block;
+    position: absolute;
+    top: 70px;
+    left: 70px;
+    width: 500px;
+    height: 500px;
+}

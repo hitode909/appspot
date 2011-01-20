@@ -14,14 +14,16 @@ var Okyo = function() {
         var rand = Math.random();
         if (rand < 0.1) {
             self.interval *= 2;
-        } else if (rand < 0.2) {
+        } else if (rand < 0.2 && self.interval > 100) {
             self.interval /= 2;
         } else if (rand < 0.3) {
             self.position = Math.random() * audio_element.duration;
         }
-
-        audio_element.currentTime = self.position;
-        audio_element.play();
+        try {
+            audio_element.currentTime = self.position;
+            audio_element.play();
+        } catch(error) {
+        }
         if (self.on_play) {
             self.on_play(self);
         }

@@ -1,17 +1,20 @@
-var newAudio = function(src_url) {
-    var audio = jQuery("<audio>");
-    audio.attr("src", src_url);
-    jQuery("body").append(audio);
-    return audio[0];
-}
+// html909.js
+// Copyright (c) 2011 hitode909
+// MIT License
 
 var HTML909 = function() {
 };
 
 HTML909.prototype = {
+    newAudio: function(src_url) {
+        var audio = jQuery("<audio>");
+        audio.attr("src", src_url);
+        jQuery("body").append(audio);
+        return audio[0];
+    },
     play: function(sample, volume) {
         var url = this.samples_root + sample;
-        var audio_element = newAudio(url);
+        var audio_element = this.newAudio(url);
         if (volume) audio_element.volume = volume;
         audio_element.play();
         jQuery(audio_element).bind('ended', function() {

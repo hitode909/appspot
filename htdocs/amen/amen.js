@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.querySelector('canvas');
-    var plotter = new Plotter(canvas, 255);
+    var plotter = new Plotter(canvas, 1<<16);
 
     // 用意されたaudioタグを再生 前のaudioがstopしたタイミングで呼ばれる
     var playNext = function(that) {
@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var audio = that.binaryAudio(samples);
 
         var sampleVars = [];
-        for(var i = 0; i < samples.length; i++) {
-            sampleVars.push(samples.charCodeAt(i) & 0xff);
+        for(var i = 0; i < samples.length; i+=2) {
+            sampleVars.push(((samples.charCodeAt(i) & 0xff)<< 8) + (samples.charCodeAt(i+1) & 0xff));
         }
 
         audio.addEventListener('ended', function(e) {
@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
         that.next = { audio: audio, vars: sampleVars };
     };
 
-    var wav = new WavFile('./amen_lq.wav', function(that) {
+    var wav = new WavFile('./amen_mq.wav', function(that) {
+        window.that = that;
         that.beatDetect();
         playNext(that);
     });

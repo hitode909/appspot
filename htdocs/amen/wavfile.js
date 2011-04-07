@@ -79,12 +79,13 @@ WavFile.prototype = {
         var beats = [];
         var powers = [];
         var sum = 0;
-        var chunkSize = 500;
-        for(i = 0; i < this.body.length; i++) {
+        var chunkSize = 3000;
+        for(i = 0; i < this.body.length; i+=2) {
             var pi = Math.floor(i / chunkSize);
             if (!powers[pi]) powers[pi] = 0;
-            powers[pi] += this.sampleAt(i);
-            sum += this.sampleAt(i);
+            var sample = this.sampleAt(i);
+            powers[pi] += sample;
+            sum += sample;
         }
         this.powers = powers;
         var average = sum / powers.length;
@@ -104,7 +105,7 @@ WavFile.prototype = {
         this.beats = beats;
     },
     sampleAt: function(i) {
-        return (this.body.charCodeAt(i) & 0xff);
+        return ((this.body.charCodeAt(i) & 0xff) <<8) + (this.body.charCodeAt(i+1) & 0xff);
     },
     randomBeats: function(length) {
         if (!length) length = 100;

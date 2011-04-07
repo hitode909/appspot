@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var prepareNext = function(that) {
         if (!that) throw('no that');
 
-        var samples = that.randomBeats(4);
+        var samples = that.randomBeats(1);
         var audio = that.binaryAudio(samples);
 
         var sampleVars = [];

@@ -114,5 +114,19 @@ WavFile.prototype = {
             buffer += this.beats[Math.floor(Math.random() * this.beats.length)];
         }
         return buffer;
-    }
+    },
+    shiftPitch: function(samples, pitch) {
+        if (!pitch >= 0) pitch = this.pitch;
+        if (pitch == 1.0) return samples;
+
+        var lengthAfter = samples.length / pitch;
+        var res = '';
+        for(var i = 0; i < lengthAfter; i+=2) {
+            var index = Math.floor(i * pitch / 2) * 2;
+            res += samples[index] + samples[index+1];
+        }
+
+        return res;
+    },
+    pitch: 1.0
 }

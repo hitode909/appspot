@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var prepareNext = function(that) {
         if (!that) throw('no that');
 
-        var samples = that.randomBeats(1);
+        var samples = that.shiftPitch(that.randomBeats(1));
         var audio = that.binaryAudio(samples);
 
         var sampleVars = [];
@@ -57,4 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
         that.beatDetect();
         playNext(that);
     });
+
+    canvas.addEventListener('click', function(event) {
+        var pitch = (canvas.clientHeight - event.clientY) / canvas.clientHeight * 2;
+        wav.pitch = pitch;
+    }, false);
 }, false);

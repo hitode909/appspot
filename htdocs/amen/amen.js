@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.querySelector('canvas');
     var plotter = new Plotter(canvas, 1<<16);
+    var text_player = new TextLoader();
 
     // 用意されたaudioタグを再生 前のaudioがstopしたタイミングで呼ばれる
     var playNext = function(that) {
@@ -17,6 +18,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 canvas.height = window.innerHeight;
                 plotter.clear();
                 plotter.plot(that.current.vars);
+
+                // テキスト表示モード
+                if (location.hash.match(/text/)) {
+                    var text = ' ' + text_player.get();
+                    var fontSize = window.innerWidth / text.length;
+                    plotter.context.fillStyle = 'hsl(' + (text.length * 10) + ',100%, 50%)';
+                    plotter.context.font = '' + fontSize + 'px gothic bold';
+                    plotter.context.fillText(text, 0, canvas.height - fontSize, 300);
+                }
+
             }, 0);
 
             // prepare next

@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     var fontSize = window.innerWidth / text.length;
                     plotter.context.fillStyle = 'hsl(' + (text.length * 10) + ',100%, 50%)';
                     plotter.context.font = '' + fontSize + 'px gothic bold';
-                    plotter.context.fillText(text, 0, canvas.height - fontSize, 300);
+                    plotter.context.fillText(text, 0, canvas.height - fontSize);
                 }
 
             }, 0);

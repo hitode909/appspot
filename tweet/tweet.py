@@ -18,19 +18,16 @@ from django.utils import simplejson
 class TweetPage(webapp.RequestHandler):
     def get(self):
         client = OAuthClient('twitter', self)
-        if client.get_cookie():
-            info = client.get('/account/verify_credentials')
+        res = {  }
 
-            template_values = {
-                'screen_name': info['screen_name'],
-                }
-            path = os.path.join(os.path.dirname(__file__), 'view.html')
-            result = template.render(path, template_values)
-            self.response.out.write(result)
+        if client.get_cookie():
+            res['logout_url'] = 'http://hitode909.appspot.com/oauth/twitter/logout'
+            res['user'] = client.get('/account/verify_credentials')
         else:
-            path = os.path.join(os.path.dirname(__file__), 'login.html')
-            result = template.render(path, { })
-            self.response.out.write(result)
+            res['login_url'] = 'http://hitode909.appspot.com/oauth/twitter/login'
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(simplejson.dumps(res))
+
 
     def post(self):
         status = self.request.get('status')
@@ -38,6 +35,7 @@ class TweetPage(webapp.RequestHandler):
             self.error(400)
             self.response.out.write('status required')
             return
+        status = status.encode('utf-8')
 
         client = OAuthClient('twitter', self)
         if not client.get_cookie():

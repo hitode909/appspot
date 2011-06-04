@@ -232,7 +232,7 @@ class OAuthClient(object):
             self.service_info['user_auth_url'], token, **oauth_callback
             ))
 
-    def callback(self, return_to='/wispper/'):
+    def callback(self, return_to='/whispper/'):
 
         oauth_token = self.handler.request.get("oauth_token")
 

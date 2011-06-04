@@ -45,6 +45,12 @@ handlers:
 - url: /color/.+
   script: color/color.py
 
+- url: /oauth/.*
+  script: oauth/oauth_handler.py
+
+- url: /tweet/.*
+  script: tweet/tweet.py
+
 - url: /public_list/.+
   script: public_list/public_list.py
 

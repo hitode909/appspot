@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>tweet</title>
+  </head>
+  <body>
+    <strong>{{ screen_name|escape }}</strong>
+    <form action="/tweet/" method="POST">
+      <input size="140" type="status" required="required" name="status"/>
+      <input type="submit" value="tweet"/>
+    </form>
+    <a href="/oauth/twitter/logout">logout</a>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18856333-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+        <script type="text/javascript"><!--
+google_ad_client = "pub-0514478731635320";
+/* big */
+google_ad_slot = "7952186038";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+  </body>
+</html>

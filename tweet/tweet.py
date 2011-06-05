@@ -21,8 +21,13 @@ class TweetPage(webapp.RequestHandler):
         res = {  }
 
         if client.get_cookie():
-            res['logout_url'] = 'http://hitode909.appspot.com/oauth/twitter/logout'
-            res['user'] = client.get('/account/verify_credentials')
+            try:
+                res['user'] = client.get('/account/verify_credentials')
+                res['logout_url'] = 'http://hitode909.appspot.com/oauth/twitter/logout'
+            except:
+                logging.warn("verify cred failed")
+                client.expire_cookie()
+                res['login_url'] = 'http://hitode909.appspot.com/oauth/twitter/login'
         else:
             res['login_url'] = 'http://hitode909.appspot.com/oauth/twitter/login'
         self.response.headers['Content-Type'] = 'application/json'

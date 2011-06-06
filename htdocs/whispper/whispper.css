@@ -75,6 +75,13 @@ input.speech {
     background: gray;
 }
 
+h3 {
+    margin: 1em;
+}
+
+.link {
+    padding-top: 100px;
+}
 .ad {
     padding-top: 100px;
 }

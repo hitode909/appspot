@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="https://raw.github.com/hitode909/jquery-dial/master/jquery-dial.js"></script>
+    <script>
+      $(function() {
+        $("img#ipod").dial(function(diff, distance) {
+          $(this).css("width", $(this).width() + diff * 10);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <img id="ipod" src="http://dl.dropbox.com/u/8270034/g/17ca1ec7d4ff91cdd4bdc325d9bec055.png"/>
+  </body>
+</html>

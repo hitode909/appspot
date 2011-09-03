@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="https://raw.github.com/hitode909/jquery-dial/master/jquery-dial.js"></script>
+    <script>
+      $(function() {
+        var update = function() {
+          var r = $("#r").width();
+          var g = $("#g").width();
+          var b = $("#b").width();
+          var color = "rgb(" + [Math.floor(r), Math.floor(g), Math.floor(b)].join(",") + ")";
+          $("body").css("background-color", color);
+          $("#value").text(color);
+          $("#value").css("color", (r+g+b) > 128*3 ? "black" : "white");
+        }
+        update();
+        $(".color").each(function() {
+          $(this).dial(function(diff, distance) {
+            var v = $(this).width() + diff * 5;
+            if (v > 255) v = 255;
+            if (v < 0)   v = 0;
+            $(this).css("width", v);
+            $(this).css("height", v);
+            update();
+          });
+        });
+      });
+    </script>
+    <style>
+      .color {
+        position: absolute;
+        top: 150px;
+        width: 170px;
+        height: 170px;
+      }
+      #r {
+        left: 0px;
+        background: #ff0000;
+      }
+      #g {
+        left: 255px;
+        background: #00ff00;
+      }
+      #b {
+        left: 510px;
+        background: #0000ff;
+      }
+      #value {
+        font-size: 100px;
+        font-family: sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="color" id="r"></div>
+    <div class="color" id="g"></div>
+    <div class="color" id="b"></div>
+    <div id="value"></div>
+  </body>
+</html>

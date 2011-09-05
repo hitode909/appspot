@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="https://raw.github.com/hitode909/jquery-dial/master/jquery-dial.js"></script>
+    <script>
+      $(function() {
+        var audios = {};
+        $(".panel").each(function() {
+          var text = $(this).text();
+          var audio = document.createElement("audio");
+          audio.src = text + ".wav";
+          audio.volume = 0.1;
+          audio.loop = true;
+          $(audio).bind("canplay", function() {
+            this.play();
+          });
+          $(audio).bind("end", function() {
+            this.play();
+          });
+          $("body").append(audio);
+          audios[$(this).text()] = audio;
+
+          $(this).dial(function(diff, distance) {
+            var audio = audios[$(this).text()];
+            volume = +audio.volume;
+            volume += diff * 0.1;
+            if (volume > 1.0) volume = 1.0;
+            if (volume < 0.0) volume = 0.0;
+            audio.volume = volume;
+            $(this).css("opacity", volume);
+          });
+        });
+      });
+    </script>
+    <style>
+      #container {
+        width: 1200px;
+        margin: 0 auto;
+      }
+      .panel {
+        float: left;
+        width: 200px;
+        height: 200px;
+        font-size: 18px;
+        border: 1px solid #888;
+        background: #eee;
+        text-align: center;
+        padding-top: 20px;
+        opacity: 0.1;
+        margin: 5px;
+      }
+      #clear {
+        clear: both;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div class="panel">BELIEVE</div>
+      <div class="panel">DISCOVER</div>
+      <div class="panel">INSTEAD</div>
+      <div class="panel">MUSTACHE</div>
+      <div class="panel">RHYTHM</div>
+      <div id="clear"></div>
+      <div class="panel">SEARCH</div>
+      <div class="panel">SWEATER</div>
+      <div class="panel">TREASURE</div>
+      <div class="panel">CONFORT</div>
+      <div class="panel">HALF</div>
+    </div>
+  </body>
+</html>

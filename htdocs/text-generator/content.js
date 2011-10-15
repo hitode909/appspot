@@ -1,12 +1,17 @@
-var start;
+var should_create, start;
+should_create = function(g) {
+  if (!g) {
+    return true;
+  }
+  return g.source !== $('#source').val() || g.gram_length !== $('#gram-length').val();
+};
 start = function() {
   var body, g;
   body = $('#source').val();
-  g = new TextGenerator(body);
+  g = null;
   return setInterval(function() {
-    if (body !== $('#source').val()) {
-      body = $('#source').val();
-      g = new TextGenerator(body);
+    if (should_create(g)) {
+      g = new TextGenerator($('#source').val(), +$('#gram-length').val());
     }
     return $('#dest').val(g.get_from_text($('#dest').val()));
   }, 100);
@@ -15,7 +20,7 @@ $(function() {
   var start_timer, typing_timer;
   start_timer = null;
   typing_timer = null;
-  return $('#dest').keyup(function() {
+  $('#dest').keyup(function() {
     if (typing_timer) {
       clearTimeout(typing_timer);
       typing_timer = null;
@@ -28,5 +33,8 @@ $(function() {
       typing_timer = start();
       return start_timer = null;
     }, 1000);
+  });
+  return $('#gram-length').change(function() {
+    return $('#gram-length-value').text($(this).val());
   });
 });

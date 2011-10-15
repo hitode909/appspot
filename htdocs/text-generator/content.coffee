@@ -1,10 +1,13 @@
+should_create = (g)->
+  return true unless g
+  g.source != $('#source').val() || g.gram_length != $('#gram-length').val()
+
 start = ->
   body = $('#source').val()
-  g = new TextGenerator(body)
+  g = null
   setInterval ->
-    if body != $('#source').val()
-      body = $('#source').val()
-      g = new TextGenerator(body)
+    if should_create(g)
+      g = new TextGenerator($('#source').val(), +$('#gram-length').val())
 
     $('#dest').val(g.get_from_text($('#dest').val()))
   , 100
@@ -28,3 +31,6 @@ $ ->
       start_timer = null
 
     ,1000
+
+  $('#gram-length').change ->
+    $('#gram-length-value').text($(this).val())

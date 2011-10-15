@@ -18,8 +18,7 @@ class TextGenerator
     @last_selected[@last_selected.length-1]
 
   get_from_text: (text) ->
-    unless text && text.length
-      text = @get_first()
+    return '' unless text && text.length
 
     node = @get_next_of(text)
     return text unless node

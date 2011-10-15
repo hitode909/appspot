@@ -32,7 +32,7 @@ TextGenerator = (function() {
   TextGenerator.prototype.get_from_text = function(text) {
     var node;
     if (!(text && text.length)) {
-      text = this.get_first();
+      return '';
     }
     node = this.get_next_of(text);
     if (!node) {

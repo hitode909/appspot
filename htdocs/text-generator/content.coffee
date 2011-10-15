@@ -15,9 +15,7 @@ start = ->
 $ ->
   start_timer = null
   typing_timer = null
-
-  $('#dest').keyup ->
-
+  set_timers = ->
     if typing_timer
       clearTimeout(typing_timer)
       typing_timer = null
@@ -31,6 +29,12 @@ $ ->
       start_timer = null
 
     ,1000
+
+  $('#dest').keyup ->
+    set_timers()
+
+  $('body').mousedown ->
+    set_timers()
 
   $('#gram-length').change ->
     $('#gram-length-value').text($(this).val())

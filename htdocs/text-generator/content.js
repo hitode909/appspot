@@ -17,10 +17,10 @@ start = function() {
   }, 100);
 };
 $(function() {
-  var start_timer, typing_timer;
+  var set_timers, start_timer, typing_timer;
   start_timer = null;
   typing_timer = null;
-  $('#dest').keyup(function() {
+  set_timers = function() {
     if (typing_timer) {
       clearTimeout(typing_timer);
       typing_timer = null;
@@ -33,6 +33,12 @@ $(function() {
       typing_timer = start();
       return start_timer = null;
     }, 1000);
+  };
+  $('#dest').keyup(function() {
+    return set_timers();
+  });
+  $('body').mousedown(function() {
+    return set_timers();
   });
   return $('#gram-length').change(function() {
     return $('#gram-length-value').text($(this).val());

@@ -2,7 +2,7 @@ sample_8bit_to_float = (v) ->
   v / 128 - 0.5
 
 play = ->
-  channel = 2
+  channel = 1
   stream_length = 4096
   context = new webkitAudioContext()
   node = context.createJavaScriptNode(stream_length, 1, channel)

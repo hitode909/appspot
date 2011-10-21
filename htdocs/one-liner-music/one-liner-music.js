@@ -4,7 +4,7 @@ sample_8bit_to_float = function(v) {
 };
 play = function() {
   var canvas, canvas_context, canvas_height, canvas_width, channel, context, fun, last_t, node, plot_at, sample_value, stream_length, time_count, update_sample, value;
-  channel = 2;
+  channel = 1;
   stream_length = 4096;
   context = new webkitAudioContext();
   node = context.createJavaScriptNode(stream_length, 1, channel);

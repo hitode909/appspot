@@ -4,7 +4,7 @@ sample_8bit_to_float = function(v) {
 };
 play = function() {
   var canvas, canvas_context, canvas_height, canvas_width, channel, context, fun, last_t, node, plot_at, sample_value, stream_length, time_count, update_sample, value;
-  channel = 1;
+  channel = 2;
   stream_length = 4096;
   context = new webkitAudioContext();
   node = context.createJavaScriptNode(stream_length, 1, channel);
@@ -31,9 +31,10 @@ play = function() {
     return canvas_context.fillRect(x, y, 1, 1);
   };
   node.onaudioprocess = function(event) {
-    var data, i, len, sampling_rate, t, v, _results;
-    data = event.outputBuffer.getChannelData(0);
-    len = data.length;
+    var data1, data2, i, len, sampling_rate, t, v, _results;
+    data1 = event.outputBuffer.getChannelData(0);
+    data2 = event.outputBuffer.getChannelData(1);
+    len = data1.length;
     sampling_rate = $('input[name="sampling-rate"]:checked').val();
     try {
       v = $("#f").val();
@@ -46,12 +47,21 @@ play = function() {
         update_sample(t);
         last_t = t;
       }
-      data[i] = sample_value;
+      data1[i] = sample_value;
+      data2[i] = sample_value;
       _results.push(time_count++);
     }
     return _results;
   };
-  return node.connect(context.destination);
+  node.connect(context.destination);
+  return $("#restart").click(function() {
+    canvas_context.clearRect(0, 0, canvas_width, canvas_height);
+    time_count = 0;
+    last_t = 0;
+    value = 0;
+    plot_at = 0;
+    return sample_value = 0.0;
+  });
 };
 $(function() {
   if (!webkitAudioContext) {

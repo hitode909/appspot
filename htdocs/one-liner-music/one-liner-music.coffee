@@ -2,7 +2,7 @@ sample_8bit_to_float = (v) ->
   v / 128 - 0.5
 
 play = ->
-  channel = 1
+  channel = 2
   stream_length = 4096
   context = new webkitAudioContext()
   node = context.createJavaScriptNode(stream_length, 1, channel)
@@ -29,8 +29,9 @@ play = ->
     canvas_context.fillRect(x, y, 1, 1)
 
   node.onaudioprocess = (event) ->
-    data = event.outputBuffer.getChannelData(0)
-    len = data.length
+    data1 = event.outputBuffer.getChannelData(0)
+    data2 = event.outputBuffer.getChannelData(1)
+    len = data1.length
     sampling_rate = $('input[name="sampling-rate"]:checked').val()
     try
       v = $("#f").val()
@@ -42,10 +43,19 @@ play = ->
       if t != last_t
         update_sample(t)
         last_t = t
-      data[i] = sample_value
+      data1[i] = sample_value
+      data2[i] = sample_value
       time_count++
 
   node.connect(context.destination)
+
+  $("#restart").click ->
+    canvas_context.clearRect(0, 0, canvas_width, canvas_height)
+    time_count = 0
+    last_t = 0
+    value = 0
+    plot_at = 0
+    sample_value = 0.0
 
 $ ->
   unless webkitAudioContext

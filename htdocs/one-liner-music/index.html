@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Music from very short programs player using WebkitAudio</title>
+    <script language="javascript" type="text/javascript" src="jquery-1.6.4.min.js"></script>
+    <script language="javascript" type="text/javascript" src="underscore-min.js"></script>
+    <script language="javascript" type="text/javascript" src="jsdeferred.js"></script>
+    <script language="javascript" type="text/javascript" src="one-liner-music.js"></script>
+    <link rel="stylesheet" type="text/css" href="reset.css" />
+    <link rel="stylesheet" type="text/css" href="text.css" />
+    <link rel="stylesheet" type="text/css" href="960.css" />
+    <link rel="stylesheet" type="text/css" href="webkit-audio.css" />
+  </head>
+  <body>
+    <div class="container_12">
+      <h1>Music from very short programs player using WebkitAudio</h1>
+      <div>
+        <input type="text" id="f" value="t * ((t>>12|t>>8)&63&t>>4)" size=100/>
+      </div>
+      <div>
+        <label>
+          <input type="radio" name="sampling-rate" value="44100"/>
+          44,100
+        </label>
+        <br/>
+        <label>
+          <input type="radio" name="sampling-rate" value="22050"/>
+          22,050
+        </label>
+        <br/>
+        <label>
+          <input type="radio" name="sampling-rate" value="11025"/>
+          11,025
+        </label>
+        <br/>
+        <label>
+          <input type="radio" name="sampling-rate" value="8000" checked/>
+          8,000
+        </label>
+      </div>
+      <div id="message">
+      </div>
+      <div style="margin-top: 4em">
+        <h2>see also</h2>
+        <ul>
+          <li>
+            <a href="http://countercomplex.blogspot.com/2011/10/algorithmic-symphonies-from-one-line-of.html">Algorithmic symphonies from one line of code -- how and why?</a>
+          </li>
+          <li>
+            <a href="http://www.youtube.com/watch?v=tCRPUv8V22o">Music from very short programs - the 3rd iteration</a>
+          </li>
+          <li>
+            <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html">Web Audio API</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

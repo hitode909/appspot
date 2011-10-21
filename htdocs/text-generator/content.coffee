@@ -38,3 +38,7 @@ $ ->
 
   $('#gram-length').change ->
     $('#gram-length-value').text($(this).val())
+
+  $('button.sample').click ->
+    $('#dest').val($(this).text())
+    set_timers()

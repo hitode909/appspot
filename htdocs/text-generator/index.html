@@ -17,7 +17,13 @@
   <body>
     <h1>テキストジェネレーター</h1>
     <p>
-      何か書くと何か出ます．途中で止めたりできます．
+      <ul>
+        <li>出力に何か書くと入力をもとに何か出します．</li>
+        <li>途中で止めたりできます．</li>
+        <li>たとえば，ペンキと書くと何か出ます．</li>
+        <li>入力は学習用のテキストなので，好きな文章をコピペしてきます．</li>
+        <li>1文字ずつにすると変な文章が出ます．</li>
+      </ul>
     </p>
     <h2>入力</h2>
     <div>
@@ -886,13 +892,18 @@
 </textarea>
     </div>
     <div>
-      <input type="range" id="gram-length" min="1" max="20" value="3"/>
+      <input type="range" id="gram-length" min="1" max="10" value="3"/>
       <span id="gram-length-value">3</span>
       <span>文字ずつ</span>
     </div>
     <h2>出力</h2>
     <div>
       <textarea id="dest" cols="80" rows="20" placeholder="何文字か書くと何か出ます"></textarea>
+    </div>
+    <div>
+      <button class="sample">ペンキ</button>
+      <button class="sample">ストライキ</button>
+      <button class="sample">煙草を</button>
     </div>
   </body>
 </html>

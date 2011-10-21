@@ -40,7 +40,11 @@ $(function() {
   $('body').mousedown(function() {
     return set_timers();
   });
-  return $('#gram-length').change(function() {
+  $('#gram-length').change(function() {
     return $('#gram-length-value').text($(this).val());
+  });
+  return $('button.sample').click(function() {
+    $('#dest').val($(this).text());
+    return set_timers();
   });
 });

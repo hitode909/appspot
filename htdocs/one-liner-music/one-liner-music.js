@@ -54,13 +54,18 @@ play = function() {
     return _results;
   };
   node.connect(context.destination);
-  return $("#restart").click(function() {
+  $("#restart").click(function() {
     canvas_context.clearRect(0, 0, canvas_width, canvas_height);
     time_count = 0;
     last_t = 0;
     value = 0;
     plot_at = 0;
     return sample_value = 0.0;
+  });
+  return $("#save_image").click(function() {
+    var img;
+    img = $("<img>").attr("src", canvas[0].toDataURL());
+    return $("#history").prepend(img);
   });
 };
 $(function() {

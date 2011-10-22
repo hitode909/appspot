@@ -57,6 +57,10 @@ play = ->
     plot_at = 0
     sample_value = 0.0
 
+  $("#save_image").click ->
+    img = $("<img>").attr("src", canvas[0].toDataURL())
+    $("#history").prepend(img)
+
 $ ->
   unless webkitAudioContext
     $('#message').text('Please visit this page with Google Chrome.')

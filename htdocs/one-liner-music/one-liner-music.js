@@ -22,7 +22,7 @@ play = function() {
   };
   update_sample = function(t) {
     var x, y;
-    value = fun(t) % 255;
+    value = fun(t) % 256;
     sample_value = sample_8bit_to_float(value);
     plot_at++;
     canvas_context.fillStyle = "rgb(" + value + ", 0, 0)";

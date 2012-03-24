@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>文字を画像か汚ない画像にする</title>
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="text_to_image.js"></script>
+  </head>
+  <body>
+    <h1>文字を画像か汚ない画像にするやつ</h1>
+    <p>
+      文字をCanvasに表示してから画像に変換する．<br/>
+      画像に変換する際に画質の低いJpegに変換することができる．<br/>
+      Google Chromeで見ると一番汚ない．<br/>
+      <ul>
+        <li><a href="http://let.hatelabo.jp/hitode909/let/gYC-ycit4Iq-IQ">文字を汚ない画像にするブックマークレット</a></li>
+        <li><a href="text_to_image.coffee">ソースコード(Coffee)</a></li>
+        <li><a href="text_to_image.js">ソースコード(JS)</a></li>
+      </ul>
+    </p>
+    <h2>↓ ここに文字を書いてボタンを押すと画像が出る</h2>
+    <textarea cols="40" rows="10">突然歌舞伎みたいに話しだすひとがいると思う．2ちゃんに書き込むときだけ30代男性みたいな話し方をする人がいるとすると，突然歌舞伎みたいに話す人と近いと思った．あと，オペラとかでは，突然歌いだす人が出てくる．それとか，プレゼンのときだけちゃんと話して，あとはだらだら話す人とか．</textarea>
+    <br/>
+    <button id="image">
+      画像にする
+    </button>
+    <button id="image2">
+      ちょっと汚ない画像にする
+    </button>
+    <button id="image3">
+      汚ない画像にする
+    </button>
+    <script>
+      $(function() {
+        $('button#image').click(function() {
+          var tti = new TextToImage;
+          tti.text = $('textarea').val();
+          tti.width = 400;
+          tti.font = '15px serif';
+          $('body').append($('<div>').append(tti.createImage()));
+        });
+
+        $('button#image2').click(function() {
+          var tti = new TextToImage;
+          tti.text = $('textarea').val();
+          tti.width = 400;
+          tti.font = '15px serif';
+          tti.background = 'white';
+          $('body').append($('<div>').append(tti.createImage('image/jpeg', 0.3)));
+        });
+
+        $('button#image3').click(function() {
+          var tti = new TextToImage;
+          tti.text = $('textarea').val();
+          tti.width = 400;
+          tti.font = '15px serif';
+          tti.background = 'white';
+          $('body').append($('<div>').append(tti.createImage('image/jpeg', 0.01)));
+        });
+      });
+    </script>
+  </body>
+</html>

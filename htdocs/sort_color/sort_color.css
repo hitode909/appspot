@@ -1,0 +1,18 @@
+body {
+    font-family: sans-serif;
+}
+
+canvas.image {
+    margin-right: 1px;
+}
+
+span.color {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.color-sample {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}

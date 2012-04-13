@@ -166,5 +166,15 @@ $ ->
       item.slideUp 300, ->
         item.remove()
 
+    $(document).on 'click', '#delete-all-button', (event) ->
+      $('#selected-colors').fadeOut 300, ->
+        console.log 'callback'
+        $('#selected-colors')
+         .empty()
+         .css
+           display: 'block'
+           opacity: 1.0
+
+
   setup_delete_button()
 

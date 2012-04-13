@@ -22,16 +22,6 @@ span.color {
     z-index: 100;
 }
 
-#selected-colors {
-    position: fixed;
-    right: 0px;
-    top: 0px;
-    width: 200px;
-    background: #fcfcfc;
-    border: 1px solid #eaeaea;
-    height: 100%;
-}
-
 #image-container {
     display: table-cell;
     text-align: center;
@@ -59,6 +49,20 @@ span.color {
 
 /* side bar */
 
+#sidebar {
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    width: 200px;
+    background: #fcfcfc;
+    border: 1px solid #eaeaea;
+    height: 100%;
+}
+
+#selected-colors {
+    opacity: 1.0;
+}
+
 .color-sample {
     display: inline-block;
     width: 20px;
@@ -68,4 +72,11 @@ span.color {
 .delete-button {
     cursor: pointer;
     vertical-align: middle;
+}
+
+#delete-all-button {
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
 }

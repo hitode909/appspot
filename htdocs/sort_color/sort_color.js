@@ -162,12 +162,21 @@ $(function() {
   };
   setup_cursor();
   setup_delete_button = function() {
-    return $(document).on('click', '.delete-button', function(event) {
+    $(document).on('click', '.delete-button', function(event) {
       var delete_button, item;
       delete_button = $(event.target);
       item = delete_button.parents('.picked-color-item');
       return item.slideUp(300, function() {
         return item.remove();
+      });
+    });
+    return $(document).on('click', '#delete-all-button', function(event) {
+      return $('#selected-colors').fadeOut(300, function() {
+        console.log('callback');
+        return $('#selected-colors').empty().css({
+          display: 'block',
+          opacity: 1.0
+        });
       });
     });
   };

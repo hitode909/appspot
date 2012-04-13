@@ -39,6 +39,14 @@ span.color {
     height: 100%;
 }
 
-canvas {
+#image-container {
+    width: 400px;
+    height: 500px;
+    border: 1px solid black;
+}
+
+#image-container canvas {
+    max-width: 100%;
+    max-height: 100%;
     cursor: pointer;
 }

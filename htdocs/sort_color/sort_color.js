@@ -17,7 +17,7 @@ $(function() {
     return item_container;
   };
   histogram = function(container) {
-    var base, canvas, color, count, ctx, data, displayed_colors_length, famous_colors, i, img_data, len, list, table, v, width, _i, _len, _ref;
+    var base, canvas, color, count, ctx, data, displayed_colors_length, famous_colors, i, img_data, len, list, stripe_container, table, v, width, _i, _len, _ref;
     canvas = container.find('canvas')[0];
     ctx = canvas.getContext('2d');
     img_data = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -50,6 +50,8 @@ $(function() {
     });
     displayed_colors_length = 0;
     base = canvas.width * canvas.height;
+    stripe_container = $('#stripe-container');
+    stripe_container.empty();
     for (_i = 0, _len = famous_colors.length; _i < _len; _i++) {
       color = famous_colors[_i];
       width = color[1] * 5 / canvas.width;
@@ -64,7 +66,7 @@ $(function() {
         width: width,
         height: canvas.height,
         background: num_to_color(color[0])
-      }).appendTo(container);
+      }).appendTo(stripe_container);
     }
     return console.log("displayed " + (displayed_colors_length / famous_colors.length) + ", " + displayed_colors_length + " of  " + famous_colors.length);
   };

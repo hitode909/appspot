@@ -50,6 +50,9 @@ $ ->
 
     base = canvas.width * canvas.height
 
+    stripe_container = $('#stripe-container')
+    stripe_container.empty()
+
     for color in famous_colors
       width = color[1] * 5  / canvas.width
       break if width < 1
@@ -63,7 +66,7 @@ $ ->
           width: width
           height: canvas.height
           background: num_to_color(color[0])
-        .appendTo(container)
+        .appendTo(stripe_container)
 
     console.log "displayed #{ displayed_colors_length / famous_colors.length }, #{ displayed_colors_length} of  #{ famous_colors.length }"
 

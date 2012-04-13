@@ -13,6 +13,32 @@ span.color {
 
 .color-sample {
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
+}
+
+.cursor-preview {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 40px;
+    height: 40px;
+    background: #fa6;
+    border: 1px solid white;
+    border-radius: 20px;
+    z-index: 100;
+}
+
+#selected-colors {
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    width: 200px;
+    background: #fcfcfc;
+    border: 1px solid #eaeaea;
+    height: 100%;
+}
+
+canvas {
+    cursor: pointer;
 }

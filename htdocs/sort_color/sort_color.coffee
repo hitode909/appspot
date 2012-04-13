@@ -97,13 +97,19 @@ $ ->
     false
 
   pick_color = (color) ->
+    delete_button = $('<img>')
+      .addClass('delete-button')
+      .attr
+        src: 'delete.png'
     color_item =  $('<div>')
+        .addClass('picked-color-item')
         .append(
           $('<span>')
             .addClass('color-sample')
             .css
               background: color
         ).append(color)
+        .append(delete_button)
 
     $('#selected-colors').append color_item
 
@@ -151,6 +157,14 @@ $ ->
       color = get_color_from_canvas(canvas, event.offsetX, event.offsetY)
       pick_color(color)
 
-
   setup_cursor()
+
+  setup_delete_button = ->
+    $(document).on 'click', '.delete-button', (event) ->
+      delete_button = $(event.target)
+      item = delete_button.parents('.picked-color-item')
+      item.slideUp 300, ->
+        item.remove()
+
+  setup_delete_button()
 

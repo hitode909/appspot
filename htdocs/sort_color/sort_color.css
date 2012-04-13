@@ -11,19 +11,12 @@ span.color {
     cursor: pointer;
 }
 
-.color-sample {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-}
-
 .cursor-preview {
     position: absolute;
     left: 0px;
     top: 0px;
     width: 40px;
     height: 40px;
-    background: #fa6;
     border: 1px solid white;
     border-radius: 20px;
     z-index: 100;
@@ -62,4 +55,17 @@ span.color {
 
 #stripe-container .stripe {
     height: 100%;
+}
+
+/* side bar */
+
+.color-sample {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+
+.delete-button {
+    cursor: pointer;
+    vertical-align: middle;
 }

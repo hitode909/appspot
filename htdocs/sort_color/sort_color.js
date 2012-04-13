@@ -1,5 +1,5 @@
 $(function() {
-  var histogram, load_img_to_canvas, num_to_color, pick_color, setup_click_color, setup_cursor;
+  var histogram, load_img_to_canvas, num_to_color, pick_color, setup_click_color, setup_cursor, setup_delete_button;
   num_to_color = function(num) {
     return '#' + ('000000' + (+num).toString(16)).slice(-6).toLowerCase();
   };
@@ -102,10 +102,13 @@ $(function() {
     return false;
   });
   pick_color = function(color) {
-    var color_item;
-    color_item = $('<div>').append($('<span>').addClass('color-sample').css({
+    var color_item, delete_button;
+    delete_button = $('<img>').addClass('delete-button').attr({
+      src: 'delete.png'
+    });
+    color_item = $('<div>').addClass('picked-color-item').append($('<span>').addClass('color-sample').css({
       background: color
-    })).append(color);
+    })).append(color).append(delete_button);
     return $('#selected-colors').append(color_item);
   };
   setup_click_color = function() {
@@ -157,5 +160,16 @@ $(function() {
       return pick_color(color);
     });
   };
-  return setup_cursor();
+  setup_cursor();
+  setup_delete_button = function() {
+    return $(document).on('click', '.delete-button', function(event) {
+      var delete_button, item;
+      delete_button = $(event.target);
+      item = delete_button.parents('.picked-color-item');
+      return item.slideUp(300, function() {
+        return item.remove();
+      });
+    });
+  };
+  return setup_delete_button();
 });

@@ -40,6 +40,9 @@ span.color {
 }
 
 #image-container {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
     width: 400px;
     height: 500px;
     border: 1px solid black;

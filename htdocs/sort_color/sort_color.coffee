@@ -1,7 +1,7 @@
 $ ->
 
   num_to_color = (num) ->
-    '#' + ('000000' + (+num).toString(16))[-6..-1]
+    '#' + ('000000' + (+num).toString(16))[-6..-1].toLowerCase()
 
   load_img_to_canvas = (img) ->
     item_container = $('<div>')
@@ -119,10 +119,15 @@ $ ->
     bg_color = '#ffffff'
     $(document).bind 'mousemove', (event)->
       $('.cursor-preview').remove()
+
+      return unless bg_color
+
       $('<span>').addClass('cursor-preview').appendTo($('body')).css
         left: event.pageX + offset
         top: event.pageY + offset
         'background-color': bg_color
+
+      bg_color = null
 
       true
 

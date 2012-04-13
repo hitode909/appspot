@@ -1,7 +1,7 @@
 $(function() {
   var histogram, load_img_to_canvas, num_to_color, pick_color, setup_click_color, setup_cursor;
   num_to_color = function(num) {
-    return '#' + ('000000' + (+num).toString(16)).slice(-6);
+    return '#' + ('000000' + (+num).toString(16)).slice(-6).toLowerCase();
   };
   load_img_to_canvas = function(img) {
     var $canvas, canvas, ctx, item_container;
@@ -122,11 +122,15 @@ $(function() {
     bg_color = '#ffffff';
     $(document).bind('mousemove', function(event) {
       $('.cursor-preview').remove();
+      if (!bg_color) {
+        return;
+      }
       $('<span>').addClass('cursor-preview').appendTo($('body')).css({
         left: event.pageX + offset,
         top: event.pageY + offset,
         'background-color': bg_color
       });
+      bg_color = null;
       return true;
     });
     $(document).on('mousemove', '.color', function(event) {

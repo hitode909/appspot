@@ -41,10 +41,10 @@ $ ->
     for color, count of table
       list.push [color, count]
 
-    famous_colors = list.sort (a, b) ->
+    famous_colors = (list.sort (a, b) ->
       return 0 if a[1] == b[1]
       if a[1] < b[1] then 1 else -1
-
+    )[0..500]
 
     displayed_colors_length = 0
 
@@ -53,18 +53,27 @@ $ ->
     stripe_container = $('#stripe-container')
     stripe_container.empty()
 
+    total = 0
     for color in famous_colors
-      width = color[1] * 5  / canvas.width
-      break if width < 1
+      total += color[1]
+
+    stripe_width = $('#stripe-container').width()
+    width_total = 0
+    for color in famous_colors
+      rate = (color[1] / total)
+      width = Math.ceil(stripe_width * rate)
+      width = 1 if width < 1
+      width_total += width
+      break if width_total > stripe_width
+      console.log width
       displayed_colors_length++
       $('<span>')
-        .addClass('color')
+        .addClass('color stripe')
         .attr
           'data-color': num_to_color(color[0])
         .css
           display: 'inline-block',
           width: width
-          height: canvas.height
           background: num_to_color(color[0])
         .appendTo(stripe_container)
 

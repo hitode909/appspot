@@ -17,7 +17,7 @@ $(function() {
     return item_container;
   };
   histogram = function(container) {
-    var base, canvas, color, count, ctx, data, displayed_colors_length, famous_colors, i, img_data, len, list, stripe_container, table, v, width, _i, _len, _ref;
+    var base, canvas, color, count, ctx, data, displayed_colors_length, famous_colors, i, img_data, len, list, rate, stripe_container, stripe_width, table, total, v, width, width_total, _i, _j, _len, _len2, _ref;
     canvas = container.find('canvas')[0];
     ctx = canvas.getContext('2d');
     img_data = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -38,7 +38,7 @@ $(function() {
       count = table[color];
       list.push([color, count]);
     }
-    famous_colors = list.sort(function(a, b) {
+    famous_colors = (list.sort(function(a, b) {
       if (a[1] === b[1]) {
         return 0;
       }
@@ -47,24 +47,36 @@ $(function() {
       } else {
         return -1;
       }
-    });
+    })).slice(0, 501);
     displayed_colors_length = 0;
     base = canvas.width * canvas.height;
     stripe_container = $('#stripe-container');
     stripe_container.empty();
+    total = 0;
     for (_i = 0, _len = famous_colors.length; _i < _len; _i++) {
       color = famous_colors[_i];
-      width = color[1] * 5 / canvas.width;
+      total += color[1];
+    }
+    stripe_width = $('#stripe-container').width();
+    width_total = 0;
+    for (_j = 0, _len2 = famous_colors.length; _j < _len2; _j++) {
+      color = famous_colors[_j];
+      rate = color[1] / total;
+      width = Math.ceil(stripe_width * rate);
       if (width < 1) {
+        width = 1;
+      }
+      width_total += width;
+      if (width_total > stripe_width) {
         break;
       }
+      console.log(width);
       displayed_colors_length++;
-      $('<span>').addClass('color').attr({
+      $('<span>').addClass('color stripe').attr({
         'data-color': num_to_color(color[0])
       }).css({
         display: 'inline-block',
         width: width,
-        height: canvas.height,
         background: num_to_color(color[0])
       }).appendTo(stripe_container);
     }

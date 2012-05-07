@@ -27,6 +27,13 @@ handlers:
 - url: /proxy/.*
   script: proxy/proxy.py
 
+- url: /thumbnail.to/
+  static_files: htdocs/thumbnail.to/index.html
+  upload: htdocs/thumbnail.to/index.html
+
+- url: /thumbnail.to/.*
+  script: thumbnail.to/thumb.py
+
 - url: /tinyurl/
   script: tinyurl/main.py
 

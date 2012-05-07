@@ -56,6 +56,14 @@ class ThumbPage(ProxyHelper):
         feed = simplejson.loads(resource["content"])
 
         # select entry
+        if not feed.has_key('feed'):
+            self.response.out.write('not found')
+            self.response.set_status(404)
+            return
+        if not feed['feed'].has_key('entry'):
+            self.response.out.write('not found')
+            self.response.set_status(404)
+            return
         entries = feed['feed']['entry']
         entry = entries[0]
 

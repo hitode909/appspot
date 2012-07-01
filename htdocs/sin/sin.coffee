@@ -5,12 +5,35 @@ class Sin
 
   load: ->
     @freq = +@container.find('input').val()
+    return if @freq == @lastFreq
+    @lastFreq = @freq
     @osc.freq = @freq
     @container.find('.hz').text(@freq)
+
+    if @rangeTimer
+      clearTimeout @rangeTimer
+
+    @rangeTimer = setTimeout =>
+      @setRange()
+      @rangeTimer = null
+    ,500
 
   set: (freq) ->
     @container.find('input').val(freq)
     @load()
+
+  setRange: ->
+    input = @container.find('input')
+    min = +input.attr('min')
+    max = +input.attr('max')
+    val = +input.val()
+    return if val == 0
+
+    if val / max > 0.7
+      input.attr('max', max * 2)
+
+    if val / max < 0.3
+      input.attr('max', max / 2)
 
 $ ->
   oscs = []

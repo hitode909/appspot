@@ -1,4 +1,5 @@
 var Sin;
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 Sin = (function() {
   function Sin(container) {
     this.container = container;
@@ -7,12 +8,39 @@ Sin = (function() {
   }
   Sin.prototype.load = function() {
     this.freq = +this.container.find('input').val();
+    if (this.freq === this.lastFreq) {
+      return;
+    }
+    this.lastFreq = this.freq;
     this.osc.freq = this.freq;
-    return this.container.find('.hz').text(this.freq);
+    this.container.find('.hz').text(this.freq);
+    if (this.rangeTimer) {
+      clearTimeout(this.rangeTimer);
+    }
+    return this.rangeTimer = setTimeout(__bind(function() {
+      this.setRange();
+      return this.rangeTimer = null;
+    }, this), 500);
   };
   Sin.prototype.set = function(freq) {
     this.container.find('input').val(freq);
     return this.load();
+  };
+  Sin.prototype.setRange = function() {
+    var input, max, min, val;
+    input = this.container.find('input');
+    min = +input.attr('min');
+    max = +input.attr('max');
+    val = +input.val();
+    if (val === 0) {
+      return;
+    }
+    if (val / max > 0.7) {
+      input.attr('max', max * 2);
+    }
+    if (val / max < 0.3) {
+      return input.attr('max', max / 2);
+    }
   };
   return Sin;
 })();

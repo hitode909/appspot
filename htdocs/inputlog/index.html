@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>入力の履歴を記録してlocalStorageにバックアップ取るやつ</title>
+    <script language="javascript" type="text/javascript" src="jquery-1.7.2.min.js"></script>
+    <script language="javascript" type="text/javascript" src="inputlog.js"></script>
+    <link rel="stylesheet" type="text/css" href="inputlog.css" />
+  </head>
+  <body>
+    <h1>入力の履歴を記録してlocalStorageにバックアップ取るやつ</h1>
+    <p>
+      入力の履歴を取ります．履歴の行をクリックするとそのバージョンに戻せます．localStorageに保存するのでタブを閉じても消えません．
+    </p>
+    <div>
+      <input type="text" id="title" placeholder="タイトル" />
+    </div>
+    <div>
+      <textarea id="body" placeholder="本文" ></textarea>
+    </div>
+  </body>
+</html>

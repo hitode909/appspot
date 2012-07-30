@@ -126,7 +126,7 @@ main = function() {
   Video.load_players(1);
   createShareURL = function(videos) {
     var text, url;
-    url = "http://hitode909.appspot.com/paralleltube#" + encodeURIComponent(videos.join(' '));
+    url = "http://hitode909.appspot.com/paralleltube/#" + encodeURIComponent(videos.join(' '));
     text = '#paralleltube';
     return "https://twitter.com/share?url=" + (encodeURIComponent(url)) + "&text=" + (encodeURIComponent(text));
   };

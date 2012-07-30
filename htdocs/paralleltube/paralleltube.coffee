@@ -114,7 +114,7 @@ main = ->
   Video.load_players(1)
 
   createShareURL = (videos) ->
-      url = "http://hitode909.appspot.com/paralleltube#" + encodeURIComponent(videos.join(' '))
+      url = "http://hitode909.appspot.com/paralleltube/#" + encodeURIComponent(videos.join(' '))
       text = '#paralleltube'
       "https://twitter.com/share?url=#{encodeURIComponent(url)}&text=#{encodeURIComponent(text)}"
 

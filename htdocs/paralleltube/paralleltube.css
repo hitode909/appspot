@@ -1,0 +1,62 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+a,
+a:visited {
+  text-decoration: none;
+  color: white;
+}
+h1 {
+  font-size: 15px;
+}
+body {
+  font: 13px/1.5 'Helvetica Neue', Arial, 'Liberation Sans', FreeSans, sans-serif;
+  color: white;
+  background: black;
+}
+textarea#videos {
+  width: 40em;
+  height: 4em;
+  font-size: 15px;
+  border: 1px solid white;
+  background: black;
+  color: white;
+  border-radius: 3px;
+  text-align: bottom;
+  padding: 5px;
+  margin: 5px;
+  float: left;
+}
+.players {
+  position: relative;
+}
+.players object {
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  top: 0px;
+  opacity: 0.5;
+}
+.footer {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  opacity: 0.3;
+}
+.footer input.submit,
+.footer .share {
+  cursor: pointer;
+  color: white;
+  background: black;
+  font-size: 15px;
+  border: 1px solid white;
+  border-radius: 3px;
+  padding: 5px;
+  margin: 5px;
+  vertical-align: bottom;
+  float: left;
+}
+body:hover .footer {
+  opacity: 1.0;
+}

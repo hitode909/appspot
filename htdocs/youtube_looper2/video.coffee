@@ -474,7 +474,7 @@ setupSaveLoop = ->
       Gallery.clearCache()
       Gallery.setupRecentLoops()
 
-      $message = $('<span>').addClass('message').text('保存しました')
+      $message = $('<span>').addClass('message').text('投稿しました')
       $('#save-loop').after($message)
 
       setTimeout ->

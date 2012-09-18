@@ -1,4 +1,4 @@
-var Gallery, Page, YoutubeLooper, YoutubeSearcher, bindLoadVideoFormEvents, bindLoopControllerEvents, setTweetLink, setup, setupPopState, setupSaveLoop, setupSearch, setupSelectOnClick, setupUrlShare;
+var Gallery, Page, YoutubeLooper, YoutubeSearcher, bindLoadVideoFormEvents, bindLoopControllerEvents, setTweetLink, setup, setupEmbedLoop, setupPopState, setupSaveLoop, setupSearch, setupSelectOnClick, setupUrlShare;
 Page = {
   parseQuery: function(query_string) {
     var k, pair, query, v, _i, _len, _ref, _ref2;
@@ -538,6 +538,17 @@ setupSaveLoop = function() {
     });
   });
 };
+setupEmbedLoop = function() {
+  return $('#embed-loop').click(function() {
+    var code;
+    if (!YoutubeLooper.playingVideoId) {
+      return;
+    }
+    code = "<iframe src=\"" + location.href + "&player=1\" width=\"640\" height=\"360\" style=\"border: none;\"></iframe>";
+    $('#embed-code').show().val(code);
+    return $('#embed-code')[0].select();
+  });
+};
 setTweetLink = function() {
   var share_url, text, url;
   text = 'ループしました';
@@ -558,8 +569,20 @@ setup = function() {
   Gallery.setupRecentLoops();
   Gallery.setupRecentLoopsClick();
   setupPopState();
-  return setupSaveLoop();
+  setupSaveLoop();
+  return setupEmbedLoop();
 };
 $(function() {
-  return setup();
+  var query;
+  query = Page.parseQuery(location.search.slice(1));
+  if (query.player) {
+    $(document.body).addClass('player');
+    return $(document).on('click', _.once(function() {
+      console.log('click!!!');
+      $('#player-play-button').remove();
+      return setup();
+    }));
+  } else {
+    return setup();
+  }
 });

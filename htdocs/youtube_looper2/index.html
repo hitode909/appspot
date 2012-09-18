@@ -15,15 +15,15 @@
     <meta name="description" content="YouTubeループするやつ">
     <script type="text/javascript">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-18856333-1']);
-  _gaq.push(['_trackPageview']);
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-18856333-1']);
+      _gaq.push(['_trackPageview']);
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
 
     </script>
   </head>
@@ -35,114 +35,125 @@
       <div class="clear">
       </div>
       <div id="left-pane">
+        <div id="player-play-button">
+          &#9658;
+        </div>
         <div id="player-container">
           <div id="player1">
           </div>
           <div id="player2">
           </div>
         </div>
-        <div class="error">
-        </div>
-        <div>
-          <label>
-            位置
-            <input id="loop-from" type="range" min="0.0" max="3600.0" step="0.1" value="5.0" />
-          </label>
-          <span id="loop-from-value"></span>
-        </div>
-        <div class="buttons-panel">
-          <button id="position-left" title="位置 -0.1">
-            -0.1
-          </button>
-          <button id="position-right" title="位置 +0.1">
-            +0.1
-          </button>
-          <button id="position-left-loop" title="1ループ左">
-            ←
-          </button>
-          <button id="position-right-loop" title="1ループ右">
-            →
-          </button>
-        </div>
-        <div>
-          <label>
-            長さ
-            <input id="loop-duration" type="range" min="0.05" max="15.0" step="0.01" value="1.0" />
-          </label>
-          <span id="loop-duration-value"></span>
-        </div>
-        <div class="buttons-panel">
-          <button id="duration-left" title="長さ -0.01">
-            -0.01
-          </button>
-          <button id="duration-right" title="長さ +0.01">
-            +0.01
-          </button>
-          <button id="duration-half" title="長さ ÷2">
-            ÷2
-          </button>
-          <button id="duration-double" title="長さ ×2">
-            ×2
-          </button>
-        </div>
-        <div class="buttons-panel">
-          <button id="save-loop">
-            このループを保存
-          </button>
-        </div>
-        <div class="buttons-panel">
-          <a id="tweet-loop" href="" target="_blank">
-            このループをギャラリーに投稿
-          </a>
-        </div>
-
-        <div id="gallery">
-          <h2>ギャラリー</h2>
-          <div id="recent-loops">
+        <div class="controller">
+          <div class="error">
           </div>
-          <script id="recent-gallery-item-template" type="text/x-underscore-template">
-            <div class="loop" data-query="<%= loop.query() %>">
-              <a href="<%= loop.url() %>">
-                <img class="thumbnail" src="<%= loop.thumbnailUrl() %>" />
-              </a>
-            </div>
-          </script>
-        </div>
-
-        </div>
-      </div>
-      <div id="right-pane">
-        <h2>ビデオ読み込み</h2>
-        <div id="create-loop">
           <div>
-            <form class="load-video" action="." method="get">
-              <input class="video-id" name="video" value="" placeholder="ビデオID" />
-              <input type="submit" value="読み込み"/>
-            </form>
+            <label>
+              位置
+              <input id="loop-from" type="range" min="0.0" max="3600.0" step="0.1" value="5.0" />
+            </label>
+            <span id="loop-from-value"></span>
+          </div>
+          <div class="buttons-panel">
+            <button id="position-left" title="位置 -0.1">
+              -0.1
+            </button>
+            <button id="position-right" title="位置 +0.1">
+              +0.1
+            </button>
+            <button id="position-left-loop" title="1ループ左">
+              ←
+            </button>
+            <button id="position-right-loop" title="1ループ右">
+              →
+            </button>
+          </div>
+          <div>
+            <label>
+              長さ
+              <input id="loop-duration" type="range" min="0.05" max="15.0" step="0.01" value="1.0" />
+            </label>
+            <span id="loop-duration-value"></span>
+          </div>
+          <div class="buttons-panel">
+            <button id="duration-left" title="長さ -0.01">
+              -0.01
+            </button>
+            <button id="duration-right" title="長さ +0.01">
+              +0.01
+            </button>
+            <button id="duration-half" title="長さ ÷2">
+              ÷2
+            </button>
+            <button id="duration-double" title="長さ ×2">
+              ×2
+            </button>
+          </div>
+          <div class="buttons-panel">
+            <button id="save-loop">
+              このループを保存
+            </button>
+          </div>
+          <div class="buttons-panel">
+            <a id="tweet-loop" href="" target="_blank">
+              このループをギャラリーに投稿
+            </a>
+          </div>
+          <div class="buttons-panel">
+            <button id="embed-loop">
+              貼り付けコードを取得
+            </button>
+            <textarea id="embed-code"></textarea>
           </div>
 
-          <div class="search-container">
-            <form id="search-form" class="load-video" action="." method="get">
-              <input id="search-keyword" name="query" type="search" placeholder="キーワード"/>
-              <input type="submit" value="検索" />
-            </form>
-            <div id="searching">
-              …
+          <div id="gallery">
+            <h2>ギャラリー</h2>
+            <div id="recent-loops">
             </div>
-            <div id="search-results">
-              <script id="search-result-template" type="text/x-underscore-template">
-                <div class="video" data-video-id="<%= video.videoId() %>">
-                  <img class="thumbnail" src="<%= video.thumbnailUrl() %>" />
-                  <span class="title"><%= video.title() %></span>
-                </div>
-              </script>
-            </div>
+            <script id="recent-gallery-item-template" type="text/x-underscore-template">
+              <div class="loop" data-query="<%= loop.query() %>">
+                <a href="<%= loop.url() %>">
+                  <img class="thumbnail" src="<%= loop.thumbnailUrl() %>" />
+                </a>
+              </div>
+            </script>
           </div>
         </div>
 
-      </div>
-      <div class="clear">
       </div>
     </div>
-  </body>
+    <div id="right-pane">
+      <h2>ビデオ読み込み</h2>
+      <div id="create-loop">
+        <div>
+          <form class="load-video" action="." method="get">
+            <input class="video-id" name="video" value="" placeholder="ビデオID" />
+            <input type="submit" value="読み込み"/>
+          </form>
+        </div>
+
+        <div class="search-container">
+          <form id="search-form" class="load-video" action="." method="get">
+            <input id="search-keyword" name="query" type="search" placeholder="キーワード"/>
+            <input type="submit" value="検索" />
+          </form>
+          <div id="searching">
+            …
+          </div>
+          <div id="search-results">
+            <script id="search-result-template" type="text/x-underscore-template">
+              <div class="video" data-video-id="<%= video.videoId() %>">
+                <img class="thumbnail" src="<%= video.thumbnailUrl() %>" />
+                <span class="title"><%= video.title() %></span>
+              </div>
+            </script>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="clear">
+    </div>
+</div>
+</body>
 </html>

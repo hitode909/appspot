@@ -485,6 +485,14 @@ setupSaveLoop = ->
     .always ->
         $('#save-loop').attr('disabled', false)
 
+setupEmbedLoop = ->
+  $('#embed-loop').click ->
+    return unless YoutubeLooper.playingVideoId
+
+    code = "<iframe src=\"#{location.href}&player=1\" width=\"640\" height=\"360\" style=\"border: none;\"></iframe>"
+    $('#embed-code').show().val(code)
+    $('#embed-code')[0].select()
+
 setTweetLink = ->
   text = 'ループしました'
   url = location.href
@@ -504,6 +512,18 @@ setup = ->
   Gallery.setupRecentLoopsClick()
   setupPopState()
   setupSaveLoop()
+  setupEmbedLoop()
 
 $ ->
-  setup()
+  query = Page.parseQuery(location.search[1..-1])
+  if query.player
+    # プレイヤーモード
+    $(document.body).addClass('player')
+    $(document).on 'click', _.once ->
+      console.log 'click!!!'
+      $('#player-play-button').remove()
+      setup()
+
+  else
+    # 普通
+    setup()

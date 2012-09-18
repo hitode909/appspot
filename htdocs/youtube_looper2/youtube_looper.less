@@ -143,3 +143,36 @@ input#search-keyword {
     font-size: 90%;
     text-overflow:ellipsis;
 }
+
+#player-play-button {
+    display: none;
+}
+
+#embed-code {
+    display: none;
+}
+
+/* ---- player ---- */
+body.player {
+    background: black;
+    width: 640px;
+    height: 360px;
+    overflow: hidden;
+
+    #player-play-button {
+        z-index: 10;
+        display: block;
+        color: white;
+        margin-top: 50px;
+        font-size: 200px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    header,
+    .controller,
+    #right-pane
+    {
+        display: none;
+    }
+}

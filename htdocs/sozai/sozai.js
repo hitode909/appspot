@@ -13,7 +13,7 @@ Page = {
   }
 };
 $(function() {
-  var load_bg;
+  var bind, load_bg;
   load_bg = function() {
     var is_repeat, query;
     query = Page.parseQuery(location.search.slice(1));
@@ -38,5 +38,14 @@ $(function() {
       });
     }
   };
-  return load_bg();
+  load_bg();
+  bind = function() {
+    return $('#tweet').click(function() {
+      var text, url;
+      text = '見てください';
+      url = location.href;
+      return window.open("https://twitter.com/share?url=" + (encodeURIComponent(url)) + "&text=" + (encodeURIComponent(text)));
+    });
+  };
+  return bind();
 });

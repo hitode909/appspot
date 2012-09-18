@@ -28,3 +28,11 @@ $ ->
         'background-size': 'cover'
 
   load_bg()
+
+  bind = ->
+    $('#tweet').click ->
+      text = '見てください'
+      url = location.href
+      window.open "https://twitter.com/share?url=#{encodeURIComponent(url)}&text=#{encodeURIComponent(text)}"
+
+  bind()

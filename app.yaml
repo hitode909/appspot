@@ -65,6 +65,11 @@ handlers:
   static_files: htdocs\1/index.html
   upload: htdocs(.*)/index.html
 
+- url: /sentence_imager/-/.*
+  static_files: htdocs/sentence_imager/index.html
+  upload: public/sentence_imager/index.html
+
+
 - url: /(.*\.py)
   script: \1
 

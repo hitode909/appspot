@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>趣旨ビジュアライザー</title>
+    <script language="javascript" type="text/javascript" src="/sentence_imager/jquery-1.7.2.min.js"></script>
+    <script language="javascript" type="text/javascript" src="/sentence_imager/underscore-min.js"></script>
+    <script language="javascript" type="text/javascript" src="/sentence_imager/sentence_imager.js"></script>
+    <link rel="stylesheet" type="text/css" href="/sentence_imager/sentence_imager.css" />
+
+  </head>
+  <body>
+    <div class="item">
+      <h1>趣旨ビジュアライザー</h1>
+      <p>
+        文章を入力すると趣旨を画像に変換します．
+      </p>
+      <form id="body-form">
+        <textarea id="body"></textarea>
+        <br/>
+        <input type="submit" value="画像に変換" />
+        <a id="tweet" href="#">Twitterで共有</a>
+      </form>
+    </div>
+    <div class="item indicator">
+      <div class="title">
+        通信中
+      </div>
+    </div>
+  </body>
+</html>

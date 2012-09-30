@@ -1,0 +1,40 @@
+textarea#body {
+    font-size: 15px;
+    width: 300px;
+    height: 200px;
+}
+
+#tweet {
+    display: none;
+    margini-left: 2em;
+}
+
+.item {
+    width: 400px;
+    height: 400px;
+    position: relative;
+    float: left;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    word-break: break-all;
+    overflow: hidden;
+
+    .title {
+        position: absolute;
+        text-align: center;
+        font-weight: bold;
+        width: 100%;
+        margin-top: 100px;
+        -webkit-text-stroke: 1px white;
+        font-size: 50px;
+
+    }
+
+    &.indicator {
+        display: none;
+        font-size: 80px;
+        background-image: url('http://wait.jpg.to');
+    }
+}

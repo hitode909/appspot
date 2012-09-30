@@ -51,7 +51,7 @@ $(function() {
     var $item;
     $item = $('<div>').addClass('item result');
     $item.css({
-      'background-image': "url('http://" + (encodeURIComponent(phrase)) + ".jpg.to')"
+      'background-image': "url('http://" + phrase + ".jpg.to')"
     });
     $item.append((($('<h2>').text(phrase)).addClass('title')).css({
       'font-size': "" + (Math.sqrt(score) * 5 + 30) + "px"

@@ -8,10 +8,14 @@ window.requestAnimationFrame = (function() {
 $(function() {
   var animationLoop, rand, setColor;
   rand = function(max) {
-    return Math.floor(Math.random() * max);
+    if (Math.random() > 0.5) {
+      return 255;
+    } else {
+      return 0;
+    }
   };
   setColor = function() {
-    return document.body.style.background = "hsl(" + (rand(360)) + ", 100%, 50%)";
+    return document.body.style.background = "rgb(" + (rand()) + ", " + (rand()) + ", " + (rand()) + ")";
   };
   animationLoop = function() {
     setColor();

@@ -10,12 +10,13 @@ window.requestAnimationFrame = (->
     , 1000 / 60
 )()
 
+
 $ ->
   rand = (max) ->
-    Math.floor(Math.random() * max)
+    if Math.random() > 0.5 then 255 else 0
 
   setColor = ->
-    document.body.style.background = "hsl(#{ rand(360) }, 100%, 50%)"
+    document.body.style.background = "rgb(#{ rand() }, #{ rand() }, #{ rand() })"
 
   animationLoop = ->
     setColor()
@@ -28,3 +29,4 @@ $ ->
       window.setTimeout ->
         callback()
       , 1000 / 6
+

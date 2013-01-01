@@ -5,13 +5,6 @@ getArgs = ->
     radianDiff: + $('#radian-diff').val()
     radiusNoiseDiff: + $('#radius-noise-diff').val()
 
-saveState = ->
-  args = getArgs()
-
-  hash = [args.strokeWeight, args.radiusDiff, args.radianDiff, args.radiusNoiseDiff].join(',')
-  if '#' + hash != location.hash
-    location.hash = hash
-
 render = (processing) ->
 
   processing.setup = ->
@@ -41,7 +34,6 @@ render = (processing) ->
       radian += args.radianDiff
       radiusNoiseTime += args.radiusNoiseDiff
 
-      # with noise
       currentRadius = radius * processing.noise(radiusNoiseTime)
       currentX = center.x + Math.sin(radian) * currentRadius
       currentY = center.y + Math.cos(radian) * currentRadius
@@ -51,8 +43,6 @@ render = (processing) ->
 
       lastX = currentX
       lastY = currentY
-
-    # saveState()
 
 save = ->
   dataURL = $('#screen').get(0).toDataURL()

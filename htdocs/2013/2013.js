@@ -1,4 +1,4 @@
-var getArgs, render, save, saveState;
+var getArgs, render, save;
 getArgs = function() {
   var args;
   return args = {
@@ -7,14 +7,6 @@ getArgs = function() {
     radianDiff: +$('#radian-diff').val(),
     radiusNoiseDiff: +$('#radius-noise-diff').val()
   };
-};
-saveState = function() {
-  var args, hash;
-  args = getArgs();
-  hash = [args.strokeWeight, args.radiusDiff, args.radianDiff, args.radiusNoiseDiff].join(',');
-  if ('#' + hash !== location.hash) {
-    return location.hash = hash;
-  }
 };
 render = function(processing) {
   processing.setup = function() {

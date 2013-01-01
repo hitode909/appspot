@@ -54,7 +54,6 @@ save = ->
     data:
       data: dataURL
   .done (tinyURL) ->
-    console.log(tinyURL)
     window.open "https://twitter.com/share?" + $.param(
       url: 'http://hitode909.appspot.com/2013/',
       text: "謹賀新年 #{tinyURL}"

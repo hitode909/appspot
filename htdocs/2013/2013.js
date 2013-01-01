@@ -59,7 +59,6 @@ save = function() {
       data: dataURL
     }
   }).done(function(tinyURL) {
-    console.log(tinyURL);
     return window.open("https://twitter.com/share?" + $.param({
       url: 'http://hitode909.appspot.com/2013/',
       text: "謹賀新年 " + tinyURL

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>謹賀新年</title>
+    <meta name="description" content="簡単に謹賀新年できるウェブサービス">
+    <script language="javascript" type="text/javascript" src="jquery-1.7.2.min.js"></script>
+    <script language="javascript" type="text/javascript" src="underscore-min.js"></script>
+    <script language="javascript" type="text/javascript" src="2013.js"></script>
+    <script src="processing-1.4.1.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" type="text/css" href="2013.css" />
+  </head>
+  <body>
+    <div id="container">
+      <h1>謹賀新年</h1>
+      <div>
+        <canvas id="screen" width="500" height="500"></canvas>
+      </div>
+      <div>
+        <div>
+          <input id="radius-diff" type="range" min="0.01" max="10" value="5" step="0.01" />
+        </div>
+        <div>
+          <input id="radius-noise-diff" type="range" min="0" max="0.1" value="0" step="0.01" />
+        </div>
+        <div>
+          <input id="radian-diff" type="range" min="0.001" max="3" value="0.5" step="0.01" />
+        </div>
+        <div>
+          <input id="stroke-weight" type="range" min="0.01" max="10" value="0.2" step="0.01" />
+        </div>
+        <div class="button-wrapper">
+          <button class="btn btn-danger btn-large" id="save">謹賀新年をツイートする</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

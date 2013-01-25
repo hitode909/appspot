@@ -1,0 +1,10 @@
+#preview-container {
+  margin-top: 100px;
+  margin-bottom: 100px;
+  text-align: center;
+}
+#preview-container #preview {
+  cursor: pointer;
+  width: 500px;
+  height: 500px;
+}

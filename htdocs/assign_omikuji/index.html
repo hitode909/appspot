@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>アサインおみくじ</title>
+    <meta name="description" content="はてなIDを使ったおみくじ">
+    <script language="javascript" type="text/javascript" src="jquery-1.7.2.min.js"></script>
+    <script language="javascript" type="text/javascript" src="underscore-min.js"></script>
+    <script language="javascript" type="text/javascript" src="assign.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="assign.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>アサインおみくじ</h1>
+
+      <p>
+        アサインおみくじは，はてなIDを使ったおみくじです
+      </p>
+
+      <form class="form-inline">
+        <input type="text" placeholder="はてなID" id="add-user-name" required title="はてなID" />
+        <input type="button" value="おみくじに追加" class="btn btn-primary" id="add-user" />
+        <input type="button" value="おみくじリセット" class="btn btn-danger" id="reset-user" />
+      </form>
+
+      <div id="preview-container">
+        <img id="preview"/>
+        <p>
+          クリックでアサイン
+        </p>
+      </div>
+      <div id="names">
+      </div>
+    </div>
+  </body>
+</html>

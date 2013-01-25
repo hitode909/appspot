@@ -1,3 +1,14 @@
+window.requestAnimationFrame = do ->
+  window.requestAnimationFrame		||
+  window.webkitRequestAnimationFrame	||
+  window.mozRequestAnimationFrame		||
+  window.oRequestAnimationFrame		||
+  window.msRequestAnimationFrame		||
+  (callback, element) ->
+    window.setTimeout ->
+      callback()
+    , 1000 / 60
+
 $ ->
 
   users = 'hitode909 nanto_vi nobuoka hakobe932 wakabatan'.split ' '
@@ -18,7 +29,7 @@ $ ->
     $preview.css
       opacity: 0
 
-  setInterval ->
+  step = ->
     users.push currentUser if currentUser
     currentUser = do users.shift
     return unless currentUser
@@ -28,7 +39,13 @@ $ ->
 
     $preview.attr
       src: "http://cdn1.www.st-hatena.com/users/#{currentUser[0...2]}/#{currentUser}/profile.gif"
-  , 10
+
+  animationLoop = ->
+    do step
+    window.requestAnimationFrame animationLoop
+
+  do animationLoop
+
 
   $preview.click ->
     ($ '#names').append ($ '<div>').text currentUser

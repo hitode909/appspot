@@ -1,5 +1,12 @@
+window.requestAnimationFrame = (function() {
+  return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback, element) {
+    return window.setTimeout(function() {
+      return callback();
+    }, 1000 / 60);
+  };
+})();
 $(function() {
-  var $preview, currentUser, users;
+  var $preview, animationLoop, currentUser, step, users;
   users = 'hitode909 nanto_vi nobuoka hakobe932 wakabatan'.split(' ');
   currentUser = null;
   $preview = $('#preview');
@@ -18,7 +25,7 @@ $(function() {
       opacity: 0
     });
   });
-  setInterval(function() {
+  step = function() {
     if (currentUser) {
       users.push(currentUser);
     }
@@ -32,7 +39,12 @@ $(function() {
     return $preview.attr({
       src: "http://cdn1.www.st-hatena.com/users/" + currentUser.slice(0, 2) + "/" + currentUser + "/profile.gif"
     });
-  }, 10);
+  };
+  animationLoop = function() {
+    step();
+    return window.requestAnimationFrame(animationLoop);
+  };
+  animationLoop();
   $preview.click(function() {
     ($('#names')).append(($('<div>')).text(currentUser));
     return alert(currentUser);

@@ -9,7 +9,7 @@ $(function() {
   ($('#add-user')).click(function() {
     users.push(($('#add-user-name')).val());
     ($('#add-user-name')).val('');
-    return location.hash = '#' + users.join(',');
+    return location.hash = '#' + (users.concat([currentUser])).join(',');
   });
   ($('#reset-user')).click(function() {
     currentUser = null;

@@ -10,7 +10,7 @@ $ ->
   ($ '#add-user').click ->
     users.push do ($ '#add-user-name').val
     ($ '#add-user-name').val ''
-    location.hash = '#' + users.join ','
+    location.hash = '#' + (users.concat [currentUser]).join ','
 
   ($ '#reset-user').click ->
     currentUser = null

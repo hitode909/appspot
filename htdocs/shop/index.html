@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ショップテスト</title>
+    <script src="underscore-min.js"></script>
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="jquery-ui-1.8.18.custom.min.js"></script>
+    <script src="http://www.google.com/jsapi?key=ABQIAAAA9zo6gDv1qbSijhp-laO8LhRtaEV2mWm6DEXnHoUWVBgk6yYnABTg47uTTr3vdw6iH57JplZ7uAlbDg" type="text/javascript"></script>
+    <script src="shop.js"></script>
+    <link rel="stylesheet" href="shop.css" type="text/css" media="all">
+
+    <script id="shop-item-template" type="text/x-underscore-template">
+      <div class="shop-item draggable">
+        <button class="delete">削除</button>
+        <img class="shop-image" src="<%= image_url %>"/>
+        <br/>
+        <span contenteditable="true">
+          <%= title %>
+        </span>
+      </div>
+    </script>
+
+  </head>
+  <body>
+    <h1 contenteditable="true">ショップテスト</h1>
+    <div>
+      説明
+      <br/>
+      検索してアイテムを追加できる．アイテムはAmazonから検索する予定だけど，とりあえず，仮で，Googleイメージ検索から取ってくる．
+      <br/>
+      アイテムは移動したり削除したりできる
+    </div>
+    <hr></hr>
+    <div>
+      <label>
+        検索してアイテムを追加
+        <input type="search" class="search" value="我輩は猫である" />
+      </label>
+      <button class="search">
+        検索
+      </button>
+    </div>
+    <hr></hr>
+    <div>
+      <label>
+        ポップを追加
+        <input type="text" class="pop-input" value="漱石渾身の一冊!!!!"/>
+      </label>
+      <button class="add-pop">
+        追加
+      </button>
+    </div>
+    <hr></hr>
+    <div class="items">
+    </div>
+  </body>
+</html>

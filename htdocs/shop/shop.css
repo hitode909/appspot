@@ -1,0 +1,42 @@
+.items {
+    position: relative;
+    width: 1800px;
+    height: 1800px;
+}
+
+.shop-item {
+    display: inline-block;
+    width: 200px;
+    border: 1px solid gray;
+    position: relative;
+    background: white;
+    z-index; 100;
+}
+
+.shop-item img {
+    max-width: 160px;
+    margin: 10px;
+}
+
+.shop-item:hover {
+ border: 1px solid gray;
+}
+
+.shop-item .shop-image {
+    cursor: move;
+}
+
+.shop-item .delete {
+    cursor: pointer;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
+.pop {
+    cursor: move;
+    font-size: 200%;
+    font-weight: bold;
+    background: yellow;
+    z-index: 300;
+}

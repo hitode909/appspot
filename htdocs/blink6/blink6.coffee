@@ -103,7 +103,7 @@ $ ->
   loadList = ->
     dfd = $.Deferred()
     GigaSchema.list().done (items) ->
-      for item in items
+      for item in items.reverse()
         addToGallery(item.key, JSON.parse(item.value))
       dfd.resolve()
 

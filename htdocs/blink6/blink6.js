@@ -114,9 +114,10 @@ $(function() {
     var dfd;
     dfd = $.Deferred();
     return GigaSchema.list().done(function(items) {
-      var item, _i, _len;
-      for (_i = 0, _len = items.length; _i < _len; _i++) {
-        item = items[_i];
+      var item, _i, _len, _ref;
+      _ref = items.reverse();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
         addToGallery(item.key, JSON.parse(item.value));
       }
       return dfd.resolve();

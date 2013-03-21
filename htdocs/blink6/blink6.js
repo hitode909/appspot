@@ -66,10 +66,12 @@ $(function() {
     }
     return edit_session = setTimeout(function() {
       edit_session = null;
-      return GigaSchema.save(playingFrames).done(function(key) {
-        location.hash = key;
-        return addToGallery(key, playingFrames);
-      });
+      if (playingFrames.length > 1) {
+        return GigaSchema.save(playingFrames).done(function(key) {
+          location.hash = key;
+          return addToGallery(key, playingFrames);
+        });
+      }
     }, 500);
   };
   $input_color.on('change', function() {

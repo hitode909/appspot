@@ -69,9 +69,10 @@ $ ->
       playingFrame = 0
     edit_session = setTimeout ->
       edit_session = null
-      GigaSchema.save(playingFrames).done (key) ->
-        location.hash = key
-        addToGallery(key, playingFrames)
+      if playingFrames.length > 1
+        GigaSchema.save(playingFrames).done (key) ->
+          location.hash = key
+          addToGallery(key, playingFrames)
     , 500
 
   $input_color.on 'change', ->

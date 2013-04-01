@@ -1,0 +1,27 @@
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  overflow: hidden;
+}
+.container {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 3px;
+}
+form {
+  float: left;
+}
+.sozai {
+  position: aboslute;
+  display: block;
+  bottom: 0px;
+  height: 100%;
+}
+#tweet {
+  margin-left: 4em;
+  float: left;
+}
+.clear {
+  clear: both;
+}

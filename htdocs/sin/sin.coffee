@@ -1,9 +1,19 @@
 class Sin
   constructor: (@container) ->
     @osc = T("sin", 400)
+    @bind()
     @load()
 
+  bind: ->
+    @container.find('.kill').on 'click', =>
+      @osc.pause()
+      @container.remove()
+
+  alive: ->
+    @container.is ':visible'
+
   load: ->
+    @play()
     @freq = +@container.find('input').val()
     return if @freq == @lastFreq
     @lastFreq = @freq
@@ -17,6 +27,12 @@ class Sin
       @setRange()
       @rangeTimer = null
     ,500
+
+  play: ->
+    @osc.play()
+
+  volume: (v) ->
+    @osc.mul = v
 
   set: (freq) ->
     @container.find('input').val(freq)
@@ -37,14 +53,23 @@ class Sin
 
 $ ->
   oscs = []
+
+  add_sin = ($container) ->
+    oscs.push new Sin($container)
+
   $('.osc').each ->
-    container = $(this)
-    oscs.push(new Sin(container))
+    add_sin $(this)
 
   timer = T "interval", 100, ->
+    oscs = (osc for osc in oscs when osc.alive())
     for osc in oscs
       osc.load()
 
+  $('.add').click ->
+    $new_container = $('.osc:last').clone()
+    $new_container.find('input[name="pitch"]').val($new_container.find('input[name="pitch"]').val() * 1.1)
+    $('.osc:last').after $new_container
+    add_sin $new_container
+
   timer.on()
 
-  T.apply(window, ["+"].concat(osc.osc for osc in oscs)).play()

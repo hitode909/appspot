@@ -7,25 +7,31 @@
     <script language="javascript" type="text/javascript" src="timbre.min.js"></script>
     <script language="javascript" type="text/javascript" src="sin.js"></script>
     <style>
-      button { font-size: 30px; background: #ccc; border: 1px solid #bbb;padding: 2px; border-radius: 2px;}
+      button { font-size: 20px; background: #ccc; border: 1px solid #bbb;padding: 2px; border-radius: 2px;}
     </style>
   </head>
   <body>
     <div style="width: 800px; margin: 0 auto 0; position: relative; min-height: 800px;">
-      <h1>sin</h1>
+      <h1>
+        <a href="/sin/">sin</a>
+      </h1>
       <div style="margin-bottom: 10px">
-        <button class="add">&#9997;</button>
+        <button class="add" title="New Wave">&#9997;</button>
       </div>
 
       <script type="x-template" id="osc-template"><div class="osc">
           <input name="pitch" type="range" min="0" max="500" value="200" style="width: 600px"/>
           <span class="hz" style="display: inline-block; width: 5em"></span>
-          <button class="kill">
+          <button class="kill" title="Delete Wave">
             &#9003;
           </button>
       </div></script>
 
       <div class="oscs" style="padding-bottom: 50px">
+      </div>
+
+      <div style="margin-top: 40px">
+        <button class="share" title="share">&#9992;</button>
       </div>
 
     </div>

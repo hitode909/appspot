@@ -1,3 +1,13 @@
+class Music
+  @load: ->
+    pitches = ( + i for i in location.hash[1..-1].split(','))
+  @save: (oscs) ->
+    hash = '#' + @serialize(oscs)
+    if hash != (location.hash || '#')
+      location.hash = hash
+  @serialize: (oscs) ->
+    ( osc.freq for osc in  oscs).join(',')
+
 class Sin
   constructor: (@container) ->
     @osc = T("sin", 400)
@@ -15,7 +25,7 @@ class Sin
 
   load: ->
     @play()
-    @freq = +@container.find('input').val()
+    @freq = + @container.find('input').val()
     return if @freq == @lastFreq
     @lastFreq = @freq
     @osc.freq = @freq
@@ -58,22 +68,33 @@ class Sin
 $ ->
   oscs = []
 
-  add_sin = ->
+  add_sin = (pitch) ->
     $new_container = if $('.osc:last')[0] then $('.osc:last').clone() else $($.parseHTML($('#osc-template').html()))
     $pitch = $new_container.find('input[name="pitch"]')
-    $pitch.val($pitch.val() * 1.1)
+    $pitch.val(if pitch then pitch else $pitch.val() * 1.1)
+
     $('.oscs').append $new_container
     oscs.push new Sin($new_container)
 
-  add_sin()
+  pitches = Music.load()
+  if pitches.length > 0
+    add_sin(pitch) for pitch in pitches
+  else
+    add_sin()
 
   timer = T "interval", 50, ->
     oscs = (osc for osc in oscs when osc.alive())
     for osc in oscs
       osc.load()
 
+    Music.save(oscs)
+
   $('.add').click ->
     add_sin()
 
   timer.on()
 
+  $('.share').click ->
+    window.open "https://twitter.com/share?" + $.param
+      url: location.href
+      text: "曲できた"

@@ -56,11 +56,11 @@ class Sin
     val = +input.val()
     return if val == 0
 
-    if val / max > 0.7
-      input.attr('max', max * 2)
+    max *= 2 while val / max > 0.7
 
-    if val / max < 0.3
-      input.attr('max', max / 2)
+    max /= 2 while val / max < 0.3
+
+    input.attr('max', max)
 
     input.val(+input.val()+1)
     input.val(+input.val()-1)
@@ -71,7 +71,11 @@ $ ->
   add_sin = (pitch) ->
     $new_container = if $('.osc:last')[0] then $('.osc:last').clone() else $($.parseHTML($('#osc-template').html()))
     $pitch = $new_container.find('input[name="pitch"]')
-    $pitch.val(if pitch then pitch else $pitch.val() * 1.1)
+    max = +$pitch.attr('max')
+    pitch = if pitch then pitch else $pitch.val() * 1.1
+    max *= 2 while pitch / max > 0.7
+    $pitch.attr('max', max)
+    $pitch.val(pitch)
 
     $('.oscs').append $new_container
     oscs.push new Sin($new_container)

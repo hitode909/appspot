@@ -107,12 +107,13 @@ Sin = (function() {
     if (val === 0) {
       return;
     }
-    if (val / max > 0.7) {
-      input.attr('max', max * 2);
+    while (val / max > 0.7) {
+      max *= 2;
     }
-    if (val / max < 0.3) {
-      input.attr('max', max / 2);
+    while (val / max < 0.3) {
+      max /= 2;
     }
+    input.attr('max', max);
     input.val(+input.val() + 1);
     return input.val(+input.val() - 1);
   };
@@ -125,10 +126,16 @@ $(function() {
   var add_sin, oscs, pitch, pitches, timer, _i, _len;
   oscs = [];
   add_sin = function(pitch) {
-    var $new_container, $pitch;
+    var $new_container, $pitch, max;
     $new_container = $('.osc:last')[0] ? $('.osc:last').clone() : $($.parseHTML($('#osc-template').html()));
     $pitch = $new_container.find('input[name="pitch"]');
-    $pitch.val(pitch ? pitch : $pitch.val() * 1.1);
+    max = +$pitch.attr('max');
+    pitch = pitch ? pitch : $pitch.val() * 1.1;
+    while (pitch / max > 0.7) {
+      max *= 2;
+    }
+    $pitch.attr('max', max);
+    $pitch.val(pitch);
     $('.oscs').append($new_container);
     return oscs.push(new Sin($new_container));
   };

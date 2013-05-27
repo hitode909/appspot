@@ -3,6 +3,7 @@ class Sin
     @osc = T("sin", 400)
     @bind()
     @load()
+    @setRange()
 
   bind: ->
     @container.find('.kill').on 'click', =>
@@ -51,25 +52,28 @@ class Sin
     if val / max < 0.3
       input.attr('max', max / 2)
 
+    input.val(+input.val()+1)
+    input.val(+input.val()-1)
+
 $ ->
   oscs = []
 
-  add_sin = ($container) ->
-    oscs.push new Sin($container)
+  add_sin = ->
+    $new_container = if $('.osc:last')[0] then $('.osc:last').clone() else $($.parseHTML($('#osc-template').html()))
+    $pitch = $new_container.find('input[name="pitch"]')
+    $pitch.val($pitch.val() * 1.1)
+    $('.oscs').append $new_container
+    oscs.push new Sin($new_container)
 
-  $('.osc').each ->
-    add_sin $(this)
+  add_sin()
 
-  timer = T "interval", 100, ->
+  timer = T "interval", 50, ->
     oscs = (osc for osc in oscs when osc.alive())
     for osc in oscs
       osc.load()
 
   $('.add').click ->
-    $new_container = $('.osc:last').clone()
-    $new_container.find('input[name="pitch"]').val($new_container.find('input[name="pitch"]').val() * 1.1)
-    $('.osc:last').after $new_container
-    add_sin $new_container
+    add_sin()
 
   timer.on()
 

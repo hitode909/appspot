@@ -8,6 +8,7 @@ Sin = (function() {
     this.osc = T("sin", 400);
     this.bind();
     this.load();
+    this.setRange();
   }
 
   Sin.prototype.bind = function() {
@@ -67,8 +68,10 @@ Sin = (function() {
       input.attr('max', max * 2);
     }
     if (val / max < 0.3) {
-      return input.attr('max', max / 2);
+      input.attr('max', max / 2);
     }
+    input.val(+input.val() + 1);
+    return input.val(+input.val() - 1);
   };
 
   return Sin;
@@ -78,13 +81,16 @@ Sin = (function() {
 $(function() {
   var add_sin, oscs, timer;
   oscs = [];
-  add_sin = function($container) {
-    return oscs.push(new Sin($container));
+  add_sin = function() {
+    var $new_container, $pitch;
+    $new_container = $('.osc:last')[0] ? $('.osc:last').clone() : $($.parseHTML($('#osc-template').html()));
+    $pitch = $new_container.find('input[name="pitch"]');
+    $pitch.val($pitch.val() * 1.1);
+    $('.oscs').append($new_container);
+    return oscs.push(new Sin($new_container));
   };
-  $('.osc').each(function() {
-    return add_sin($(this));
-  });
-  timer = T("interval", 100, function() {
+  add_sin();
+  timer = T("interval", 50, function() {
     var osc, _i, _len, _results;
     oscs = (function() {
       var _i, _len, _results;
@@ -105,11 +111,7 @@ $(function() {
     return _results;
   });
   $('.add').click(function() {
-    var $new_container;
-    $new_container = $('.osc:last').clone();
-    $new_container.find('input[name="pitch"]').val($new_container.find('input[name="pitch"]').val() * 1.1);
-    $('.osc:last').after($new_container);
-    return add_sin($new_container);
+    return add_sin();
   });
   return timer.on();
 });

@@ -3,21 +3,31 @@
   <head>
     <meta charset="utf-8">
     <title>sin</title>
-    <script language="javascript" type="text/javascript" src="jquery-1.7.2.min.js"></script>
+    <script language="javascript" type="text/javascript" src="jquery-2.0.1.min.js"></script>
     <script language="javascript" type="text/javascript" src="timbre.min.js"></script>
     <script language="javascript" type="text/javascript" src="sin.js"></script>
+    <style>
+      button { font-size: 30px; background: #ccc; border: 1px solid #bbb;padding: 2px; border-radius: 2px;}
+    </style>
   </head>
   <body>
-    <h1>sin</h1>
-    <div class="osc">
-      <input name="pitch" type="range" min="0" max="500" value="236" style="width: 90%"/>
-      <span class="hz"></span>
-      <button class="kill">
-        x
-      </button>
+    <div style="width: 800px; margin: 0 auto 0; position: relative; min-height: 800px;">
+      <h1>sin</h1>
+      <div style="margin-bottom: 10px">
+        <button class="add">&#9997;</button>
+      </div>
+
+      <script type="x-template" id="osc-template"><div class="osc">
+          <input name="pitch" type="range" min="0" max="500" value="200" style="width: 600px"/>
+          <span class="hz" style="display: inline-block; width: 5em"></span>
+          <button class="kill">
+            &#9003;
+          </button>
+      </div></script>
+
+      <div class="oscs" style="padding-bottom: 50px">
+      </div>
+
     </div>
-    <button class="add" style="position: absolute; left: 10px; bottom: 10px;">
-      +
-    </button>
   </body>
 </html>

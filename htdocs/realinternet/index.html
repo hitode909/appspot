@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>リアルインターネット</title>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&language=ja&region=JP&libraries=places"></script>
+    <script language="javascript" type="text/javascript" src="jquery-2.0.2.min.js"></script>
+    <script language="javascript" type="text/javascript" src="realinternet.js"></script>
+  </head>
+  <body>
+    <style>
+      #container {
+        width: 800px;
+        margin: 0 auto 0;
+      }
+      #map-container {
+        width: 100%;
+        height: 500px;
+      }
+    </style>
+    <div id="container">
+      <h1>リアルインターネット</h1>
+      <div>
+        <button id="checkin" style="display: none; font-size: 30px; margin-bottom: 30px;">
+          チェックイン
+        </button>
+      </div>
+      <div id="map-container"></div>
+    </div>
+  </body>
+</html>

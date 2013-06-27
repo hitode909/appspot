@@ -8,15 +8,15 @@ handlers:
 
 - url: /dic/js/(.*)
   static_files: dic/public/js/\1
-  upload: dic/public/js/(.*)  
+  upload: dic/public/js/(.*)
 
 - url: /dic/image/(.*)
   static_files: dic/public/image/\1
-  upload: dic/public/image/(.*)  
+  upload: dic/public/image/(.*)
 
 - url: /dic/css/(.*)
   static_files: dic/public/css/\1
-  upload: dic/public/css/(.*)  
+  upload: dic/public/css/(.*)
 
 - url: /dic/.*
   script: dic/dic.py

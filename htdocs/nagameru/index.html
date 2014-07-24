@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>nagameru</title>
+    <script language="javascript" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+    <script language="javascript" type="text/javascript" src="nagameru.js"></script>
+    <link rel="stylesheet" type="text/css" href="nagameru.css" />
+  </head>
+  <body>
+    <div class="stage js-stage"></div>
+    <div class="pool js-pool"></div>
+    <div class="controller">
+      <div>
+        <label>
+          <span class="label">speed</span>
+          <input class="range js-speed" type="range" step="1" min="1" max="1000" value="500" />
+        </label>
+      </div>
+      <div>
+        <label>
+          <span class="label">loop from</span>
+          <input class="range js-loop-from" type="range" step="0.001" min="0" max="1.0" value="0.0" />
+        </label>
+      </div>
+      <div>
+        <label>
+          <span class="label">loop size</span>
+          <input class="range js-loop-size" type="range" step="0.001" min="0" max="0.3" value="0.1" />
+        </label>
+      </div>
+      <div>
+        <label>
+          <span class="label">shuffle</span>
+          <input type="checkbox" class="js-shuffle"/>
+        </label>
+      </div>
+    </div>
+    <div class="controller controller2">
+      <form action="." method="get">
+        <label>
+          <span class="label">set user</span>
+          <input type="text" name="user" placeholder="saatom"/>.tumblr.com
+          <button>
+            set user
+          </button>
+        </label>
+      </form>
+    </div>
+  </body>
+</html>

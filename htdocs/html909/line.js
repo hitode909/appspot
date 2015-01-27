@@ -196,35 +196,6 @@ Reader.prototype = {
     }
 };
 
-var inflate_hash = function() {
-// api version
-// bpm a0
-// length
-
-// -each parts
-// -- sample index
-// -- 1 or 0 * 16
-// -- volume
-
-    var source = new Reader(location.hash);
-    var api_version = source.read(1);
-    var bpm = source.read(2);
-    var length = source.read(1);
-    var part_settings = [];
-    parts.forEach(function(i) {
-        part_settings[i] = { };
-        part_settings[i]['volume'] = source.read(1);
-        for(var i = 0; i < 4; i++) {
-            var a = source.read(1);
-            // 一文字に4つずつ入ってるので，いれていく
-            for( var j = 0; j < 4; j++) {
-                
-            }
-        }
-    });
-
-};
-
 $.extend({
     newLine: function(srces) {
         var line = $("<div>");
@@ -253,7 +224,7 @@ $.extend({
         volume_label.append(volume);
         line.append(volume_label);
 
-        // playbackRate..
+        // TODO: playbackRate
         if (false) {
             var pitch_label = $("<label>");
             pitch_label.text("Pitch");

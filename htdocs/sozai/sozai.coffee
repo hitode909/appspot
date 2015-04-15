@@ -11,6 +11,9 @@ $ ->
 
   load_bg = ->
     query = Page.parseQuery(location.search[1..-1])
+    if query.fg
+      $('input[name="fg"]').val(query.fg)
+      $('.sozai').attr 'src', query.fg
     return unless query.url
     $('input[name="url"]').val(query.url)
     $('input[name="repeat"]').prop('checked', query.repeat)
@@ -26,6 +29,7 @@ $ ->
       $(document.body).css
         'background-repeat': 'no-repeat'
         'background-size': 'cover'
+
 
   load_bg()
 

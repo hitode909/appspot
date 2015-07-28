@@ -1,5 +1,5 @@
 # http://nonn-et-twk.net/twk/google-app-engine-html
-application: hitode909
+application: hitode909-hrd
 version: 1
 runtime: python
 api_version: 1

@@ -15,67 +15,55 @@ flatten = (a) ->
 
 class Filter
   constructor: (@width, @height) ->
-    @src = document.createElement('canvas')
-    @src.width = @width
-    @src.height = @height
-    @src_ctx = @src.getContext '2d'
+    @canvas = document.createElement('canvas')
+    @canvas.width = @width
+    @canvas.height = @height
+    @ctx = @canvas.getContext '2d'
+    @kernels = []
+    @flatten_kernels = []
 
-    @dst = document.createElement('canvas')
-    @dst.width = @width
-    @dst.height = @height
-    @dst_ctx = @dst.getContext '2d'
-
-
-  setKernel: (kernel) ->
-    @kernel = kernel
+  setKernel: (kernel, rgb) ->
+    @kernels[rgb] = kernel
+    @flatten_kernels[rgb] = flatten(kernel)
 
   process: (image, width, height, cb) ->
-    @clear()
-    @src_ctx.drawImage(image, 0, 0, width, height, 0, 0, @width, @height)
-    @dst_ctx.drawImage(image, 0, 0, width, height, 0, 0, @width, @height)
+    @ctx.drawImage(image, 0, 0, width, height, 0, 0, @width, @height)
 
-    bitmap = @src_ctx.getImageData(0, 0, @width, @height)
+    bitmap = @ctx.getImageData(0, 0, @width, @height)
 
-    result = @src_ctx.createImageData @width, @height
+    result = @ctx.createImageData @width, @height
 
-    kernel_size = @kernel[0].length
-    kernel_radius = @kernel[0].length-1 / 2
-    kernel = flatten(@kernel)
+    kernel_size = @kernels[0][0].length
+    kernel_radius = @kernels[0][0].length-1 / 2
 
-    for y in [20..@height-2]
+    for y in [1..@height-2]
       offset_px_y = y * @width
-      for x in [20..@width-2]
+      for x in [1..@width-2]
         offset_px_x = x
-        sliced = @src_ctx.getImageData(x-kernel_radius, y-kernel_radius, kernel_size, kernel_size).data
+        sliced = @ctx.getImageData(x-kernel_radius, y-kernel_radius, kernel_size, kernel_size).data
 
         index = (offset_px_y + offset_px_x) * 4
 
         for offset_rgb in [0..2]
+          kernel = @flatten_kernels[offset_rgb]
+          continue unless kernel
           v = 0
           for i in [0..kernel.length-1]
-            v += sliced[i*4+offset_rgb] * kernel[i]
+            v += (sliced[i*4]*0.29+sliced[i*4+1]*0.58+sliced[i*4]*0.11) * kernel[i]
+          v *= -1 if v < 0
           v = 255 if v > 255
-          v = 0 if v < 0
           result.data[index+offset_rgb] = v
 
         # alpha channel
         result.data[index+3] = 255
 
-      #   break
-      # break
+    @ctx.putImageData result, 0, 0
 
-    @src_ctx.putImageData result, 0, 0
-
-    cb @src.toDataURL()
-
-  clear: ->
-    for ctx in [@src_ctx, @dst_ctx]
-      ctx.clearRect 0, 0, @width, @height
+    cb @canvas.toDataURL()
 
 main = ->
   video = document.querySelector('#video')
   img = document.querySelector('#screen')
-
   filter = null
 
   process = ->
@@ -85,28 +73,20 @@ main = ->
       scale = 0.25
       filter = new Filter(video.videoWidth * scale, video.videoHeight * scale)
 
-      # emboss
       filter.setKernel [
-        [-2, -1, 0],
-        [-1, 1,  1],
-        [0,  1,  2],
-      ]
-
-      # 縦
-      filter.setKernel [
-        [-1, 0, 1],
-        [-1, 0, 1],
-        [-1, 0, 1],
-      ]
-      # 横
-      filter.setKernel [
-        [-1, -1, -1],
+        [-1, -2, -1],
         [0, 0, 0],
-        [1,1, 1],
-      ]
+        [1,2, 1],
+      ], 0
+      filter.setKernel [
+        [-1, 0, 1],
+        [-2, 0, 2],
+        [-1, 0, 1],
+      ], 1
 
     filter.process video, video.videoWidth, video.videoHeight, (url) ->
       img.src = url
+
 
   success = (stream)->
     video = document.querySelector('#video')
@@ -116,12 +96,14 @@ main = ->
   error = ->
     alert 'error'
 
-  navigator.webkitGetUserMedia({video:true}, success, error)
+  if navigator.webkitGetUserMedia
+    navigator.webkitGetUserMedia({video:true}, success, error)
+  else
+    navigator.mozGetUserMedia({video:true}, success, error)
 
   animationLoop = ->
     process()
-    setTimeout animationLoop, 100
-    # window.requestAnimationFrame(animationLoop)
+    window.requestAnimationFrame(animationLoop)
 
   animationLoop()
 

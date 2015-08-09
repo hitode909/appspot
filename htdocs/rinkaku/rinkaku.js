@@ -17,65 +17,54 @@ Filter = (function() {
   function Filter(width, height) {
     this.width = width;
     this.height = height;
-    this.src = document.createElement('canvas');
-    this.src.width = this.width;
-    this.src.height = this.height;
-    this.src_ctx = this.src.getContext('2d');
-    this.dst = document.createElement('canvas');
-    this.dst.width = this.width;
-    this.dst.height = this.height;
-    this.dst_ctx = this.dst.getContext('2d');
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+    this.ctx = this.canvas.getContext('2d');
+    this.kernels = [];
+    this.flatten_kernels = [];
   }
 
-  Filter.prototype.setKernel = function(kernel) {
-    return this.kernel = kernel;
+  Filter.prototype.setKernel = function(kernel, rgb) {
+    this.kernels[rgb] = kernel;
+    return this.flatten_kernels[rgb] = flatten(kernel);
   };
 
   Filter.prototype.process = function(image, width, height, cb) {
     var bitmap, i, index, kernel, kernel_radius, kernel_size, offset_px_x, offset_px_y, offset_rgb, result, sliced, v, x, y, _i, _j, _k, _l, _ref, _ref1, _ref2;
-    this.clear();
-    this.src_ctx.drawImage(image, 0, 0, width, height, 0, 0, this.width, this.height);
-    this.dst_ctx.drawImage(image, 0, 0, width, height, 0, 0, this.width, this.height);
-    bitmap = this.src_ctx.getImageData(0, 0, this.width, this.height);
-    result = this.src_ctx.createImageData(this.width, this.height);
-    kernel_size = this.kernel[0].length;
-    kernel_radius = this.kernel[0].length - 1 / 2;
-    kernel = flatten(this.kernel);
-    for (y = _i = 20, _ref = this.height - 2; 20 <= _ref ? _i <= _ref : _i >= _ref; y = 20 <= _ref ? ++_i : --_i) {
+    this.ctx.drawImage(image, 0, 0, width, height, 0, 0, this.width, this.height);
+    bitmap = this.ctx.getImageData(0, 0, this.width, this.height);
+    result = this.ctx.createImageData(this.width, this.height);
+    kernel_size = this.kernels[0][0].length;
+    kernel_radius = this.kernels[0][0].length - 1 / 2;
+    for (y = _i = 1, _ref = this.height - 2; 1 <= _ref ? _i <= _ref : _i >= _ref; y = 1 <= _ref ? ++_i : --_i) {
       offset_px_y = y * this.width;
-      for (x = _j = 20, _ref1 = this.width - 2; 20 <= _ref1 ? _j <= _ref1 : _j >= _ref1; x = 20 <= _ref1 ? ++_j : --_j) {
+      for (x = _j = 1, _ref1 = this.width - 2; 1 <= _ref1 ? _j <= _ref1 : _j >= _ref1; x = 1 <= _ref1 ? ++_j : --_j) {
         offset_px_x = x;
-        sliced = this.src_ctx.getImageData(x - kernel_radius, y - kernel_radius, kernel_size, kernel_size).data;
+        sliced = this.ctx.getImageData(x - kernel_radius, y - kernel_radius, kernel_size, kernel_size).data;
         index = (offset_px_y + offset_px_x) * 4;
         for (offset_rgb = _k = 0; _k <= 2; offset_rgb = ++_k) {
+          kernel = this.flatten_kernels[offset_rgb];
+          if (!kernel) {
+            continue;
+          }
           v = 0;
           for (i = _l = 0, _ref2 = kernel.length - 1; 0 <= _ref2 ? _l <= _ref2 : _l >= _ref2; i = 0 <= _ref2 ? ++_l : --_l) {
-            v += sliced[i * 4 + offset_rgb] * kernel[i];
+            v += (sliced[i * 4] * 0.29 + sliced[i * 4 + 1] * 0.58 + sliced[i * 4] * 0.11) * kernel[i];
+          }
+          if (v < 0) {
+            v *= -1;
           }
           if (v > 255) {
             v = 255;
-          }
-          if (v < 0) {
-            v = 0;
           }
           result.data[index + offset_rgb] = v;
         }
         result.data[index + 3] = 255;
       }
     }
-    this.src_ctx.putImageData(result, 0, 0);
-    return cb(this.src.toDataURL());
-  };
-
-  Filter.prototype.clear = function() {
-    var ctx, _i, _len, _ref, _results;
-    _ref = [this.src_ctx, this.dst_ctx];
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      ctx = _ref[_i];
-      _results.push(ctx.clearRect(0, 0, this.width, this.height));
-    }
-    return _results;
+    this.ctx.putImageData(result, 0, 0);
+    return cb(this.canvas.toDataURL());
   };
 
   return Filter;
@@ -95,9 +84,8 @@ main = function() {
     if (!filter) {
       scale = 0.25;
       filter = new Filter(video.videoWidth * scale, video.videoHeight * scale);
-      filter.setKernel([[-2, -1, 0], [-1, 1, 1], [0, 1, 2]]);
-      filter.setKernel([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]]);
-      filter.setKernel([[-1, -1, -1], [0, 0, 0], [1, 1, 1]]);
+      filter.setKernel([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], 0);
+      filter.setKernel([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], 1);
     }
     return filter.process(video, video.videoWidth, video.videoHeight, function(url) {
       return img.src = url;
@@ -111,12 +99,18 @@ main = function() {
   error = function() {
     return alert('error');
   };
-  navigator.webkitGetUserMedia({
-    video: true
-  }, success, error);
+  if (navigator.webkitGetUserMedia) {
+    navigator.webkitGetUserMedia({
+      video: true
+    }, success, error);
+  } else {
+    navigator.mozGetUserMedia({
+      video: true
+    }, success, error);
+  }
   animationLoop = function() {
     process();
-    return setTimeout(animationLoop, 100);
+    return window.requestAnimationFrame(animationLoop);
   };
   return animationLoop();
 };

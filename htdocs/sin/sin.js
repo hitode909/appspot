@@ -48,7 +48,7 @@ Sin = (function() {
 
   function Sin(container) {
     this.container = container;
-    this.osc = T("sin", 400);
+      this.osc = T("sin", {freq: 400});
     this.bind();
     this.load();
     this.setRange();
@@ -148,7 +148,7 @@ $(function() {
   } else {
     add_sin();
   }
-  timer = T("interval", 50, function() {
+    timer = T("interval", {interval: 50}, function() {
     var osc, _j, _len1;
     oscs = (function() {
       var _j, _len1, _results;
@@ -170,7 +170,7 @@ $(function() {
   $('.add').click(function() {
     return add_sin();
   });
-  timer.on();
+  timer.start();
   return $('.share').click(function() {
     return window.open("https://twitter.com/share?" + $.param({
       url: location.href,

@@ -4,6 +4,10 @@ version: 1
 runtime: python
 api_version: 1
 
+skip_files:
+- ^(node_modules/.*)
+- ^(.git/.*)
+
 handlers:
 
 - url: /dic/js/(.*)
@@ -60,6 +64,11 @@ handlers:
 
 - url: /public_list/.+
   script: public_list/public_list.py
+
+- url: /slitscan/
+  static_files: htdocs/slitscan/index.html
+  upload: htdocs/slitscan/index.html
+  secure: always
 
 - url: (.*)/
   static_files: htdocs\1/index.html

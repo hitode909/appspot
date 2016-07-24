@@ -24,7 +24,7 @@ class Filter
     @canvas.toDataURL()
 
 main = ->
-  video = document.querySelector('#video')
+  video = document.createElement('video')
   canvas = document.querySelector('#canvas-screen')
   filter = null
 
@@ -38,7 +38,6 @@ main = ->
     filter.process video, video.videoWidth, video.videoHeight
 
   success = (stream)->
-    video = document.querySelector('#video')
     video.src = window.URL.createObjectURL(stream)
     video.play()
 

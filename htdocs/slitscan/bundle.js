@@ -36,7 +36,7 @@ Filter = (function() {
 
 main = function() {
   var animationLoop, canvas, error, filter, process, success, video;
-  video = document.querySelector('#video');
+  video = document.createElement('video');
   canvas = document.querySelector('#canvas-screen');
   filter = null;
   process = function() {
@@ -51,7 +51,6 @@ main = function() {
     return filter.process(video, video.videoWidth, video.videoHeight);
   };
   success = function(stream) {
-    video = document.querySelector('#video');
     video.src = window.URL.createObjectURL(stream);
     return video.play();
   };

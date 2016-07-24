@@ -11,8 +11,7 @@ window.requestAnimationFrame = (->
 )()
 
 class Filter
-  constructor: (@width, @height) ->
-    @canvas = document.createElement('canvas')
+  constructor: (@canvas, @width, @height) ->
     @canvas.width = @width
     @canvas.height = @height
     @ctx = @canvas.getContext '2d'
@@ -21,11 +20,12 @@ class Filter
     existing = @ctx.getImageData(0,0,@width-1, @height)
     @ctx.putImageData(existing, 1,0)
     @ctx.drawImage(image, Math.floor(@width/2), 0, 1, height, 0, 0, 1, @height)
-    cb @canvas.toDataURL()
+  getURL: () ->
+    @canvas.toDataURL()
 
 main = ->
   video = document.querySelector('#video')
-  img = document.querySelector('#screen')
+  canvas = document.querySelector('#canvas-screen')
   filter = null
 
   process = ->
@@ -33,10 +33,9 @@ main = ->
 
     unless filter
       scale = 1
-      filter = new Filter(video.videoWidth * scale, video.videoHeight * scale)
+      filter = new Filter(canvas, video.videoWidth * scale, video.videoHeight * scale)
 
-    filter.process video, video.videoWidth, video.videoHeight, (url) ->
-      img.src = url
+    filter.process video, video.videoWidth, video.videoHeight
 
   success = (stream)->
     video = document.querySelector('#video')
@@ -57,9 +56,9 @@ main = ->
 
   animationLoop()
 
-  img.addEventListener('click', () ->
+  canvas.addEventListener('click', () ->
     new_img = document.createElement 'img'
-    new_img.src = img.src
+    new_img.src = filter.getURL()
     document.body.appendChild(new_img)
   )
 

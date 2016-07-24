@@ -10,10 +10,10 @@ window.requestAnimationFrame = (function() {
 })();
 
 Filter = (function() {
-  function Filter(width1, height1) {
+  function Filter(canvas1, width1, height1) {
+    this.canvas = canvas1;
     this.width = width1;
     this.height = height1;
-    this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
     this.canvas.height = this.height;
     this.ctx = this.canvas.getContext('2d');
@@ -23,8 +23,11 @@ Filter = (function() {
     var existing;
     existing = this.ctx.getImageData(0, 0, this.width - 1, this.height);
     this.ctx.putImageData(existing, 1, 0);
-    this.ctx.drawImage(image, Math.floor(this.width / 2), 0, 1, height, 0, 0, 1, this.height);
-    return cb(this.canvas.toDataURL());
+    return this.ctx.drawImage(image, Math.floor(this.width / 2), 0, 1, height, 0, 0, 1, this.height);
+  };
+
+  Filter.prototype.getURL = function() {
+    return this.canvas.toDataURL();
   };
 
   return Filter;
@@ -32,9 +35,9 @@ Filter = (function() {
 })();
 
 main = function() {
-  var animationLoop, error, filter, img, process, success, video;
+  var animationLoop, canvas, error, filter, process, success, video;
   video = document.querySelector('#video');
-  img = document.querySelector('#screen');
+  canvas = document.querySelector('#canvas-screen');
   filter = null;
   process = function() {
     var scale;
@@ -43,11 +46,9 @@ main = function() {
     }
     if (!filter) {
       scale = 1;
-      filter = new Filter(video.videoWidth * scale, video.videoHeight * scale);
+      filter = new Filter(canvas, video.videoWidth * scale, video.videoHeight * scale);
     }
-    return filter.process(video, video.videoWidth, video.videoHeight, function(url) {
-      return img.src = url;
-    });
+    return filter.process(video, video.videoWidth, video.videoHeight);
   };
   success = function(stream) {
     video = document.querySelector('#video');
@@ -71,10 +72,10 @@ main = function() {
     return window.requestAnimationFrame(animationLoop);
   };
   animationLoop();
-  return img.addEventListener('click', function() {
+  return canvas.addEventListener('click', function() {
     var new_img;
     new_img = document.createElement('img');
-    new_img.src = img.src;
+    new_img.src = filter.getURL();
     return document.body.appendChild(new_img);
   });
 };

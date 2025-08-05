@@ -1,7 +1,7 @@
 # hitode909.appspot.com → GitHub Pages 移行計画
 
 ## プロジェクト概要
-Google App Engine で動いていたアーティスト/開発者のポートフォリオサイトを GitHub Pages に移行する計画です。  
+Google App Engine で動いていたアーティスト/開発者のポートフォリオサイトを GitHub Pages に移行する計画です。
 約80個のWebアプリケーションが含まれており、そのうち約80%は完全静的コンテンツで GitHub Pages に移行可能です。
 
 ## 移行対象コンテンツ分類
@@ -122,10 +122,9 @@ cd htdocs && python3 -m http.server 8080
 
 ### Phase 1: 即座実行
 1. ✅ プロジェクト調査完了
-2. ⏳ Python コード削除
-3. ⏳ htdocs 内容を root に移動
-4. ⏳ ローカル静的サーバーでテスト
-5. ⏳ GitHub Pages セットアップ
+2. ✅ Python コード削除
+3. ✅ ローカル静的サーバーでテスト
+4. ⏳ htdocs/を GitHub Pages で配信させる形でセットアップ
 
 ### Phase 2: 修正対応
 1. Google APIs のキー更新

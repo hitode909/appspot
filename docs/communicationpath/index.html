@@ -98,7 +98,14 @@
             drawCommunicationPaths(parseInt(this.value));
         });
         
-        drawCommunicationPaths(0);
+        // Get initial value from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialN = parseInt(urlParams.get('n')) || 0;
+        if (initialN > 20) {
+            slider.max = initialN;
+        }
+        slider.value = Math.max(0, initialN);
+        drawCommunicationPaths(parseInt(slider.value));
     </script>
 </body>
 </html>

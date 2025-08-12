@@ -136,6 +136,14 @@ cd htdocs && python3 -m http.server 8080
 2. パフォーマンス最適化
 3. モバイル対応確認
 
+### Phase 4: 旧サイトからのリダイレクト
+以下のルールでGoogle App Engineの旧サイトから、GitHub Pagesにリダイレクトさせたい。
+appspot/以下に実装を追加する。なるべく放置できるよう最小限の実装で、Google App Engineにデプロイできるアプリケーションを開発する。
+
+- https://hitode909.appspot.com/ → https://hitode909.github.io/appspot/
+- http://hitode909.appspot.com/ → https://hitode909.github.io/appspot/
+- http://hitode909.appspot.com/foo/bar?bazz=qux → https://hitode909.github.io/appspot/foo/bar?bazz=qux
+
 ## 期待される結果
 - 約80%のコンテンツが GitHub Pages で正常動作
 - 保守コスト大幅削減

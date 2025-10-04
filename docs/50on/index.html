@@ -15,21 +15,21 @@
             font-family: 'Hiragino Kaku Gothic Pro', 'Meiryo', sans-serif;
             padding: 20px;
             background: #f5f5f5;
+            overflow-x: auto;
         }
 
         .container {
-            display: flex;
+            display: inline-flex;
             gap: 10px;
-            justify-content: center;
             flex-wrap: nowrap;
             flex-direction: row-reverse;
-            overflow-x: auto;
         }
 
         .column {
             display: flex;
             flex-direction: column;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .card {
@@ -62,15 +62,27 @@
         .char {
             font-size: 48px;
             font-weight: bold;
+            font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'YuMincho', 'HG明朝E', 'MS P明朝', 'MS 明朝', serif;
             color: #333;
             z-index: 2;
+            position: absolute;
+            top: 0px;
+            text-shadow:
+                -2px -2px 0 #fff,
+                 2px -2px 0 #fff,
+                -2px  2px 0 #fff,
+                 2px  2px 0 #fff,
+                -2px  0   0 #fff,
+                 2px  0   0 #fff,
+                 0   -2px 0 #fff,
+                 0    2px 0 #fff;
         }
 
         .image-area {
             position: absolute;
-            top: 50%;
+            bottom: 10px;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
             width: 80px;
             height: 80px;
             background: white;
@@ -254,6 +266,7 @@
                 e.preventDefault();
                 card.classList.remove('drag-over');
 
+                // ファイルからの画像
                 const files = e.dataTransfer.files;
                 if (files.length > 0) {
                     const file = files[0];
@@ -269,17 +282,62 @@
                         };
                         reader.readAsDataURL(file);
                     }
+                    return;
+                }
+
+                // ウェブからの画像URL
+                const imageUrl = e.dataTransfer.getData('text/html');
+                const urlMatch = imageUrl.match(/src="([^"]+)"/);
+                if (urlMatch) {
+                    const url = urlMatch[1];
+                    const img = document.createElement('img');
+                    img.crossOrigin = 'anonymous';
+                    img.onload = () => {
+                        // 画像をcanvasでbase64に変換
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth;
+                        canvas.height = img.naturalHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        try {
+                            const dataUrl = canvas.toDataURL('image/png');
+                            const displayImg = document.createElement('img');
+                            displayImg.src = dataUrl;
+                            imageArea.innerHTML = '';
+                            imageArea.appendChild(displayImg);
+                            imageArea.classList.remove('empty');
+                            saveImage(char, dataUrl);
+                        } catch (err) {
+                            // CORS エラーの場合は直接URLを使用
+                            const displayImg = document.createElement('img');
+                            displayImg.src = url;
+                            imageArea.innerHTML = '';
+                            imageArea.appendChild(displayImg);
+                            imageArea.classList.remove('empty');
+                            saveImage(char, url);
+                        }
+                    };
+                    img.onerror = () => {
+                        // 読み込みエラーの場合は直接URLを使用
+                        const displayImg = document.createElement('img');
+                        displayImg.src = url;
+                        imageArea.innerHTML = '';
+                        imageArea.appendChild(displayImg);
+                        imageArea.classList.remove('empty');
+                        saveImage(char, url);
+                    };
+                    img.src = url;
                 }
             });
 
-            // File input as alternative
-            card.addEventListener('click', () => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.onchange = (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
+
+            // ペースト機能
+            card.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const items = e.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                        const file = items[i].getAsFile();
                         const reader = new FileReader();
                         reader.onload = (event) => {
                             const img = document.createElement('img');
@@ -290,10 +348,13 @@
                             saveImage(char, event.target.result);
                         };
                         reader.readAsDataURL(file);
+                        break;
                     }
-                };
-                input.click();
+                }
             });
+
+            // カードをフォーカス可能にする
+            card.setAttribute('tabindex', '0');
 
             return card;
         }

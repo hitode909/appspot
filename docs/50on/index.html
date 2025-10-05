@@ -62,7 +62,7 @@
         .char {
             font-size: 48px;
             font-weight: bold;
-            font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'YuMincho', 'HG明朝E', 'MS P明朝', 'MS 明朝', serif;
+            font-family: 'UD Digi Kyokasho NP-R', 'UD Digi Kyokasho N-R', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
             color: #333;
             z-index: 2;
             position: absolute;
@@ -80,27 +80,34 @@
 
         .image-area {
             position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 4px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            pointer-events: none;
         }
 
         .image-area img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+            pointer-events: all;
         }
 
         .image-area.empty {
             border: 2px dashed #ccc;
+            width: 80px;
+            height: 80px;
+            top: auto;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 4px;
+            background: white;
         }
 
         .instructions {
@@ -120,6 +127,42 @@
         .instructions p {
             color: #666;
             margin: 5px 0;
+        }
+
+        .toggle-container {
+            margin-top: 8px;
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .toggle-button {
+            padding: 3px 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s;
+            color: #999;
+        }
+
+        .toggle-button.active {
+            background: #e0e0e0;
+            color: #333;
+            border-color: #999;
+        }
+
+        .toggle-button:hover {
+            background: #f5f5f5;
+        }
+
+        .toggle-button.active:hover {
+            background: #d0d0d0;
+        }
+
+        .char.katakana {
+            font-family: 'UD Digi Kyokasho N-R', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
         }
 
         .clear-button {
@@ -145,29 +188,56 @@
         }
 
         @media print {
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
             body {
-                background: white;
-                padding: 10px;
+                background: white !important;
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
             }
 
             .instructions {
-                display: none;
+                display: none !important;
             }
 
+
             .container {
-                gap: 5px;
+                gap: 3px;
+                justify-content: center;
             }
 
             .column {
-                gap: 5px;
+                gap: 3px;
             }
 
             .card {
+                width: 100px;
+                height: 140px;
                 box-shadow: none;
+                page-break-inside: avoid;
+                background: white !important;
+            }
+
+            .char {
+                font-size: 40px;
+            }
+
+            .image-area.empty {
+                width: 70px;
+                height: 70px;
             }
 
             .clear-button {
-                display: none;
+                display: none !important;
             }
         }
     </style>
@@ -177,6 +247,10 @@
         <h1>五十音表</h1>
         <p>画像をドラッグ＆ドロップして、各文字に画像を設定できます</p>
         <p>設定した画像は自動的に保存されます</p>
+        <div class="toggle-container">
+            <button class="toggle-button active" id="hiraganaBtn">ひらがな</button>
+            <button class="toggle-button" id="katakanaBtn">カタカナ</button>
+        </div>
     </div>
 
     <div class="container" id="container"></div>
@@ -195,7 +269,47 @@
             ['わ', '', 'を', '', 'ん']
         ];
 
+        const katakana = [
+            ['ア', 'イ', 'ウ', 'エ', 'オ'],
+            ['カ', 'キ', 'ク', 'ケ', 'コ'],
+            ['サ', 'シ', 'ス', 'セ', 'ソ'],
+            ['タ', 'チ', 'ツ', 'テ', 'ト'],
+            ['ナ', 'ニ', 'ヌ', 'ネ', 'ノ'],
+            ['ハ', 'ヒ', 'フ', 'ヘ', 'ホ'],
+            ['マ', 'ミ', 'ム', 'メ', 'モ'],
+            ['ヤ', '', 'ユ', '', 'ヨ'],
+            ['ラ', 'リ', 'ル', 'レ', 'ロ'],
+            ['ワ', '', 'ヲ', '', 'ン']
+        ];
+
+        let currentMode = 'hiragana';
+
         const STORAGE_KEY = '50on-images';
+        const STORAGE_TRANSFORM_KEY = '50on-transforms';
+
+        // ひらがな→カタカナの対応表
+        const hiraganaToKatakana = {
+            'あ': 'ア', 'い': 'イ', 'う': 'ウ', 'え': 'エ', 'お': 'オ',
+            'か': 'カ', 'き': 'キ', 'く': 'ク', 'け': 'ケ', 'こ': 'コ',
+            'さ': 'サ', 'し': 'シ', 'す': 'ス', 'せ': 'セ', 'そ': 'ソ',
+            'た': 'タ', 'ち': 'チ', 'つ': 'ツ', 'て': 'テ', 'と': 'ト',
+            'な': 'ナ', 'に': 'ニ', 'ぬ': 'ヌ', 'ね': 'ネ', 'の': 'ノ',
+            'は': 'ハ', 'ひ': 'ヒ', 'ふ': 'フ', 'へ': 'ヘ', 'ほ': 'ホ',
+            'ま': 'マ', 'み': 'ミ', 'む': 'ム', 'め': 'メ', 'も': 'モ',
+            'や': 'ヤ', 'ゆ': 'ユ', 'よ': 'ヨ',
+            'ら': 'ラ', 'り': 'リ', 'る': 'ル', 'れ': 'レ', 'ろ': 'ロ',
+            'わ': 'ワ', 'を': 'ヲ', 'ん': 'ン'
+        };
+
+        const katakanaToHiragana = {};
+        for (const [h, k] of Object.entries(hiraganaToKatakana)) {
+            katakanaToHiragana[k] = h;
+        }
+
+        // 文字を正規化（ひらがなに統一してキーとする）
+        function normalizeChar(char) {
+            return katakanaToHiragana[char] || char;
+        }
 
         function loadImages() {
             try {
@@ -206,16 +320,35 @@
             }
         }
 
+        function loadTransforms() {
+            try {
+                const data = localStorage.getItem(STORAGE_TRANSFORM_KEY);
+                return data ? JSON.parse(data) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
         function saveImage(char, imageData) {
             const images = loadImages();
-            images[char] = imageData;
+            images[normalizeChar(char)] = imageData;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
+        }
+
+        function saveTransform(char, transform) {
+            const transforms = loadTransforms();
+            transforms[normalizeChar(char)] = transform;
+            localStorage.setItem(STORAGE_TRANSFORM_KEY, JSON.stringify(transforms));
         }
 
         function clearImage(char) {
             const images = loadImages();
-            delete images[char];
+            delete images[normalizeChar(char)];
             localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
+
+            const transforms = loadTransforms();
+            delete transforms[normalizeChar(char)];
+            localStorage.setItem(STORAGE_TRANSFORM_KEY, JSON.stringify(transforms));
         }
 
         function createCard(char) {
@@ -224,6 +357,9 @@
 
             const charElement = document.createElement('div');
             charElement.className = 'char';
+            if (currentMode === 'katakana') {
+                charElement.classList.add('katakana');
+            }
             charElement.textContent = char;
 
             const imageArea = document.createElement('div');
@@ -232,20 +368,87 @@
             const clearButton = document.createElement('button');
             clearButton.className = 'clear-button';
             clearButton.textContent = '×';
+            clearButton.style.display = 'none';
             clearButton.onclick = (e) => {
                 e.stopPropagation();
                 imageArea.innerHTML = '';
                 imageArea.className = 'image-area empty';
                 clearImage(char);
+                clearButton.style.display = 'none';
             };
+
+            // 画像の変形状態
+            let imageTransform = { scale: 1, x: 0, y: 0 };
+
+            function applyTransform(img) {
+                img.style.transform = `translate(${imageTransform.x}px, ${imageTransform.y}px) scale(${imageTransform.scale})`;
+            }
+
+            function setImage(src) {
+                const img = document.createElement('img');
+                img.src = src;
+                img.draggable = false;
+                imageArea.innerHTML = '';
+                imageArea.appendChild(img);
+                imageArea.classList.remove('empty');
+                clearButton.style.display = '';
+
+                // 保存された変形を復元
+                const transforms = loadTransforms();
+                const normalizedChar = normalizeChar(char);
+                if (transforms[normalizedChar]) {
+                    imageTransform = transforms[normalizedChar];
+                    applyTransform(img);
+                }
+
+                // ドラッグで移動
+                let isDragging = false;
+                let startX, startY;
+
+                img.addEventListener('mousedown', (e) => {
+                    if (e.button !== 0) return;
+                    e.stopPropagation();
+                    isDragging = true;
+                    startX = e.clientX - imageTransform.x;
+                    startY = e.clientY - imageTransform.y;
+                    img.style.cursor = 'grabbing';
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    imageTransform.x = e.clientX - startX;
+                    imageTransform.y = e.clientY - startY;
+                    applyTransform(img);
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        img.style.cursor = 'grab';
+                        saveTransform(char, imageTransform);
+                    }
+                });
+
+                img.style.cursor = 'grab';
+
+                // ホイールで拡大縮小
+                imageArea.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const delta = e.deltaY > 0 ? 0.95 : 1.05;
+                    imageTransform.scale *= delta;
+                    imageTransform.scale = Math.max(0.01, Math.min(10, imageTransform.scale));
+                    applyTransform(img);
+                    saveTransform(char, imageTransform);
+                });
+            }
 
             // Load saved image
             const images = loadImages();
-            if (images[char]) {
-                const img = document.createElement('img');
-                img.src = images[char];
-                imageArea.appendChild(img);
-                imageArea.classList.remove('empty');
+            const normalizedChar = normalizeChar(char);
+            if (images[normalizedChar]) {
+                setImage(images[normalizedChar]);
             }
 
             card.appendChild(charElement);
@@ -273,11 +476,7 @@
                     if (file.type.startsWith('image/')) {
                         const reader = new FileReader();
                         reader.onload = (event) => {
-                            const img = document.createElement('img');
-                            img.src = event.target.result;
-                            imageArea.innerHTML = '';
-                            imageArea.appendChild(img);
-                            imageArea.classList.remove('empty');
+                            setImage(event.target.result);
                             saveImage(char, event.target.result);
                         };
                         reader.readAsDataURL(file);
@@ -301,29 +500,17 @@
                         ctx.drawImage(img, 0, 0);
                         try {
                             const dataUrl = canvas.toDataURL('image/png');
-                            const displayImg = document.createElement('img');
-                            displayImg.src = dataUrl;
-                            imageArea.innerHTML = '';
-                            imageArea.appendChild(displayImg);
-                            imageArea.classList.remove('empty');
+                            setImage(dataUrl);
                             saveImage(char, dataUrl);
                         } catch (err) {
                             // CORS エラーの場合は直接URLを使用
-                            const displayImg = document.createElement('img');
-                            displayImg.src = url;
-                            imageArea.innerHTML = '';
-                            imageArea.appendChild(displayImg);
-                            imageArea.classList.remove('empty');
+                            setImage(url);
                             saveImage(char, url);
                         }
                     };
                     img.onerror = () => {
                         // 読み込みエラーの場合は直接URLを使用
-                        const displayImg = document.createElement('img');
-                        displayImg.src = url;
-                        imageArea.innerHTML = '';
-                        imageArea.appendChild(displayImg);
-                        imageArea.classList.remove('empty');
+                        setImage(url);
                         saveImage(char, url);
                     };
                     img.src = url;
@@ -340,11 +527,7 @@
                         const file = items[i].getAsFile();
                         const reader = new FileReader();
                         reader.onload = (event) => {
-                            const img = document.createElement('img');
-                            img.src = event.target.result;
-                            imageArea.innerHTML = '';
-                            imageArea.appendChild(img);
-                            imageArea.classList.remove('empty');
+                            setImage(event.target.result);
                             saveImage(char, event.target.result);
                         };
                         reader.readAsDataURL(file);
@@ -361,20 +544,44 @@
 
         function renderApp() {
             const container = document.getElementById('container');
+            container.innerHTML = '';
 
-            hiragana.forEach(row => {
+            const charSet = currentMode === 'hiragana' ? hiragana : katakana;
+
+            charSet.forEach(row => {
                 const column = document.createElement('div');
                 column.className = 'column';
 
                 row.forEach(char => {
                     if (char) {
                         column.appendChild(createCard(char));
+                    } else {
+                        // 空のスペースを作成
+                        const emptyCard = document.createElement('div');
+                        emptyCard.className = 'card';
+                        emptyCard.style.visibility = 'hidden';
+                        column.appendChild(emptyCard);
                     }
                 });
 
                 container.appendChild(column);
             });
         }
+
+        // ボタンのイベントリスナー
+        document.getElementById('hiraganaBtn').addEventListener('click', () => {
+            currentMode = 'hiragana';
+            document.getElementById('hiraganaBtn').classList.add('active');
+            document.getElementById('katakanaBtn').classList.remove('active');
+            renderApp();
+        });
+
+        document.getElementById('katakanaBtn').addEventListener('click', () => {
+            currentMode = 'katakana';
+            document.getElementById('katakanaBtn').classList.add('active');
+            document.getElementById('hiraganaBtn').classList.remove('active');
+            renderApp();
+        });
 
         renderApp();
     </script>

@@ -1,0 +1,73 @@
+<html>
+  <meta charset="utf-8">
+  <title>ワープロ</title>
+  <style>
+    body {
+      margin: 40px;
+    }
+    button {
+      font-size: 30px;
+    }
+  </style>
+  <body>
+  <script>
+    const space = () => {
+      const pad = document.createElement('span');
+      pad.textContent = ' ';
+      pad.style.width = '3em';
+      pad.style.display = 'inline-block';
+      document.body.appendChild(pad);
+    }
+    const br = () => {
+      const br = document.createElement('br');
+      document.body.appendChild(br);
+    };
+    let i = 0;
+    const chars = 'あいうえお かきくけこ がぎぐげご さしすせそ ざじずぜぞ たちつてと だぢづでど なにぬねの はひふへほ ばびぶべぼ ぱぴぷぺぽ まみむめも やゆよ らりるれろ わをん 、。！？'.split('');
+    for (char of chars) {
+      i++;
+      if (i % 18 == 0) {
+        br();
+        continue;
+      }
+      if (char === ' ') {
+        space();
+        continue;
+      }
+      const charButton = document.createElement('button');
+      charButton.textContent = char;
+      document.body.appendChild(charButton);
+    }
+    br();
+
+const buttons = document.querySelectorAll('button');
+    let isMouseDown;
+    let tag;
+    buttons.forEach(button => {
+      button.addEventListener('mousedown', (event) => {
+        tag = document.createElement('span');
+        tag.textContent = event.target.textContent;
+        tag.style.fontSize = '10px';
+        tag.style.display = 'inline-block';
+        tag.style.fontWeight = 'bold';
+        document.body.appendChild(tag);
+      });
+      button.addEventListener('mouseup', (event) => {
+        tag = undefined;
+      });
+    });
+
+    setInterval(() => {
+      if (tag) {
+        let nextSize = +tag.style.fontSize.match(/^\d+/) * 1.2;
+        if (nextSize  > 150) nextSize = 150;
+        tag.style.fontSize = `${nextSize}px`;
+        tag.style.transform = `rotate(${Math.floor(Math.random() * 50) - 25}deg)`;
+        tag.style.color = `hsl(${Math.random()*360}, 100%, 50%)`;
+        tag.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 30%)`;
+        const fontFamilies = ['ヒラギノ角ゴシック','Hiragino Sans','ヒラギノ角ゴ StdN','Hiragino Kaku Gothic StdN','ヒラギノ明朝 ProN','Hiragino Mincho ProN','klee','TsukuARdGothic-Regular','Osaka','Yu Mincho Light','YuMincho','Yu Mincho','游明朝体','sans-serif'];
+        tag.style.fontFamily = fontFamilies[Math.floor(fontFamilies.length * Math.random())];
+      }
+    }, 100);
+  </script>
+</html>

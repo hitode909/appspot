@@ -23,7 +23,7 @@
       document.body.appendChild(br);
     };
     let i = 0;
-    const chars = 'あいうえお かきくけこ がぎぐげご さしすせそ ざじずぜぞ たちつてと だぢづでど なにぬねの はひふへほ ばびぶべぼ ぱぴぷぺぽ まみむめも やゆよ らりるれろ わをん 、。！？'.split('');
+    const chars = 'あいうえお かきくけこ がぎぐげご さしすせそ ざじずぜぞ たちつてと だぢづでど なにぬねの はひふへほ ばびぶべぼ ぱぴぷぺぽ まみむめも やゆよ らりるれろ わをんー、。！？'.split('');
     for (char of chars) {
       i++;
       if (i % 18 == 0) {
@@ -62,9 +62,9 @@ const buttons = document.querySelectorAll('button');
         let nextSize = +tag.style.fontSize.match(/^\d+/) * 1.2;
         if (nextSize  > 150) nextSize = 150;
         tag.style.fontSize = `${nextSize}px`;
-        tag.style.transform = `rotate(${Math.floor(Math.random() * 50) - 25}deg)`;
+        tag.style.transform = `rotate(${Math.floor(Math.random() * 50) - 25}deg) scaleX(${Math.random()*0.5+0.75}) scaleY(${Math.random()*0.5+0.75})`;
         tag.style.color = `hsl(${Math.random()*360}, 100%, 50%)`;
-        tag.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 30%)`;
+        // tag.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 20%)`;
         const fontFamilies = ['ヒラギノ角ゴシック','Hiragino Sans','ヒラギノ角ゴ StdN','Hiragino Kaku Gothic StdN','ヒラギノ明朝 ProN','Hiragino Mincho ProN','klee','TsukuARdGothic-Regular','Osaka','Yu Mincho Light','YuMincho','Yu Mincho','游明朝体','sans-serif'];
         tag.style.fontFamily = fontFamilies[Math.floor(fontFamilies.length * Math.random())];
       }

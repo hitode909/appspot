@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>リプレイできるテキストエリア</title>
+  </head>
+  <body>
+    <h1>リプレイできるテキストエリア</h1>
+    <p>
+      お絵かき掲示板のアニメ機能のテキスト版です．テキストエリアに文字を打つと，入力の履歴（打った時刻・変換・削除）が記録されて，下に貼り付け用のHTMLが生成されます．ブログの記事などにそのまま貼ると，読者がリプレイボタンで執筆の様子を再生できます．
+    </p>
+    <div>
+      <textarea id="input" rows="8" cols="60" placeholder="ここに入力"></textarea>
+    </div>
+    <div>
+      <button type="button" id="reset">最初からやりなおす</button>
+    </div>
+    <h2>貼り付け用HTML</h2>
+    <div>
+      <textarea id="output" rows="8" cols="60" readonly onclick="this.select()"></textarea>
+    </div>
+    <h2>プレビュー</h2>
+    <p>貼り付け先ではこのように表示されます．入力するたびに作りなおされます．</p>
+    <div id="preview" style="border: 1px solid #ccc; padding: 10px;"></div>
+    <h2>先行研究</h2>
+    <p>
+      dividual（遠藤拓己・ドミニク・チェン）の「TypeTrace」は，タイピングを時間情報とともに記録し再生するソフトウェアです．2007年には舞城王太郎の新作執筆に使われ，150時間を超える執筆過程が展示されました（<a href="https://www.ntticc.or.jp/ja/feature/2012/Internet_Art_Future/Works/work05_j.html">《タイプトレース道——舞城王太郎之巻》</a>）．あいちトリエンナーレ2019では，大切な人への遺言を10分で書いてもらい，その執筆過程ごと再生する<a href="https://wired.jp/2019/04/08/10-min-last-words/">《Last Words / TypeTrace》</a>として展示されました．打ち間違いや逡巡といった執筆過程に表れるものが読み手とのつながりを生む，という考えかたに影響を受けています．
+    </p>
+    <p>
+      また，描画過程を記録して再生できるという形式は，お絵かき掲示板のアニメ機能が先行しています．
+    </p>
+    <script>
+      var input = document.getElementById('input');
+      var output = document.getElementById('output');
+      var preview = document.getElementById('preview');
+      var reset = document.getElementById('reset');
+
+      var ops = [];
+      var prevValue = '';
+      var startedAt = null;
+
+      // a と b の差分を [位置, 削除数, 挿入文字列] で返す
+      var diff = function(a, b) {
+        var prefix = 0;
+        var max = Math.min(a.length, b.length);
+        while (prefix < max && a.charAt(prefix) === b.charAt(prefix)) prefix++;
+        var suffix = 0;
+        while (suffix < max - prefix && a.charAt(a.length - 1 - suffix) === b.charAt(b.length - 1 - suffix)) suffix++;
+        return [prefix, a.length - prefix - suffix, b.slice(prefix, b.length - suffix)];
+      };
+
+      var escapeHTML = function(text) {
+        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      };
+
+      var generate = function() {
+        var id = 'textreplay-' + Date.now().toString(36) + Math.floor(Math.random() * 1000);
+        var data = JSON.stringify(ops).replace(/</g, '\\u003c');
+        var paragraphs = escapeHTML(input.value).split('\n').map(function(line) {
+          return '<p>' + line + '</p>';
+        }).join('\n');
+        var htmlPart = [
+          '<div id="' + id + '">',
+          '<button type="button">▶ リプレイ</button>',
+          '<div>',
+          paragraphs,
+          '</div>',
+          '</div>'
+        ].join('\n');
+        var scriptPart = [
+          '(function() {',
+          'var ops = ' + data + ';',
+          "var root = document.getElementById('" + id + "');",
+          "var button = root.getElementsByTagName('button')[0];",
+          "var content = root.getElementsByTagName('div')[0];",
+          "var finalText = Array.prototype.map.call(content.getElementsByTagName('p'), function(p) { return p.textContent; }).join('\\n');",
+          'var timers = [];',
+          'var playing = false;',
+          'var render = function(text, caret) {',
+          "  if (caret != null) text = text.slice(0, caret) + '\\u258c' + text.slice(caret);",
+          "  content.textContent = '';",
+          "  text.split('\\n').forEach(function(line) {",
+          "    var p = document.createElement('p');",
+          '    p.textContent = line;',
+          '    content.appendChild(p);',
+          '  });',
+          '};',
+          'var stop = function() {',
+          '  timers.forEach(clearTimeout);',
+          '  timers = [];',
+          '  playing = false;',
+          "  button.textContent = '▶ リプレイ';",
+          '  render(finalText, null);',
+          '};',
+          'var play = function() {',
+          '  playing = true;',
+          "  button.textContent = '■ 停止';",
+          "  var text = '';",
+          '  render(text, 0);',
+          '  ops.forEach(function(op) {',
+          '    timers.push(setTimeout(function() {',
+          '      text = text.slice(0, op[1]) + op[3] + text.slice(op[1] + op[2]);',
+          '      render(text, op[1] + op[3].length);',
+          '    }, op[0]));',
+          '  });',
+          '  timers.push(setTimeout(stop, (ops.length ? ops[ops.length - 1][0] : 0) + 1000));',
+          '};',
+          "button.addEventListener('click', function() { playing ? stop() : play(); });",
+          '})();'
+        ].join('\n');
+        return { htmlPart: htmlPart, scriptPart: scriptPart };
+      };
+
+      var update = function() {
+        var generated = generate();
+        output.value = generated.htmlPart + '\n<script>\n' + generated.scriptPart + '\n<' + '/script>';
+        preview.innerHTML = generated.htmlPart;
+        var script = document.createElement('script');
+        script.textContent = generated.scriptPart;
+        preview.appendChild(script);
+      };
+
+      input.addEventListener('input', function() {
+        var now = Date.now();
+        if (startedAt === null) startedAt = now;
+        var d = diff(prevValue, input.value);
+        ops.push([now - startedAt, d[0], d[1], d[2]]);
+        prevValue = input.value;
+        update();
+      });
+
+      reset.addEventListener('click', function() {
+        ops = [];
+        prevValue = '';
+        startedAt = null;
+        input.value = '';
+        output.value = '';
+        preview.innerHTML = '';
+        input.focus();
+      });
+    </script>
+  </body>
+</html>

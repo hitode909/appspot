@@ -45,19 +45,10 @@ render = (processing) ->
       lastY = currentY
 
 save = ->
-  dataURL = $('#screen').get(0).toDataURL()
-
-  $.ajax
-    async: false
-    type: 'POST'
-    url: '/png/'
-    data:
-      data: dataURL
-  .done (tinyURL) ->
-    window.open "https://twitter.com/share?" + $.param(
-      url: 'http://hitode909.appspot.com/2013/',
-      text: "謹賀新年 #{tinyURL}"
-    )
+  link = document.createElement('a')
+  link.href = $('#screen').get(0).toDataURL('image/png')
+  link.download = '謹賀新年2013.png'
+  link.click()
 
 $ ->
   new Processing($('#screen').get(0), render)

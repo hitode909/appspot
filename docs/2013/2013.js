@@ -49,21 +49,11 @@ render = function(processing) {
   };
 };
 save = function() {
-  var dataURL;
-  dataURL = $('#screen').get(0).toDataURL();
-  return $.ajax({
-    async: false,
-    type: 'POST',
-    url: '/png/',
-    data: {
-      data: dataURL
-    }
-  }).done(function(tinyURL) {
-    return window.open("https://twitter.com/share?" + $.param({
-      url: 'http://hitode909.appspot.com/2013/',
-      text: "謹賀新年 " + tinyURL
-    }));
-  });
+  var link;
+  link = document.createElement('a');
+  link.href = $('#screen').get(0).toDataURL('image/png');
+  link.download = '謹賀新年2013.png';
+  return link.click();
 };
 $(function() {
   new Processing($('#screen').get(0), render);

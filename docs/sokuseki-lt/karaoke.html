@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>プレゼンカラオケ</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fffdf5; color: #222; line-height: 1.6; }
+    a { color: #0a58ca; }
+    main { max-width: 900px; margin: 0 auto; padding: 24px 16px 80px; }
+    h1 { margin: 0 0 4px; font-size: 26px; }
+    .lead { margin: 0 0 24px; color: #555; }
+    button { font: inherit; padding: 6px 14px; border: 1px solid #222; border-radius: 999px; background: #fff; color: inherit; cursor: pointer; }
+    button:disabled { opacity: 0.3; cursor: default; }
+
+    /* 一覧 */
+    h2 { margin: 40px 0 4px; font-size: 22px; border-bottom: 2px solid #222; padding-bottom: 4px; }
+    .decks { list-style: none; margin: 0; padding: 0; }
+    .decks a { display: flex; gap: 12px; padding: 10px 12px; border-bottom: 1px solid #ddd; color: inherit; text-decoration: none; font-size: 18px; }
+    .decks a:hover { background: #fff3c4; }
+    .decks .n { color: #777; }
+    .decks .seen { margin-left: auto; font-size: 14px; color: #777; }
+
+    /* 再生 */
+    .nav { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 14px; }
+    .nav a { color: #555; }
+    .nav .step { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .start { margin: 48px 0; text-align: center; }
+    .start button { font-size: 24px; padding: 12px 32px; }
+    .start p { color: #555; }
+    .timer { display: block; margin: 0 0 6px auto; padding: 2px 10px; border-color: #999; font-size: 14px; font-variant-numeric: tabular-nums; }
+    .timer.running { background: #222; border-color: #222; color: #fff; }
+    .timer.over { background: #f0b400; border-color: #f0b400; }
+    /* 1枚目の「AIが作った架空の内容です」は小さく出す */
+    .deck-slide.title p { font-size: 0.45em; color: #777; margin-top: 2em; }
+  </style>
+</head>
+<body>
+  <main id="main">読み込み中…</main>
+
+  <script src="deck.js"></script>
+  <script>
+    let decks = [];
+    const LIMIT = 180;
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+    // 見たスライドは、このブラウザに覚えておく。使えなければ、開いている間だけ覚える
+    let seen = new Set();
+    try { seen = new Set(JSON.parse(localStorage.getItem('karaoke-seen') || '[]')); } catch (e) {}
+    const see = (file) => {
+      seen.add(file);
+      try { localStorage.setItem('karaoke-seen', JSON.stringify([...seen])); } catch (e) {}
+    };
+    const forget = () => {
+      seen = new Set();
+      try { localStorage.removeItem('karaoke-seen'); } catch (e) {}
+    };
+
+    const startView = () => `
+      <h1>プレゼンカラオケ</h1>
+      <p class="lead">AIが作った、初めて見るスライドで3分話します。読みながら、自分の話にすり替えてかまいません。</p>
+      <div class="start">
+        <button data-draw>1本引く</button>
+        <p>まだ見ていないのは ${decks.length - seen.size}本 / ${decks.length}本</p>
+      </div>
+      <p class="nav"><a href="#list">一覧を見る</a></p>`;
+
+    const listView = () => `
+      <h1>プレゼンカラオケ</h1>
+      <p class="lead">スライドは ${decks.length}本。どれもAIが作った架空の内容です。</p>
+      <p class="nav"><span class="step"><button data-draw>1本引く</button><button data-forget ${seen.size ? '' : 'disabled'}>見た印を消す</button></span></p>
+      <h2>一覧</h2>
+      <ul class="decks">${decks.map((d) => `<li><a href="#/${d.n}"><span class="n">${d.n}</span><span>${esc(d.title)}</span>${seen.has(d.file) ? '<span class="seen">見た</span>' : ''}</a></li>`).join('')}</ul>`;
+
+    const playView = (d) => `
+      <div class="nav">
+        <a href="#list">一覧を見る</a>
+        <span class="step"><button data-draw>次の人</button></span>
+      </div>
+      <button class="timer" data-timer>3:00 から始める</button>
+      <div class="deck" data-src="karaoke/${esc(d.file)}"></div>`;
+
+    // まだ見ていないものから1本選ぶ。全部見たら、見た印を消してから選ぶ
+    const draw = () => {
+      const now = current();
+      let p = decks.filter((d) => !seen.has(d.file) && d !== now);
+      if (!p.length) { forget(); p = decks.filter((d) => d !== now); }
+      return p[Math.floor(Math.random() * p.length)].n;
+    };
+    const current = () => decks.find((d) => location.hash === `#/${d.n}`) || null;
+
+    // タイマー。押すと3分を数えはじめ、もう一度押すと3分に戻る
+    let timerId = null;
+    const stopTimer = () => { clearInterval(timerId); timerId = null; };
+    const fmt = (s) => `${s < 0 ? '+' : ''}${Math.floor(Math.abs(s) / 60)}:${String(Math.abs(s) % 60).padStart(2, '0')}`;
+    const toggleTimer = (b) => {
+      if (timerId) { stopTimer(); b.className = 'timer'; b.textContent = '3:00 から始める'; return; }
+      const end = Date.now() + LIMIT * 1000;
+      const tick = () => {
+        const left = Math.ceil((end - Date.now()) / 1000);
+        b.className = `timer running${left <= 0 ? ' over' : ''}`;
+        b.textContent = left > 0 ? fmt(left) : `時間です ${fmt(left)}`;
+      };
+      tick();
+      timerId = setInterval(tick, 250);
+    };
+
+    const render = () => {
+      stopTimer();
+      const main = document.getElementById('main');
+      const d = current();
+      if (d) {
+        see(d.file);
+        main.innerHTML = playView(d);
+        window.mountDecks(main);
+      } else {
+        main.innerHTML = location.hash === '#list' ? listView() : startView();
+      }
+      scrollTo(0, 0);
+    };
+
+    document.getElementById('main').addEventListener('click', (e) => {
+      if (e.target.closest('button[data-draw]')) location.hash = `#/${draw()}`;
+      if (e.target.closest('button[data-forget]')) { forget(); render(); }
+      const t = e.target.closest('button[data-timer]');
+      if (t) toggleTimer(t);
+    });
+    addEventListener('hashchange', render);
+
+    (async () => {
+      decks = await (await fetch('karaoke/index.json')).json();
+      decks.forEach((d) => { d.n = d.file.replace(/\.md$/, ''); });
+      render();
+    })();
+  </script>
+</body>
+</html>

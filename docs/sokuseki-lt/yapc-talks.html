@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YAPCトーク研究室</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fffdf5; color: #222; line-height: 1.6; }
+    a { color: #0a58ca; }
+    main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 80px; }
+    h1 { margin: 0 0 4px; font-size: 26px; }
+    h2 { margin: 0 0 4px; font-size: 22px; }
+    .lead { margin: 0 0 16px; color: #555; }
+    .note { margin: 0 0 16px; color: #777; font-size: 13px; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+    .tabs a { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; color: inherit; text-decoration: none; font-size: 14px; background: #fff; }
+    .tabs a.on { background: #222; color: #fff; }
+    button, input, select { font: inherit; }
+    button { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; background: #fff; cursor: pointer; }
+    button.on { background: #222; color: #fff; }
+    button:disabled { opacity: 0.4; cursor: default; }
+    button.on:disabled { opacity: 1; }
+    input[type=text], textarea, select { padding: 6px 10px; border: 1px solid #999; border-radius: 6px; background: #fff; }
+    input[type=text] { width: min(100%, 420px); }
+    textarea { width: 100%; font: inherit; }
+    .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 12px; }
+    .chips button { font-size: 13px; padding: 2px 10px; border-color: #999; }
+    svg { display: block; width: 100%; height: auto; }
+    svg text { font-family: system-ui, sans-serif; }
+    .big { font-size: clamp(22px, 4vw, 36px); font-weight: bold; line-height: 1.4; margin: 8px 0 16px; }
+    .talks { list-style: none; margin: 0; padding: 0; }
+    .talks li { padding: 8px 0; border-top: 1px solid #ddd; }
+    .talks .meta { font-size: 13px; color: #777; }
+    .muted { color: #777; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    th, td { padding: 4px 6px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; }
+    th { font-weight: normal; color: #777; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .heat td.cell { text-align: center; font-size: 12px; min-width: 36px; }
+    .heat tr:hover th { background: #fff3c4; cursor: pointer; }
+    .scroll { overflow-x: auto; }
+    .event { margin: 0 0 28px; }
+    .event h3 { margin: 0; font-size: 16px; }
+    .kata td.ex { color: #555; font-size: 13px; }
+    .kata tr.open td { background: #fff8dc; }
+    .gen li { font-size: 20px; padding: 4px 0; }
+    .quiz-q { font-size: clamp(24px, 4.5vw, 42px); font-weight: bold; line-height: 1.4; margin: 16px 0 20px; min-height: 3em; }
+    .ans { margin: 16px 0; font-size: 18px; }
+    .bar-bg { background: #eee; height: 6px; border-radius: 3px; }
+    .bar-fg { background: #f0b400; height: 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>YAPCトーク研究室</h1>
+    <p class="lead" id="lead">読み込み中…</p>
+    <nav class="tabs" id="tabs"></nav>
+    <section id="view"></section>
+  </main>
+
+  <script>
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    const pct = (a, b) => (b ? Math.round((a / b) * 1000) / 10 : 0);
+    let D, talks = [], years = [];
+
+    const TABS = [
+      ['shime', '締め切りの日'],
+      ['kotoba', 'ことばの移り変わり'],
+      ['heat', '技術の年表'],
+      ['kata', 'タイトルの型'],
+      ['quiz', '何年のトーク？'],
+      ['niteru', '似た話を探す'],
+      ['nagasa', 'タイトルの長さ'],
+      ['zenbu', '全部の一覧'],
+    ];
+
+    // 技術の年表に並べる言葉。左が表示名、右がタイトルに対する正規表現
+    const TECH = [
+      ['Perl', /perl|mojolicious|cpan|moose|plack|psgi/i],
+      ['Ruby', /ruby|rails/i],
+      ['Go', /\bgo\b|golang|go言語/i],
+      ['Rust', /rust/i],
+      ['TypeScript', /typescript|\bts\b/i],
+      ['JavaScript', /javascript|\bjs\b|node\.?js|react|vue/i],
+      ['PHP', /php/i],
+      ['Python', /python/i],
+      ['SQL・DB', /sql|mysql|postgres|データベース|\bdb\b/i],
+      ['クラウド', /aws|gcp|google cloud|cloudflare|azure|クラウド|lambda/i],
+      ['コンテナ', /docker|kubernetes|k8s|コンテナ|ecs/i],
+      ['テスト', /テスト|test/i],
+      ['設計', /設計|アーキテクチャ|architecture|ddd|ドメイン/i],
+      ['セキュリティ', /セキュリティ|security|脆弱性|認証|identity/i],
+      ['AI・LLM', /\bai\b|llm|生成ai|chatgpt|gpt|claude|copilot|エージェント|agent|mcp|バイブ/i],
+      ['チーム・組織', /チーム|組織|マネジメント|マネージャ|team/i],
+      ['キャリア', /キャリア|転職|新卒|若手|エンジニア人生/i],
+      ['コミュニティ', /コミュニティ|community|勉強会|カンファレンス/i],
+      ['個人開発・趣味', /個人開発|趣味|自作|作ってみた|遊び/i],
+    ];
+
+    // タイトルの型。左が名前、真ん中が見分け方、右が自分の話題を入れるときの形（{x} が話題）
+    const KATA = [
+      ['〜した話', /(した|してる|している|しました|やった|やってみた)話/, '{x}をやってみた話'],
+      ['〜を作った', /(作った|作ってみた|作りました|つくった|作る)/, '{x}を作った'],
+      ['〜入門', /入門|はじめて|初めて|はじめよう|始める/, 'はじめての{x}'],
+      ['〜を支える技術', /支える技術/, '{x}を支える技術'],
+      ['〜のすすめ', /すすめ|勧め|推し/, '{x}のすすめ'],
+      ['〜で学ぶ', /で学ぶ|から学ぶ|学んだ/, '{x}で学ぶ○○'],
+      ['なぜ〜のか', /なぜ|どうして|why/i, 'なぜ{x}なのか'],
+      ['〜とは', /とは/, '{x}とは何だったのか'],
+      ['〜年', /\d+\s*年/, '{x}を10年続けてわかったこと'],
+      ['〜の現在地・いま', /現在地|いま|今の|最前線|最新/, '{x}の現在地'],
+      ['〜の作り方・やり方', /(作り方|つくりかた|やり方|進め方|書き方|始め方|方法)/, '{x}の作り方'],
+      ['〜しよう', /しよう|しましょう|ませんか/, '{x}をやってみませんか'],
+      ['問いかけ（？）', /[?？]/, '{x}、どうしてますか？'],
+      ['叫び（！）', /[!！]/, '{x}！'],
+      ['副題つき（〜 ○○ 〜）', /〜.+〜|―|—|--| - /, '{x} 〜ある日の試行錯誤〜'],
+      ['全部話します', /全部|すべて|ぜんぶ|総まとめ|まとめて/, '{x}について知っていることを全部話します'],
+      ['英語だけ', /^[\x20-\x7e]+$/, null],
+    ];
+
+    // ---------- 締め切りの日 ----------
+    const shimeView = () => {
+      // 採択分だけが公開されている回は、応募の傾向にならないので外す
+      const blocks = D.events.filter((e) => e.proposals > e.accepted).map((e) => {
+        // 締め切りのあとに足された LT や企画は、グラフから外して件数だけ書く
+        const top = e.days.reduce((a, b) => (b[1] > a[1] ? b : a))[0];
+        const days = e.days.filter(([d]) => Date.parse(d) - Date.parse(top) <= 7 * 864e5);
+        const later = e.days.filter((d) => !days.includes(d)).reduce((s, d) => s + d[1], 0);
+        const t0 = Date.parse(days[0][0]);
+        const t1 = Date.parse(days[days.length - 1][0]);
+        const span = Math.round((t1 - t0) / 864e5) + 1;
+        const peak = days.reduce((a, b) => (b[1] > a[1] ? b : a));
+        const max = peak[1];
+        const W = 900, H = 160, pad = 24, bw = (W - pad * 2) / span;
+        const bars = days.map(([d, n]) => {
+          const i = Math.round((Date.parse(d) - t0) / 864e5);
+          const h = ((H - 40) * n) / max;
+          const on = d === peak[0];
+          return `<rect x="${pad + i * bw}" y="${H - 20 - h}" width="${Math.max(bw - 1, 1.5)}" height="${h}" fill="${on ? '#e06000' : '#bbb'}"><title>${d}：${n}件</title></rect>`;
+        }).join('');
+        const px = pad + Math.round((Date.parse(peak[0]) - t0) / 864e5) * bw;
+        return `<div class="event">
+          <h3>${esc(e.name)}</h3>
+          <p class="muted">応募 ${e.proposals}件。いちばん多い日（${peak[0]}）に <strong>${peak[1]}件</strong>（${pct(peak[1], e.proposals)}%）。この日の応募のうち ${peak[2]}件が採択されている${later ? `。それより後の日付の応募 ${later}件はグラフに入れていない` : ''}</p>
+          <svg viewBox="0 0 ${W} ${H}">
+            ${bars}
+            <text x="${Math.min(px, W - 80)}" y="${H - 26 - (H - 40)}" font-size="14" fill="#e06000">${peak[1]}件</text>
+            <text x="${pad}" y="${H - 4}" font-size="12" fill="#777">${days[0][0]}</text>
+            <text x="${W - pad}" y="${H - 4}" font-size="12" fill="#777" text-anchor="end">${days[days.length - 1][0]}</text>
+          </svg>
+        </div>`;
+      }).join('');
+      return `<h2>締め切りの日</h2>
+        <p class="lead">YAPC のトーク応募が、日ごとに何件あったか。応募はいつも最後の日に集まります。</p>
+        <p class="note">fortee で応募の受け付け日時が公開されている回だけ。福岡2025は採択されたトークだけが公開されているので外しています。応募がいちばん多かった日から8日目以降の分は、LT の追加募集や企画など別の受け付けが混ざることがあるので、グラフから外しています。</p>
+        ${blocks}`;
+    };
+
+    // ---------- ことばの移り変わり ----------
+    let word = 'Perl';
+    const matcher = (w) => {
+      const parts = w.split(/\s+/).filter(Boolean).map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      return parts.length ? new RegExp(parts.join('|'), 'i') : null;
+    };
+    const yearChart = (counts, label) => {
+      const W = 900, H = 220, pad = 30, bw = (W - pad * 2) / years.length;
+      const max = Math.max(...counts.map((c) => c.share), 1);
+      return `<svg viewBox="0 0 ${W} ${H}">${counts.map((c, i) => {
+        const h = ((H - 60) * c.share) / max;
+        const x = pad + i * bw;
+        return `<rect x="${x + 3}" y="${H - 30 - h}" width="${bw - 6}" height="${h}" fill="#f0b400"><title>${c.year}：${c.hit} / ${c.all}</title></rect>
+          <text x="${x + bw / 2}" y="${H - 34 - h}" font-size="13" text-anchor="middle">${c.hit ? `${c.share}%` : ''}</text>
+          <text x="${x + bw / 2}" y="${H - 14}" font-size="12" text-anchor="middle" fill="#555">${c.year}</text>
+          <text x="${x + bw / 2}" y="${H - 1}" font-size="10" text-anchor="middle" fill="#999">${c.hit}/${c.all}</text>`;
+      }).join('')}</svg>`;
+    };
+    const kotobaView = () => {
+      const re = matcher(word);
+      const hits = re ? talks.filter((t) => re.test(t.title)) : [];
+      const counts = years.map((y) => {
+        const all = talks.filter((t) => t.year === y).length;
+        const hit = hits.filter((t) => t.year === y).length;
+        return { year: y, all, hit, share: pct(hit, all) };
+      });
+      const presets = ['Perl', 'Go', 'Rust', 'TypeScript', 'AI LLM', 'Docker', 'Kubernetes', 'テスト', '設計', 'チーム', '組織', 'キャリア', '入門', '個人開発', 'ゲーム', '話', '技術', '僕 私 俺'];
+      return `<h2>ことばの移り変わり</h2>
+        <p class="lead">トークのタイトルに、その言葉が入っている割合を年ごとに。スペースで区切るといずれかを含むものを数えます。</p>
+        <div class="row"><input type="text" id="word" value="${esc(word)}" placeholder="言葉を入れる"></div>
+        <div class="row chips">${presets.map((p) => `<button data-word="${esc(p)}" class="${p === word ? 'on' : ''}">${esc(p)}</button>`).join('')}</div>
+        <div id="kotoba-out">${yearChart(counts)}
+        <p class="muted">${hits.length}件</p>
+        <ul class="talks">${hits.slice().reverse().slice(0, 80).map(talkItem).join('')}</ul></div>`;
+    };
+
+    // ---------- 技術の年表 ----------
+    const heatView = () => {
+      const all = years.map((y) => talks.filter((t) => t.year === y));
+      const rows = TECH.map(([label, re]) => {
+        const cells = all.map((list) => {
+          const n = list.filter((t) => re.test(t.title)).length;
+          const s = list.length ? n / list.length : 0;
+          return `<td class="cell" style="background: rgba(240,180,0,${Math.min(s * 5, 1)})" title="${n} / ${list.length}">${n || ''}</td>`;
+        }).join('');
+        return `<tr data-tech="${esc(label)}"><th>${esc(label)}</th>${cells}</tr>`;
+      }).join('');
+      return `<h2>技術の年表</h2>
+        <p class="lead">タイトルに出てくる技術や話題を、年ごとに数えました。数字は件数、色の濃さはその年のトークに占める割合です。</p>
+        <p class="note">言葉で機械的に数えているので、取りこぼしや数えすぎがあります。行を押すと、その行の見分け方で数えたトークを出します。</p>
+        <div class="scroll"><table class="heat"><tr><th></th>${years.map((y) => `<th class="num">${y}</th>`).join('')}</tr>${rows}
+        <tr><th class="muted">トーク数</th>${all.map((l) => `<td class="cell muted">${l.length}</td>`).join('')}</tr></table></div>
+        <div id="heat-out"></div>`;
+    };
+
+    // ---------- タイトルの型 ----------
+    let openKata = null, topic = '';
+    const kataView = () => {
+      const rows = KATA.map(([label, re], i) => {
+        const hits = talks.filter((t) => re.test(t.title));
+        const ex = hits.length ? hits[Math.floor(Math.random() * hits.length)].title : '';
+        const spark = years.map((y) => {
+          const n = talks.filter((t) => t.year === y).length;
+          const h = n ? hits.filter((t) => t.year === y).length / n : 0;
+          return h;
+        });
+        const m = Math.max(...spark, 0.01);
+        const svg = `<svg viewBox="0 0 ${years.length * 8} 20" style="width:${years.length * 8}px">${spark.map((h, j) => `<rect x="${j * 8}" y="${20 - (20 * h) / m}" width="6" height="${(20 * h) / m}" fill="#f0b400"/>`).join('')}</svg>`;
+        return `<tr data-kata="${i}" class="${openKata === i ? 'open' : ''}" style="cursor:pointer">
+          <td>${esc(label)}</td><td class="num">${hits.length}</td><td>${svg}</td><td class="ex">${esc(ex)}</td></tr>
+          ${openKata === i ? `<tr><td colspan="4"><ul class="talks">${hits.slice().reverse().map(talkItem).join('')}</ul></td></tr>` : ''}`;
+      }).join('');
+      return `<h2>タイトルの型</h2>
+        <p class="lead">過去のタイトルを、よく使われる言い回しで分けました。行を押すと、その型のトークを全部出します。</p>
+        <div class="scroll"><table class="kata"><tr><th>型</th><th class="num">件数</th><th>${years[0]}〜${years[years.length - 1]}</th><th>例</th></tr>${rows}</table></div>
+        <h2 style="margin-top:32px">型を借りる</h2>
+        <p class="lead">話したいことを一言で入れると、上の型に当てはめたタイトルを並べます。</p>
+        <div class="row"><input type="text" id="topic" value="${esc(topic)}" placeholder="例：家の電気代"></div>
+        <ul class="talks gen" id="gen">${genList()}</ul>`;
+    };
+    const genList = () => (topic.trim()
+      ? KATA.filter((k) => k[2]).map((k) => `<li>${esc(k[2].replace('{x}', topic.trim()))}</li>`).join('')
+      : '');
+
+    // ---------- 何年のトーク？ ----------
+    let quiz = null, score = { ok: 0, all: 0 };
+    const nextQuiz = () => { quiz = { t: talks[Math.floor(Math.random() * talks.length)], answer: null }; };
+    const quizView = () => {
+      if (!quiz) nextQuiz();
+      const t = quiz.t;
+      const ans = quiz.answer;
+      return `<h2>何年のトーク？</h2>
+        <p class="lead">YAPC に応募されたタイトルを1つ出します。何年のものか当ててください。</p>
+        <p class="muted">${score.ok} / ${score.all} 正解</p>
+        <p class="quiz-q">${esc(t.title)}</p>
+        <div class="row">${years.map((y) => `<button data-year="${y}" ${ans !== null ? 'disabled' : ''} class="${ans !== null && y === t.year ? 'on' : ''}">${y}</button>`).join('')}</div>
+        ${ans !== null ? `<div class="ans">${ans === t.year ? '正解' : `ちがいます。${t.year}年`}：${esc(t.event)}${t.speaker ? `／${esc(t.speaker)}` : ''} ${t.url ? `<a href="${esc(t.url)}" target="_blank" rel="noopener">ページ</a>` : ''}
+          ${t.abstract ? `<p class="muted">${esc(t.abstract)}</p>` : ''}</div>
+          <button data-next>次の問題</button>` : ''}`;
+    };
+
+    // ---------- 似た話を探す ----------
+    // 文字の2文字組（bigram）で、タイトルと概要の近さを測る
+    let index = null, idea = '';
+    const grams = (s) => {
+      const t = s.toLowerCase().replace(/\s+/g, ' ');
+      const m = new Map();
+      for (let i = 0; i < t.length - 1; i++) {
+        const g = t.slice(i, i + 2);
+        if (/^[\s\p{P}]+$/u.test(g)) continue;
+        m.set(g, (m.get(g) || 0) + 1);
+      }
+      return m;
+    };
+    const buildIndex = () => {
+      const docs = talks.map((t) => grams(`${t.title} ${t.title} ${t.abstract}`));
+      const df = new Map();
+      docs.forEach((d) => d.forEach((_, g) => df.set(g, (df.get(g) || 0) + 1)));
+      const idf = (g) => Math.log((docs.length + 1) / ((df.get(g) || 0) + 1));
+      const vecs = docs.map((d) => {
+        const v = new Map();
+        let norm = 0;
+        d.forEach((n, g) => { const w = (1 + Math.log(n)) * idf(g); v.set(g, w); norm += w * w; });
+        return { v, norm: Math.sqrt(norm) || 1 };
+      });
+      index = { vecs, idf };
+    };
+    const search = (q) => {
+      if (!index) buildIndex();
+      const qv = new Map();
+      let qn = 0;
+      grams(q).forEach((n, g) => { const w = (1 + Math.log(n)) * index.idf(g); qv.set(g, w); qn += w * w; });
+      qn = Math.sqrt(qn) || 1;
+      return index.vecs.map(({ v, norm }, i) => {
+        let dot = 0;
+        qv.forEach((w, g) => { const x = v.get(g); if (x) dot += w * x; });
+        return { t: talks[i], s: dot / norm / qn };
+      }).sort((a, b) => b.s - a.s).slice(0, 15);
+    };
+    const niteruOut = () => {
+      if (!idea.trim()) return '';
+      const res = search(idea);
+      const max = res[0]?.s || 1;
+      return `<ul class="talks">${res.map(({ t, s }) => `<li>
+        <div class="bar-bg"><div class="bar-fg" style="width:${Math.round((s / max) * 100)}%"></div></div>
+        ${talkBody(t)}</li>`).join('')}</ul>`;
+    };
+    const niteruView = () => `<h2>似た話を探す</h2>
+      <p class="lead">話したいことを書くと、過去の YAPC のタイトルと概要から、言葉の近いものを15件出します。近い話が見つかったら、そのトークを入口にしたり、違うところを話の芯にしたりできます。</p>
+      <textarea id="idea" rows="3" placeholder="例：家の Wi-Fi が夜だけ遅いので、ルーターのログを集めて調べた">${esc(idea)}</textarea>
+      <div class="row" style="margin-top:8px"><button data-search>探す</button><button data-lucky>過去のタイトルを1つ入れてみる</button></div>
+      <div id="niteru-out">${niteruOut()}</div>`;
+
+    // ---------- タイトルの長さ ----------
+    const nagasaView = () => {
+      const len = (t) => [...t.title].length;
+      const med = (a) => { const s = a.slice().sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : 0; };
+      const stats = years.map((y) => {
+        const list = talks.filter((t) => t.year === y);
+        return { year: y, all: list.length, med: med(list.map(len)), en: pct(list.filter((t) => /^[\x20-\x7e]+$/.test(t.title)).length, list.length) };
+      });
+      const W = 900, H = 200, pad = 30, bw = (W - pad * 2) / years.length;
+      const max = Math.max(...stats.map((s) => s.med), 1);
+      const chart = `<svg viewBox="0 0 ${W} ${H}">${stats.map((s, i) => {
+        const h = ((H - 60) * s.med) / max;
+        const x = pad + i * bw;
+        return `<rect x="${x + 3}" y="${H - 30 - h}" width="${bw - 6}" height="${h}" fill="#f0b400"/>
+          <text x="${x + bw / 2}" y="${H - 34 - h}" font-size="13" text-anchor="middle">${s.med}字</text>
+          <text x="${x + bw / 2}" y="${H - 14}" font-size="12" text-anchor="middle" fill="#555">${s.year}</text>
+          <text x="${x + bw / 2}" y="${H - 1}" font-size="10" text-anchor="middle" fill="#999">英語のみ ${s.en}%</text>`;
+      }).join('')}</svg>`;
+      const sorted = talks.slice().sort((a, b) => len(a) - len(b));
+      return `<h2>タイトルの長さ</h2>
+        <p class="lead">タイトルの文字数の中央値を年ごとに。下の段は、英数字だけで書かれたタイトルの割合です。</p>
+        ${chart}
+        <h2 style="margin-top:24px">短いタイトル</h2>
+        <ul class="talks">${sorted.slice(0, 15).map(talkItem).join('')}</ul>
+        <h2 style="margin-top:24px">長いタイトル</h2>
+        <ul class="talks">${sorted.slice(-10).reverse().map(talkItem).join('')}</ul>`;
+    };
+
+    // ---------- 全部の一覧 ----------
+    let filter = { year: '', q: '' }, shown = 200;
+    const zenbuList = () => {
+      const re = filter.q ? matcher(filter.q) : null;
+      const list = talks.filter((t) => (!filter.year || t.year === Number(filter.year)) && (!re || re.test(`${t.title} ${t.speaker} ${t.abstract}`)));
+      return `<p class="muted">${list.length}件</p><ul class="talks">${list.slice(0, shown).map(talkItem).join('')}</ul>
+        ${list.length > shown ? '<button data-more>さらに表示</button>' : ''}`;
+    };
+    const zenbuView = () => `<h2>全部の一覧</h2>
+      <p class="lead">集めたトーク ${talks.length}件。2024年以降は、採択されなかった応募も含みます。</p>
+      <div class="row">
+        <select id="f-year"><option value="">すべての年</option>${years.map((y) => `<option ${String(y) === filter.year ? 'selected' : ''}>${y}</option>`).join('')}</select>
+        <input type="text" id="f-q" value="${esc(filter.q)}" placeholder="タイトル・名前・概要で絞り込む">
+      </div>
+      <div id="zenbu-out">${zenbuList()}</div>`;
+
+    // ---------- 共通 ----------
+    const KIND = { lt: 'LT', keynote: '基調講演' };
+    const talkBody = (t) => `<div>${t.url ? `<a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.title)}</a>` : esc(t.title)}</div>
+      <div class="meta">${esc(t.event)}${t.speaker ? `／${esc(t.speaker)}` : ''}${KIND[t.kind] ? `／${KIND[t.kind]}` : ''}${t.length ? `／${t.length}分` : ''}</div>`;
+    const talkItem = (t) => `<li>${talkBody(t)}</li>`;
+
+    const VIEWS = { shime: shimeView, kotoba: kotobaView, heat: heatView, kata: kataView, quiz: quizView, niteru: niteruView, nagasa: nagasaView, zenbu: zenbuView };
+    const tab = () => (VIEWS[location.hash.slice(1)] ? location.hash.slice(1) : 'shime');
+    const render = () => {
+      const t = tab();
+      document.getElementById('tabs').innerHTML = TABS.map(([k, l]) => `<a href="#${k}" class="${k === t ? 'on' : ''}">${l}</a>`).join('');
+      document.getElementById('view').innerHTML = VIEWS[t]();
+    };
+    const rerender = (keepFocus) => {
+      const id = document.activeElement?.id;
+      const pos = document.activeElement?.selectionStart;
+      render();
+      if (keepFocus && id) { const el = document.getElementById(id); el?.focus(); if (pos != null) el.setSelectionRange?.(pos, pos); }
+    };
+
+    const view = document.getElementById('view');
+    view.addEventListener('click', (e) => {
+      const w = e.target.closest('[data-word]');
+      if (w) { word = w.dataset.word; rerender(); }
+      const h = e.target.closest('[data-tech]');
+      if (h) {
+        const re = TECH.find((x) => x[0] === h.dataset.tech)[1];
+        const hits = talks.filter((t) => re.test(t.title));
+        document.getElementById('heat-out').innerHTML = `<h2 style="margin-top:24px">${esc(h.dataset.tech)}（${hits.length}件）</h2><ul class="talks">${hits.slice().reverse().map(talkItem).join('')}</ul>`;
+      }
+      const k = e.target.closest('[data-kata]');
+      if (k && !e.target.closest('a')) { const i = Number(k.dataset.kata); openKata = openKata === i ? null : i; rerender(); }
+      const y = e.target.closest('[data-year]');
+      if (y) { quiz.answer = Number(y.dataset.year); score.all++; if (quiz.answer === quiz.t.year) score.ok++; rerender(); }
+      if (e.target.closest('[data-next]')) { nextQuiz(); rerender(); }
+      if (e.target.closest('[data-search]')) { idea = document.getElementById('idea').value; document.getElementById('niteru-out').innerHTML = niteruOut(); }
+      if (e.target.closest('[data-lucky]')) { idea = talks[Math.floor(Math.random() * talks.length)].title; rerender(); }
+      if (e.target.closest('[data-more]')) { shown += 200; document.getElementById('zenbu-out').innerHTML = zenbuList(); }
+    });
+    view.addEventListener('input', (e) => {
+      if (e.target.id === 'word') { word = e.target.value; rerender(true); }
+      if (e.target.id === 'topic') { topic = e.target.value; document.getElementById('gen').innerHTML = genList(); }
+      if (e.target.id === 'f-q' || e.target.id === 'f-year') {
+        filter = { year: document.getElementById('f-year').value, q: document.getElementById('f-q').value };
+        shown = 200;
+        document.getElementById('zenbu-out').innerHTML = zenbuList();
+      }
+    });
+    view.addEventListener('keydown', (e) => {
+      if (e.target.id === 'idea' && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { idea = e.target.value; document.getElementById('niteru-out').innerHTML = niteruOut(); }
+    });
+    addEventListener('hashchange', render);
+
+    (async () => {
+      D = await (await fetch('data/yapc-talks.json')).json();
+      talks = D.talks;
+      years = [...new Set(talks.map((t) => t.year))].sort((a, b) => a - b);
+      const events = new Set(talks.map((t) => t.event)).size;
+      document.getElementById('lead').textContent = `過去の YAPC ${events}回分、${talks.length}件のトークのタイトルを集めて、数えたり並べたりしてみました。手元でいじって遊んでください。2023年までは採択されたトーク、2024年以降は採択されなかった応募も含みます。LT のタイトルが公開されていない年もあります。`;
+      render();
+    })();
+  </script>
+</body>
+</html>

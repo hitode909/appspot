@@ -7,6 +7,7 @@
 //
 // Markdown は、`---` の行があればそこで区切る。なければ `# ` の見出しごとに1枚にする
 // 扱う記法: # 見出し、## 小見出し、- 箇条書き、段落、[リンク](URL)、**太字**、`コード`、![画像](URL)
+// 画像1枚だけのページは枠いっぱいに出す（past/ の過去の発表は、1枚ずつ画像にしたもの）
 (() => {
   const CSS = `
     .deck { margin: 0 0 32px; }
@@ -29,6 +30,8 @@
     .deck-slide h1 a, .deck-slide h2 a { font-size: inherit; }
     .deck-slide code { font-size: 0.9em; background: #f0ece0; padding: 0 0.2em; border-radius: 3px; }
     .deck-slide img { max-width: 100%; max-height: 60cqw; object-fit: contain; }
+    .deck-slide.image { padding: 0; }
+    .deck-slide.image img { display: block; width: 100%; max-height: none; }
     .deck-frame:fullscreen .deck-slide { font-size: calc(min(3.6vw, 6.4vh) * var(--fit)); padding: 5vh 8vw; }
     .deck-progress { position: absolute; left: 0; bottom: 0; height: 4px; background: #f0b400; transition: width 0.2s; }
   `;
@@ -60,6 +63,8 @@
     const pages = /^---\s*$/m.test(md) ? md.split(/^---\s*$/m) : md.split(/^(?=# )/m);
     return pages.map((p) => p.trim()).filter(Boolean);
   };
+  // 画像1枚だけのページは、枠いっぱいに出す。縦に長い画像は枠の中でスクロールする
+  const isImage = (p) => /^!\[[^\]]*\]\([^)\s]+\)$/.test(p.trim());
   // 見出しだけ（と短い行が1つ）のページは、表紙として真ん中に置く
   const isTitle = (p) => /^# /.test(p) && p.split('\n').filter((l) => l.trim()).length <= 2 && !/^\s*- /m.test(p);
 
@@ -68,6 +73,7 @@
   const fit = (slide) => {
     let f = 1;
     slide.style.setProperty('--fit', f);
+    if (slide.classList.contains('image')) return;
     const over = () => slide.scrollHeight > slide.clientHeight + 1 || slide.scrollWidth > slide.clientWidth + 1;
     while (over() && f > MIN_FIT) {
       f = Math.max(MIN_FIT, f * 0.9);
@@ -113,7 +119,8 @@
     const slide = frame.querySelector('.deck-slide');
     const show = () => {
       slide.innerHTML = renderPage(pages[n]);
-      slide.classList.toggle('title', n === 0 || isTitle(pages[n]));
+      slide.classList.toggle('image', isImage(pages[n]));
+      slide.classList.toggle('title', !isImage(pages[n]) && (n === 0 || isTitle(pages[n])));
       slide.scrollTop = 0;
       tools.querySelector('.deck-page').textContent = `${n + 1} / ${pages.length}`;
       frame.querySelector('.deck-progress').style.width = `${((n + 1) / pages.length) * 100}%`;

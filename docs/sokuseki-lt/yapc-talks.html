@@ -394,13 +394,17 @@
       if (e.target.closest('[data-more]')) { shown += 200; document.getElementById('zenbu-out').innerHTML = zenbuList(); }
     });
     view.addEventListener('input', (e) => {
-      if (e.target.id === 'word') { word = e.target.value; rerender(true); }
+      // 変換中に描き直すと入力欄が作り直されて変換が切れるので、確定（compositionend）まで待つ
+      if (e.target.id === 'word' && !e.isComposing) { word = e.target.value; rerender(true); }
       if (e.target.id === 'topic') { topic = e.target.value; document.getElementById('gen').innerHTML = genList(); }
       if (e.target.id === 'f-q' || e.target.id === 'f-year') {
         filter = { year: document.getElementById('f-year').value, q: document.getElementById('f-q').value };
         shown = 200;
         document.getElementById('zenbu-out').innerHTML = zenbuList();
       }
+    });
+    view.addEventListener('compositionend', (e) => {
+      if (e.target.id === 'word') { word = e.target.value; rerender(true); }
     });
     view.addEventListener('keydown', (e) => {
       if (e.target.id === 'idea' && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { idea = e.target.value; document.getElementById('niteru-out').innerHTML = niteruOut(); }

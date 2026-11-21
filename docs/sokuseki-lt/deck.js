@@ -3,7 +3,7 @@
 // <div class="deck" data-src="hints/foo.md"></div>        Markdown のデッキ
 // <div class="deck" data-page="shibari.html"></div>       ページをそのまま枠に入れる
 // data-title で枠の上の見出しを変えられる
-// はみ出す1枚は文字を縮めて収める
+// はみ出す1枚は文字を縮めて収め、めくった位置は URL の #デッキ名/ページ番号 に残す
 //
 // Markdown は、`---` の行があればそこで区切る。なければ `# ` の見出しごとに1枚にする
 // 扱う記法: # 見出し、## 小見出し、- 箇条書き、段落、[リンク](URL)、**太字**、`コード`、![画像](URL)
@@ -75,6 +75,16 @@
     }
   };
 
+  // めくった位置を URL の #デッキ名/ページ番号 に残す。リロードや共有で同じ1枚から始まる
+  const ids = new Set();
+  const deckId = (src) => {
+    const base = src.replace(/^.*\//, '').replace(/\.md$/, '');
+    let id = base;
+    for (let i = 2; ids.has(id); i++) id = `${base}-${i}`;
+    ids.add(id);
+    return id;
+  };
+
   let active = null;
   const decks = [];
 
@@ -95,7 +105,9 @@
     const md = await (await fetch(el.dataset.src)).text();
     const pages = split(md);
     if (!title) el.querySelector('.deck-title').textContent = (pages[0].match(/^# (.+)$/m) || [, ''])[1].replace(/\[(.+?)\]\(.+?\)/g, '$1');
-    let n = 0;
+    const id = deckId(el.dataset.src);
+    const fromHash = location.hash.match(/^#([\w-]+)\/(\d+)$/);
+    let n = fromHash && fromHash[1] === id ? Math.min(Number(fromHash[2]), pages.length) - 1 : 0;
     tools.innerHTML = `<button data-d="-1">←</button><span class="deck-page"></span><button data-d="1">→</button><button data-full>全画面</button><a href="deck.html?src=${encodeURIComponent(el.dataset.src)}" target="_blank" rel="noopener">別のタブで開く</a>`;
     frame.innerHTML = '<div class="deck-slide"></div><div class="deck-progress"></div>';
     const slide = frame.querySelector('.deck-slide');
@@ -108,7 +120,11 @@
       fit(slide);
       slide.querySelectorAll('img').forEach((img) => img.addEventListener('load', () => fit(slide)));
     };
-    const move = (d) => { n = Math.min(Math.max(n + d, 0), pages.length - 1); show(); };
+    const move = (d) => {
+      n = Math.min(Math.max(n + d, 0), pages.length - 1);
+      show();
+      history.replaceState(null, '', `${location.pathname}${location.search}#${id}/${n + 1}`);
+    };
     new ResizeObserver(() => fit(slide)).observe(frame);
     tools.querySelectorAll('[data-d]').forEach((b) => (b.onclick = () => { active = move; move(Number(b.dataset.d)); }));
     tools.querySelector('[data-full]').onclick = () => { active = move; full(); };
@@ -122,6 +138,7 @@
     decks.push(move);
     if (!active) active = move;
     show();
+    if (fromHash && fromHash[1] === id) { active = move; el.scrollIntoView(); }
   };
 
   // 最後に触った枠を、キーで動かす

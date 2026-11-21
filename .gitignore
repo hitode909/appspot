@@ -24,3 +24,6 @@ Thumbs.db
 
 # Claude Code
 .claude/settings.local.json
+
+# 作業用の一時ファイル
+tmp/

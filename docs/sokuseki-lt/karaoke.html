@@ -29,9 +29,6 @@
     .start { margin: 48px 0; text-align: center; }
     .start button { font-size: 24px; padding: 12px 32px; }
     .start p { color: #555; }
-    .timer { display: block; margin: 0 0 6px auto; padding: 2px 10px; border-color: #999; font-size: 14px; font-variant-numeric: tabular-nums; }
-    .timer.running { background: #222; border-color: #222; color: #fff; }
-    .timer.over { background: #f0b400; border-color: #f0b400; }
     /* 1枚目の「AIが作った架空の内容です」は小さく出す */
     .deck-slide.title p { font-size: 0.45em; color: #777; margin-top: 2em; }
   </style>
@@ -42,7 +39,6 @@
   <script src="deck.js"></script>
   <script>
     let decks = [];
-    const LIMIT = 180;
     const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
     // 見たスライドは、このブラウザに覚えておく。使えなければ、開いている間だけ覚える
@@ -78,7 +74,6 @@
         <a href="#list">一覧を見る</a>
         <span class="step"><button data-draw>次の人</button></span>
       </div>
-      <button class="timer" data-timer>3:00 から始める</button>
       <div class="deck" data-src="karaoke/${esc(d.file)}"></div>`;
 
     // まだ見ていないものから1本選ぶ。全部見たら、見た印を消してから選ぶ
@@ -90,24 +85,7 @@
     };
     const current = () => decks.find((d) => location.hash === `#/${d.n}`) || null;
 
-    // タイマー。押すと3分を数えはじめ、もう一度押すと3分に戻る
-    let timerId = null;
-    const stopTimer = () => { clearInterval(timerId); timerId = null; };
-    const fmt = (s) => `${s < 0 ? '+' : ''}${Math.floor(Math.abs(s) / 60)}:${String(Math.abs(s) % 60).padStart(2, '0')}`;
-    const toggleTimer = (b) => {
-      if (timerId) { stopTimer(); b.className = 'timer'; b.textContent = '3:00 から始める'; return; }
-      const end = Date.now() + LIMIT * 1000;
-      const tick = () => {
-        const left = Math.ceil((end - Date.now()) / 1000);
-        b.className = `timer running${left <= 0 ? ' over' : ''}`;
-        b.textContent = left > 0 ? fmt(left) : `時間です ${fmt(left)}`;
-      };
-      tick();
-      timerId = setInterval(tick, 250);
-    };
-
     const render = () => {
-      stopTimer();
       const main = document.getElementById('main');
       const d = current();
       if (d) {
@@ -123,8 +101,6 @@
     document.getElementById('main').addEventListener('click', (e) => {
       if (e.target.closest('button[data-draw]')) location.hash = `#/${draw()}`;
       if (e.target.closest('button[data-forget]')) { forget(); render(); }
-      const t = e.target.closest('button[data-timer]');
-      if (t) toggleTimer(t);
     });
     addEventListener('hashchange', render);
 

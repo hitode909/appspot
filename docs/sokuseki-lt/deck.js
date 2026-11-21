@@ -1,7 +1,7 @@
 // スライド枠。Markdown のデッキか、別のページ（iframe）を、16:9 の枠に入れて再生する
 //
 // <div class="deck" data-src="hints/foo.md"></div>        Markdown のデッキ
-// <div class="deck" data-page="timer.html"></div>         ページをそのまま枠に入れる
+// <div class="deck" data-page="shibari.html"></div>       ページをそのまま枠に入れる
 // data-title で枠の上の見出しを変えられる
 //
 // Markdown は、`---` の行があればそこで区切る。なければ `# ` の見出しごとに1枚にする

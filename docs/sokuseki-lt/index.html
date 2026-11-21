@@ -83,12 +83,12 @@
       <div class="deck" data-page="kirikuchi.html" data-title="発表の切り口（1つ引く）"></div>
       <h3>手元から探す</h3>
       <div class="grid">
-        <div class="deck" data-src="hints/neta-shell-history.md" data-ending></div>
-        <div class="deck" data-src="hints/neta-photo-roll.md" data-ending></div>
-        <div class="deck" data-src="hints/neta-browser-tabs.md" data-ending></div>
-        <div class="deck" data-src="hints/neta-jibun-no-kiroku.md" data-ending></div>
-        <div class="deck" data-src="hints/neta-hamatta.md" data-ending></div>
-        <div class="deck" data-src="hints/neta-yapc-ni-noru.md" data-ending></div>
+        <div class="deck" data-src="hints/neta-shell-history.md"></div>
+        <div class="deck" data-src="hints/neta-photo-roll.md"></div>
+        <div class="deck" data-src="hints/neta-browser-tabs.md"></div>
+        <div class="deck" data-src="hints/neta-jibun-no-kiroku.md"></div>
+        <div class="deck" data-src="hints/neta-hamatta.md"></div>
+        <div class="deck" data-src="hints/neta-yapc-ni-noru.md"></div>
       </div>
     </section>
 
@@ -145,7 +145,7 @@
       <div class="memo">発表したタイトルをふせんにして、2本の軸の上に置く。置き場所の正しさより「なぜそこに置いたか」を話す。軸ガチャで、その場限りの軸に替えてもよい。</div>
       <div class="deck" data-page="nijiku.html" data-title="二軸プロット"></div>
       <div class="grid">
-        <div class="deck" data-src="hints/naze-ka-kininaru.md" data-ending></div>
+        <div class="deck" data-src="hints/naze-ka-kininaru.md"></div>
       </div>
     </section>
 
@@ -172,7 +172,7 @@
     (async () => {
       const hints = await (await fetch('hints/index.json')).json();
       const all = document.getElementById('all');
-      all.innerHTML = hints.map((h) => `<div class="deck" data-src="hints/${h.slug}.md"${/^(neta-|naze-)/.test(h.slug) ? ' data-ending' : ''}></div>`).join('');
+      all.innerHTML = hints.map((h) => `<div class="deck" data-src="hints/${h.slug}.md"${/^(neta-|naze-)/.test(h.slug) ? '' : ''}></div>`).join('');
       window.mountDecks(all);
     })();
   </script>

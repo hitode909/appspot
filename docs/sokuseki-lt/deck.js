@@ -2,18 +2,11 @@
 //
 // <div class="deck" data-src="hints/foo.md"></div>        Markdown のデッキ
 // <div class="deck" data-page="timer.html"></div>         ページをそのまま枠に入れる
-// data-title で枠の上の見出しを変えられる。data-ending を付けると最後に「あなたの番です」を足す
+// data-title で枠の上の見出しを変えられる
 //
 // Markdown は、`---` の行があればそこで区切る。なければ `# ` の見出しごとに1枚にする
 // 扱う記法: # 見出し、## 小見出し、- 箇条書き、段落、[リンク](URL)、**太字**、`コード`、![画像](URL)
 (() => {
-  const ENDING = `## あなたの番です
-
-- 最近驚いたことは？
-- どうなると予想していた？
-- 次に同じことが起きたら、どうしたい？
-- そうすると、どうなると予想できる？`;
-
   const CSS = `
     .deck { margin: 0 0 32px; }
     .deck-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 0 0 6px; }
@@ -88,10 +81,9 @@
 
     const md = await (await fetch(el.dataset.src)).text();
     const pages = split(md);
-    if ('ending' in el.dataset) pages.push(ENDING);
     if (!title) el.querySelector('.deck-title').textContent = (pages[0].match(/^# (.+)$/m) || [, ''])[1].replace(/\[(.+?)\]\(.+?\)/g, '$1');
     let n = 0;
-    tools.innerHTML = `<button data-d="-1">←</button><span class="deck-page"></span><button data-d="1">→</button><button data-full>全画面</button><a href="deck.html?src=${encodeURIComponent(el.dataset.src)}${'ending' in el.dataset ? '&ending' : ''}" target="_blank" rel="noopener">別のタブで開く</a>`;
+    tools.innerHTML = `<button data-d="-1">←</button><span class="deck-page"></span><button data-d="1">→</button><button data-full>全画面</button><a href="deck.html?src=${encodeURIComponent(el.dataset.src)}" target="_blank" rel="noopener">別のタブで開く</a>`;
     frame.innerHTML = '<div class="deck-slide"></div><div class="deck-progress"></div>';
     const slide = frame.querySelector('.deck-slide');
     const show = () => {

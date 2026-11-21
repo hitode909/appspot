@@ -6,7 +6,7 @@
   <title>発表タイマー</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, sans-serif; background: #fffdf5; color: #222; user-select: none; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fff; color: #222; user-select: none; }
     main { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 16px; }
     .time { font-size: min(30vw, 50vh); font-weight: bold; font-variant-numeric: tabular-nums; line-height: 1; }
     .msg { font-size: clamp(18px, 4vw, 40px); min-height: 1.5em; color: #555; }
@@ -15,7 +15,7 @@
     button.on { background: #222; color: #fff; }
     .hint { font-size: 13px; color: #777; }
     body.soon { background: #fff3c4; }
-    body.over { background: #222; color: #fffdf5; }
+    body.over { background: #222; color: #fff; }
     body.over .msg, body.over .hint { color: #ddd; }
     body.running .row, body.running .hint { opacity: 0.15; }
     body.running .row:hover { opacity: 1; }

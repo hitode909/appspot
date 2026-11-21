@@ -14,9 +14,9 @@
     .deck-tools { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #777; white-space: nowrap; }
     .deck-tools button { font: inherit; padding: 2px 10px; border: 1px solid #999; border-radius: 999px; background: #fff; cursor: pointer; color: #222; }
     .deck-tools a { color: #777; }
-    .deck-frame { position: relative; aspect-ratio: 16 / 9; border: 2px solid #222; border-radius: 8px; background: #fffdf5; overflow: hidden; container-type: inline-size; }
+    .deck-frame { position: relative; aspect-ratio: 16 / 9; border: 2px solid #222; border-radius: 8px; background: #fff; overflow: hidden; container-type: inline-size; }
     .deck-frame:fullscreen { border: 0; border-radius: 0; aspect-ratio: auto; }
-    .deck-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fffdf5; }
+    .deck-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
     .deck-slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5cqw 7cqw; font-size: 3.6cqw; line-height: 1.5; overflow: auto; cursor: pointer; user-select: none; color: #222; }
     .deck-slide.title { align-items: center; text-align: center; }
     .deck-slide h1, .deck-slide h2 { display: block; border: 0; padding: 0; font-weight: bold; }

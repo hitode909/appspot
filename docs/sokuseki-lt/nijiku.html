@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; }
     html, body { height: 100%; }
-    body { margin: 0; font-family: system-ui, sans-serif; background: #fffdf5; color: #222; line-height: 1.5; display: flex; flex-direction: column; overflow: hidden; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fff; color: #222; line-height: 1.5; display: flex; flex-direction: column; overflow: hidden; }
     button { font: inherit; padding: 4px 14px; border: 1px solid #222; border-radius: 999px; background: #fff; color: inherit; cursor: pointer; }
     button:hover { background: #fff3c4; }
 
@@ -29,7 +29,7 @@
     .line.v::after { bottom: -10px; left: -6px; border-top-color: #222; }
     .end { position: absolute; font: inherit; font-size: clamp(13px, 1.7vw, 24px); font-weight: bold; color: #222; background: transparent; border: 1px dashed transparent; border-radius: 6px; padding: 2px 6px; }
     .end:hover { border-color: #aaa; }
-    .end:focus { outline: none; border-color: #222; background: #fffdf5; }
+    .end:focus { outline: none; border-color: #222; background: #fff; }
     .end.top, .end.bottom { left: 50%; width: 46%; transform: translateX(-50%); text-align: center; }
     .end.top { top: 4px; }
     .end.bottom { bottom: 4px; }
@@ -45,7 +45,7 @@
     .empty { position: absolute; left: 50%; top: 72%; transform: translate(-50%, -50%); margin: 0; padding: 4px 8px; background: #fff; color: #999; font-size: clamp(12px, 1.4vw, 18px); pointer-events: none; text-align: center; width: 80%; }
 
     /* 確認・編集 */
-    dialog { border: 2px solid #222; border-radius: 16px; background: #fffdf5; color: inherit; padding: 14px 16px; width: min(420px, 92vw); max-height: 92vh; overflow: auto; }
+    dialog { border: 2px solid #222; border-radius: 16px; background: #fff; color: inherit; padding: 14px 16px; width: min(420px, 92vw); max-height: 92vh; overflow: auto; }
     dialog::backdrop { background: rgba(0, 0, 0, 0.3); }
     dialog p { margin: 0 0 10px; }
     dialog label { display: block; margin: 0 0 8px; font-size: 14px; color: #555; }

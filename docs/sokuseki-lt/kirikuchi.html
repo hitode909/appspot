@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>発表の切り口</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fffdf5; color: #222; line-height: 1.6; }
+    a { color: #0a58ca; }
+    main { max-width: 900px; margin: 0 auto; padding: 24px 16px 80px; }
+    h1 { margin: 0 0 4px; font-size: 26px; }
+    .lead { margin: 0 0 24px; color: #555; }
+
+    /* 一覧 */
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+    .toc a { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; color: inherit; text-decoration: none; font-size: 14px; background: #fff; }
+    h2 { margin: 40px 0 4px; font-size: 22px; border-bottom: 2px solid #222; padding-bottom: 4px; }
+    .chapter-lead { margin: 0 0 12px; color: #555; font-size: 14px; }
+    .angles { list-style: none; margin: 0; padding: 0; }
+    .angles a { display: block; padding: 10px 12px; border-bottom: 1px solid #ddd; color: inherit; text-decoration: none; font-size: 18px; }
+    .angles a:hover { background: #fff3c4; }
+
+    /* 切り口 */
+    .nav { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 14px; }
+    .nav a { color: #555; }
+    .nav .step { display: flex; gap: 8px; }
+    .nav button { font: inherit; padding: 6px 14px; border: 1px solid #222; border-radius: 999px; background: #fff; cursor: pointer; }
+    .nav button:disabled { opacity: 0.3; cursor: default; }
+    .chapter-name { margin: 0; font-size: 14px; color: #777; }
+    .question { margin: 8px 0 16px; font-size: clamp(26px, 5vw, 46px); font-weight: bold; line-height: 1.4; }
+    .parts { margin: 0 0 20px; font-size: 14px; }
+    .parts div { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .parts .label { width: 5em; color: #777; }
+    .parts button { font: inherit; padding: 2px 10px; border: 1px solid #999; border-radius: 999px; background: #fff; cursor: pointer; }
+    .parts button.on { background: #222; border-color: #222; color: #fff; }
+    .who summary { margin: 0 0 8px; font-size: 14px; color: #777; cursor: pointer; }    .examples li:last-child { border-bottom: 1px solid #ddd; }
+    .examples { list-style: none; margin: 0; padding: 0; }
+    .examples li { padding: 12px 0; border-top: 1px solid #ddd; }
+    .examples .note { font-size: clamp(17px, 2.4vw, 22px); }
+    .examples .src { font-size: 13px; color: #777; }
+  </style>
+</head>
+<body>
+  <main id="main">読み込み中…</main>
+
+  <script>
+    let chapters = [], flat = [];
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+    // 問いの前につなぐ部品。グループごとに1つ選べる
+    const PARTS = [
+      { label: "いつ", items: ["今日", "この1週間で", "この1か月で", "この1年で", "学生のころ", "新人のころ"] },
+      { label: "どこで", items: ["今回のYAPCで", "職場で", "家で", "出かけた先で", "移動中に", "店で", "ネットで"] },
+      { label: "何をしていて", items: ["仕事で", "趣味で", "コードを書いていて", "買い物で", "料理で", "人と話していて"] },
+    ];
+    const picked = PARTS.map(() => null);
+    const prefix = () => picked.filter((p) => p !== null).map((p) => `${p}、`).join("");
+    const partsView = () => `<div class="parts">${PARTS.map((g, gi) => `
+      <div><span class="label">${g.label}</span>${g.items.map((it) => `<button data-part="${gi}" class="${picked[gi] === it ? "on" : ""}">${esc(it)}</button>`).join("")}</div>`).join("")}</div>`;
+
+    const listView = () => `
+      <h1>発表の切り口</h1>
+      <p class="lead">「こういう見方で探すと、話せることが見つかるのでは？」という問いを ${flat.length}個。それぞれに hitode909 の実例が付いています。</p>
+      <p class="nav"><button data-omikuji>1つ引く</button></p>
+      <nav class="toc">${chapters.map((c, i) => `<a href="#c${i}">${esc(c.name)}</a>`).join('')}</nav>
+      ${chapters.map((c, i) => `
+        <h2 id="c${i}">${esc(c.name)}</h2>
+        <p class="chapter-lead">${esc(c.lead)}</p>
+        <ul class="angles">${c.angles.map((a) => `<li><a href="#/${a.n}">${esc(a.question)}</a></li>`).join('')}</ul>`).join('')}`;
+
+    const angleView = (a) => `
+      <div class="nav">
+        <a href="#list">一覧を見る</a>
+        <div class="step">
+          <button data-omikuji>もう1つ</button>
+          <button data-omikuji="chapter">この章からもう1つ</button>
+          <button data-go="${a.n - 1}" ${a.n === 1 ? 'disabled' : ''}>← 前</button>
+          <span>${a.n} / ${flat.length}</span>
+          <button data-go="${a.n + 1}" ${a.n === flat.length ? 'disabled' : ''}>次 →</button>
+        </div>
+      </div>
+      ${partsView()}
+      <p class="chapter-name">${esc(a.chapter)}</p>
+      <p class="question">${esc(prefix() + a.question)}</p>
+      <details class="who" ${opened ? "open" : ""}>
+      <summary>hitode909 の場合を見る</summary>
+      <ul class="examples">${a.examples.map((e) => `
+        <li>
+          <div class="note">${esc(e.note)}</div>
+          <div class="src">${esc(e.date)} <a href="https://blog.sushi.money/entry/${e.basename}" target="_blank" rel="noopener">${esc(e.title)}</a></div>
+        </li>`).join('')}
+      </ul>
+      </details>`;
+
+    const current = () => { const m = location.hash.match(/^#\/(\d+)$/); return m ? flat[Number(m[1]) - 1] : null; };
+    // 実例を開いているか。切り口を移るたびに閉じる
+    let opened = false;
+    // いま見ている切り口以外から1つ選ぶ。chapter を渡すと、その章の中から選ぶ
+    const draw = (chapter) => {
+      const now = current();
+      const pool = flat.filter((a) => a !== now && (!chapter || a.chapter === chapter));
+      return pool[Math.floor(Math.random() * pool.length)].n;
+    };
+    const render = () => {
+      // 最初の画面では、1つ引いて出す
+      if (/^#?\/?$/.test(location.hash)) return location.replace(`#/${draw()}`);
+      const a = current();
+      opened = false;
+      // 章へのリンク（#c3 など）は一覧の中の移動なので、描き直さない
+      if (!a && /^#c\d+$/.test(location.hash) && document.getElementById(location.hash.slice(1))) return;
+      document.getElementById('main').innerHTML = a ? angleView(a) : listView();
+      if (a) scrollTo(0, 0);
+      else if (/^#c\d+$/.test(location.hash)) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+    };
+    const go = (n) => { if (n >= 1 && n <= flat.length) location.hash = `#/${n}`; };
+
+    document.getElementById('main').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-go]');
+      if (b) go(Number(b.dataset.go));
+      const o = e.target.closest("button[data-omikuji]");
+      if (o) go(draw(o.dataset.omikuji === "chapter" ? current().chapter : null));
+      const p = e.target.closest("button[data-part]");
+      if (p) {
+        const gi = Number(p.dataset.part);
+        picked[gi] = picked[gi] === p.textContent ? null : p.textContent;
+        opened = document.querySelector("details.who").open;
+        document.getElementById("main").innerHTML = angleView(current());
+      }
+    });
+    addEventListener('keydown', (e) => {
+      const a = current();
+      if (!a) return;
+      if (e.key === 'ArrowRight') go(a.n + 1);
+      if (e.key === 'ArrowLeft') go(a.n - 1);
+      if (e.key === 'Escape') location.hash = '#list';
+    });
+    addEventListener('hashchange', render);
+
+    (async () => {
+      chapters = (await (await fetch('data/kirikuchi.json')).json()).chapters;
+      chapters.forEach((c) => c.angles.forEach((a) => { a.chapter = c.name; a.n = flat.push(a); }));
+      render();
+    })();
+  </script>
+</body>
+</html>

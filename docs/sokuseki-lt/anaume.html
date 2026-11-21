@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>穴うめLT</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fffdf5; color: #222; line-height: 1.6; }
+    a { color: #0a58ca; }
+    main { max-width: 760px; margin: 0 auto; padding: 24px 16px 80px; }
+    h1 { margin: 0 0 4px; font-size: 26px; }
+    .lead { margin: 0 0 24px; color: #555; }
+    button { font: inherit; padding: 6px 14px; border: 1px solid #222; border-radius: 999px; background: #fff; color: inherit; cursor: pointer; }
+    button.on { background: #222; color: #fff; }
+    button.primary { padding: 10px 24px; font-size: 18px; font-weight: bold; background: #222; color: #fff; }
+
+    /* 入力 */
+    .types { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+    .type-lead { margin: 0 0 16px; font-size: 14px; color: #777; }
+    .q { margin: 0 0 20px; }
+    .q label { display: block; font-weight: bold; font-size: 18px; }
+    .q .ex { margin: 0 0 4px; font-size: 13px; color: #888; }
+    .q textarea { width: 100%; padding: 8px 10px; border: 1px solid #999; border-radius: 8px; font: inherit; font-size: 16px; background: #fff; resize: vertical; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 24px 0 8px; }
+    .share { margin: 8px 0 0; font-size: 14px; color: #555; }
+    .share input { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; font: inherit; font-size: 13px; background: #fff; }
+    .notice { margin: 0 0 16px; padding: 8px 12px; border: 1px solid #222; border-radius: 8px; background: #fff3c4; font-size: 14px; }
+
+    /* 再生 */
+    #player { position: fixed; inset: 0; display: flex; flex-direction: column; background: #fffdf5; cursor: pointer; user-select: none; }
+    .slide { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 5vh 8vw; overflow: auto; }
+    .slide .label { margin: 0 0 0.6em; font-size: clamp(16px, 2.6vw, 30px); color: #777; }
+    .slide .answer { margin: 0; font-size: clamp(28px, 6vw, 72px); font-weight: bold; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .slide .answer.long { font-size: clamp(22px, 4vw, 48px); }
+    .slide.title { align-items: center; text-align: center; }
+    .slide.title .name { margin: 1em 0 0; font-size: clamp(18px, 3vw, 36px); }
+    .bar { display: flex; justify-content: space-between; padding: 8px 16px; font-size: 14px; color: #888; }
+    .bar a { color: #888; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main id="main"></main>
+
+  <div id="player" hidden>
+    <div class="slide" id="slide"></div>
+    <div class="bar">
+      <a href="#" id="back">入力に戻る (Esc)</a>
+      <span id="page"></span>
+    </div>
+  </div>
+
+  <script>
+    // 型ごとの質問。key は保存と共有に使うので、変えると以前の入力が読めなくなる
+    const TYPES = [
+      {
+        id: "odoroki", name: "驚いた話", lead: "予想と現実のズレには、自分の関心や前提が出ます。YAPCに来てから驚いたことでもいい。",
+        questions: [
+          { key: "title", q: "何の話？（タイトル）", ex: "例: 3分で終わると思った作業が3時間かかった" },
+          { key: "what", q: "最近驚いたことは？", ex: "例: ライブラリを1つ上げただけで、テストが半分落ちた" },
+          { key: "expect", q: "どうなると予想していた？", ex: "例: 差分は小さいので、そのまま通ると思っていた" },
+          { key: "actual", q: "実際はどうだった？", ex: "例: 日付の扱いが変わっていて、あちこちで1日ずれた" },
+          { key: "next", q: "次に同じことが起きたら、どうしたい？", ex: "例: 上げる前に変更履歴を読む。1つずつ上げる" },
+          { key: "predict", q: "そうすると、どうなると予想できる？", ex: "例: 落ちる理由がすぐわかる。たぶん30分で終わる" },
+          { key: "name", q: "名前", ex: "例: hitode909" },
+        ],
+      },
+      {
+        id: "tsukutta", name: "作った話", lead: "作ったものは、うまく動かなくても話せます。作りながら気づいたことが話のタネになります。",
+        questions: [
+          { key: "title", q: "何の話？（タイトル）", ex: "例: 家の電気代をグラフにした" },
+          { key: "why", q: "きっかけは？", ex: "例: 冬の請求額を見て、何が原因か知りたくなった" },
+          { key: "made", q: "何を作った？", ex: "例: 30分ごとの使用量を取ってきて、グラフにするスクリプト" },
+          { key: "surprise", q: "作っていて驚いたことは？", ex: "例: 夜中にも使用量の山があった。冷蔵庫だった" },
+          { key: "found", q: "作ってみて、わかったことは？", ex: "例: 見えるようにすると、家族も気にするようになる" },
+          { key: "next", q: "次はどうしたい？", ex: "例: 天気のデータと並べてみたい" },
+          { key: "name", q: "名前", ex: "例: hitode909" },
+        ],
+      },
+      {
+        id: "suki", name: "好きなものの紹介", lead: "専門家向けでなくていい。あなたの好きなものの入門編を作って、仲間を増やしましょう。",
+        questions: [
+          { key: "title", q: "何の話？（タイトル）", ex: "例: 正規表現が好き" },
+          { key: "what", q: "何が好き？ ひとことで", ex: "例: 短い式で、たくさんの文字列を言い当てられるところ" },
+          { key: "since", q: "好きになったきっかけは？", ex: "例: ログの調査で、1行で目的の行だけ取り出せたとき" },
+          { key: "point", q: "ここを見てほしい、というところは？", ex: "例: 先読み。条件だけ確かめて、文字は消費しない" },
+          { key: "surprise", q: "最近、それについて驚いたことは？", ex: "例: 同じ式でも、言語によって結果が違った" },
+          { key: "try", q: "聞いた人に、まず何をしてみてほしい？", ex: "例: エディタの検索で、正規表現モードをオンにしてみる" },
+          { key: "name", q: "名前", ex: "例: hitode909" },
+        ],
+      },
+    ];
+    const STORAGE_KEY = "sokuseki-lt-anaume";
+
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    const typeOf = (id) => TYPES.find((t) => t.id === id) || TYPES[0];
+
+    // state: いま選んでいる型と、型ごとの答え
+    let state = { type: TYPES[0].id, answers: {} };
+    // 共有URLから開いたときは、自分の保存を上書きしないよう、編集するまで保存しない
+    let shared = false;
+
+    const load = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (saved && saved.answers) state = saved;
+      } catch (e) { /* 保存が使えなくても入力はできる */ }
+    };
+    const save = () => {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* 同上 */ }
+    };
+
+    // 共有: 型と答えを JSON にして、UTF-8 の base64url にしてハッシュに入れる
+    const encode = (obj) => {
+      const bytes = new TextEncoder().encode(JSON.stringify(obj));
+      let bin = "";
+      bytes.forEach((b) => { bin += String.fromCharCode(b); });
+      return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    };
+    const decode = (s) => {
+      const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"));
+      return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))));
+    };
+    const loadShared = () => {
+      const m = location.hash.match(/^#s=([\w-]+)$/);
+      if (!m) return;
+      try {
+        const { t, a } = decode(m[1]);
+        state = { type: typeOf(t).id, answers: { ...state.answers, [typeOf(t).id]: a } };
+        shared = true;
+      } catch (e) { /* 壊れたURLは無視して、ふだんの入力を出す */ }
+    };
+    const shareURL = () => {
+      const a = {};
+      Object.entries(current()).forEach(([k, v]) => { if (v.trim()) a[k] = v; });
+      return `${location.href.split("#")[0]}#s=${encode({ t: state.type, a })}`;
+    };
+
+    const current = () => (state.answers[state.type] ||= {});
+
+    const formView = () => {
+      const t = typeOf(state.type);
+      const a = current();
+      return `
+        <h1>穴うめLT</h1>
+        <p class="lead">質問に1〜2行ずつ答えると、3分のLTスライドになります。空欄の質問はスライドに出ません。</p>
+        ${shared ? `<p class="notice">共有されたスライドを開いています。書き換えると、この端末に保存されます。</p>` : ""}
+        <div class="types">${TYPES.map((x) => `<button data-type="${x.id}" class="${x.id === t.id ? "on" : ""}">${esc(x.name)}</button>`).join("")}</div>
+        <p class="type-lead">${esc(t.lead)}</p>
+        ${t.questions.map((q) => `
+          <div class="q">
+            <label for="q-${q.key}">${esc(q.q)}</label>
+            <p class="ex">${esc(q.ex)}</p>
+            <textarea id="q-${q.key}" data-key="${q.key}" rows="2">${esc(a[q.key] || "")}</textarea>
+          </div>`).join("")}
+        <div class="actions">
+          <button class="primary" data-play>スライドにする</button>
+          <button data-share>URLにして共有</button>
+        </div>
+        <div class="share" id="share" hidden>
+          <p id="share-msg"></p>
+          <input id="share-url" readonly>
+        </div>`;
+    };
+    const renderForm = () => { document.getElementById("main").innerHTML = formView(); };
+
+    // スライド: 1枚目はタイトルと名前、そのあと答えを1枚ずつ
+    let pages = [], n = 0;
+    const buildPages = () => {
+      const t = typeOf(state.type);
+      const a = current();
+      const v = (k) => (a[k] || "").trim();
+      const list = [];
+      if (v("title") || v("name")) list.push({ title: v("title"), name: v("name") });
+      t.questions.forEach((q) => {
+        if (q.key === "title" || q.key === "name" || !v(q.key)) return;
+        list.push({ label: q.q, answer: v(q.key) });
+      });
+      return list;
+    };
+    const renderSlide = () => {
+      const p = pages[n];
+      const slide = document.getElementById("slide");
+      slide.classList.toggle("title", !p.label);
+      slide.innerHTML = p.label
+        ? `<p class="label">${esc(p.label)}</p><p class="answer ${p.answer.length > 40 ? "long" : ""}">${esc(p.answer)}</p>`
+        : `<p class="answer">${esc(p.title)}</p>${p.name ? `<p class="name">${esc(p.name)}</p>` : ""}`;
+      document.getElementById("page").textContent = `${n + 1} / ${pages.length}`;
+    };
+    const play = () => {
+      pages = buildPages();
+      if (!pages.length) return alert("どれか1つ答えると、スライドになります");
+      n = 0;
+      renderSlide();
+      document.getElementById("player").hidden = false;
+      try { document.documentElement.requestFullscreen?.().catch(() => {}); } catch (e) { /* 全画面にできない端末では、画面いっぱいの表示のまま */ }
+    };
+    const stop = () => {
+      document.getElementById("player").hidden = true;
+      if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+    };
+    const move = (d) => {
+      if (n + d < 0 || n + d >= pages.length) return;
+      n += d;
+      renderSlide();
+    };
+    const playing = () => !document.getElementById("player").hidden;
+
+    document.getElementById("main").addEventListener("input", (e) => {
+      const key = e.target.dataset.key;
+      if (!key) return;
+      current()[key] = e.target.value;
+      if (shared) {
+        // 編集を始めたら、共有URLから自分の入力に切り替える
+        shared = false;
+        history.replaceState(null, "", location.pathname + location.search);
+        document.querySelector(".notice")?.remove();
+      }
+      save();
+    });
+    document.getElementById("main").addEventListener("click", async (e) => {
+      const t = e.target.closest("button[data-type]");
+      if (t) {
+        state.type = t.dataset.type;
+        if (!shared) save();
+        renderForm();
+      }
+      if (e.target.closest("button[data-play]")) play();
+      if (e.target.closest("button[data-share]")) {
+        const url = shareURL();
+        let msg = "このURLを開くと、同じスライドが見られます。入力はサーバーに送られません。";
+        try { await navigator.clipboard.writeText(url); msg = "URLをコピーしました。" + msg; } catch (err) { /* コピーできないときは、表示したURLを手で選んでもらう */ }
+        document.getElementById("share").hidden = false;
+        document.getElementById("share-msg").textContent = msg;
+        const input = document.getElementById("share-url");
+        input.value = url;
+        input.select();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (!playing()) return;
+      if (["ArrowRight", "ArrowDown", " ", "PageDown", "Enter"].includes(e.key)) { e.preventDefault(); move(1); }
+      if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); move(-1); }
+      if (e.key === "Escape") stop();
+    });
+    // 全画面中の Esc はブラウザが受け取るので、全画面が解けたら入力に戻る
+    document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && playing()) stop(); });
+    // 画面の左3分の1で戻る、それ以外で進む
+    document.getElementById("player").addEventListener("click", (e) => {
+      if (e.target.closest("a")) return;
+      move(e.clientX < innerWidth / 3 ? -1 : 1);
+    });
+    document.getElementById("back").addEventListener("click", (e) => { e.preventDefault(); stop(); });
+
+    load();
+    loadShared();
+    renderForm();
+  </script>
+</body>
+</html>

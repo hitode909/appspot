@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>スライド</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fffdf5; color: #222; }
+    main { max-width: 1200px; margin: 0 auto; padding: 16px; }
+    .back { font-size: 14px; color: #777; }
+  </style>
+  <script src="deck.js"></script>
+</head>
+<body>
+  <main>
+    <p><a class="back" href="./">即席LT大会へ</a></p>
+    <div id="deck"></div>
+  </main>
+  <script>
+    // deck.html?src=hints/foo.md で、そのデッキを1つだけ大きく出す
+    const q = new URLSearchParams(location.search);
+    const el = document.getElementById('deck');
+    el.className = 'deck';
+    if (q.get('src')) el.dataset.src = q.get('src');
+    if (q.has('ending')) el.dataset.ending = '';
+  </script>
+</body>
+</html>

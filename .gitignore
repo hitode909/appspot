@@ -23,4 +23,4 @@ build/
 Thumbs.db
 
 # Claude Code
-.claude/
+.claude/settings.local.json

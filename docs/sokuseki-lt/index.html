@@ -6,193 +6,174 @@
   <title>即席LT大会</title>
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #fffdf5;
-      color: #222;
-    }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fffdf5; color: #222; line-height: 1.7; }
     a { color: #0a58ca; }
-
-    /* 一覧 */
-    #list { padding: 24px 16px; max-width: 1100px; margin: 0 auto; }
-    #list h1 { margin: 0 0 16px; }
-    .tools { display: flex; gap: 8px; margin-bottom: 16px; }
-    .tools button { font-size: 16px; padding: 8px 16px; cursor: pointer; }
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 12px;
-    }
-    .card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px;
-      min-height: 96px;
-      border: 2px solid #222;
-      border-radius: 8px;
-      background: #fff;
-      color: inherit;
-      text-decoration: none;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .card:hover { background: #fff3c4; }
-    .card .play { font-size: 28px; }
-
-    /* 再生 */
-    #player {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      background: #fffdf5;
-      cursor: pointer;
-      user-select: none;
-    }
-    .slide {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 5vh 8vw;
-      font-size: clamp(20px, 4vw, 48px);
-      line-height: 1.5;
-      overflow: auto;
-    }
-    .slide.title { align-items: center; text-align: center; }
-    .slide h1 { font-size: 1.6em; margin: 0; }
-    .slide h2 { font-size: 1.2em; margin: 0 0 0.5em; }
-    .slide ul { margin: 0 0 0.5em; padding-left: 1.2em; }
-    .slide p { margin: 0 0 0.5em; }
-    .slide a { font-size: 0.6em; }
-    .bar {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 16px;
-      font-size: 14px;
-      color: #888;
-    }
-    .bar a { color: #888; }
-    [hidden] { display: none !important; }
+    main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 120px; }
+    h1 { margin: 0 0 4px; font-size: 30px; }
+    .lead { margin: 0 0 16px; color: #555; }
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 40px; }
+    .toc a { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; color: inherit; text-decoration: none; font-size: 14px; background: #fff; }
+    .toc a:hover { background: #fff3c4; }
+    section { margin: 0 0 56px; }
+    h2 { margin: 0 0 8px; font-size: 24px; border-bottom: 2px solid #222; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    h2 .time { font-size: 14px; font-weight: normal; color: #777; }
+    h3 { margin: 32px 0 8px; font-size: 18px; }
+    .memo { margin: 0 0 20px; padding: 10px 14px; border-left: 4px solid #f0b400; background: #fff; font-size: 15px; }
+    .memo ul { margin: 0; padding-left: 1.2em; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 8px 20px; }
+    .grid .deck-title { font-size: 14px; }
   </style>
+  <script src="deck.js"></script>
 </head>
 <body>
-  <main id="list">
+  <main>
     <h1>即席LT大会</h1>
-    <div class="tools">
-      <button id="shuffle">シャッフル</button>
-      <button id="random">ランダムに1つ再生</button>
-    </div>
-    <div class="cards" id="cards"></div>
+    <p class="lead">その場で発表を作って、その場で発表する2時間のワークショップ。このページを上から順に進めると、会を開けます。途中の枠は、そのまま再生できるスライドや道具です。</p>
+    <nav class="toc">
+      <a href="#junbi">準備</a>
+      <a href="#hajimeni">はじめに</a>
+      <a href="#rules">ルール説明</a>
+      <a href="#howto">トークのつくりかた</a>
+      <a href="#neta">ネタが見つからない人へ</a>
+      <a href="#worktime">資料作成タイム</a>
+      <a href="#happyo">発表タイム</a>
+      <a href="#amari">時間が余ったら</a>
+      <a href="#owari">最後に</a>
+      <a href="#zenbu">小ネタ全部</a>
+    </nav>
+
+    <section id="junbi">
+      <h2>準備 <span class="time">開始前</span></h2>
+      <div class="memo"><ul>
+        <li>ふせんとペンを前方に置く。発表した人がタイトルと名前を書いて貼る壁を決める</li>
+        <li>発表者のPCのつなぎ方と、ハッシュタグの投稿を映す方法を決めておく</li>
+        <li>このページと発表タイマーを、別のタブで開いておく</li>
+      </ul></div>
+      <div class="deck" data-page="timer.html" data-title="発表タイマー"></div>
+    </section>
+
+    <section id="hajimeni">
+      <h2>はじめに <span class="time">5分</span></h2>
+      <div class="deck" data-src="slides/opening.md" data-title="オープニング"></div>
+    </section>
+
+    <section id="rules">
+      <h2>第1部：ルール説明 <span class="time">5分</span></h2>
+      <div class="deck" data-src="slides/rules.md" data-title="即席LT大会のルール"></div>
+    </section>
+
+    <section id="howto">
+      <h2>第2部：YAPCトークのつくりかた <span class="time">15分</span></h2>
+      <div class="deck" data-src="slides/howto.md" data-title="YAPCトークのつくりかた"></div>
+      <h3>hitode909 の過去の発表</h3>
+      <div class="memo">つくりかたの話の途中で、実物を1枚ずつめくって見せる。</div>
+      <div class="grid">
+        <div class="deck" data-page="https://speakerdeck.com/player/41215c801248013275035ab86563b68e" data-title="2014 Perlの静的解析入門とPerlリファクタリングツールApp::PRTのご紹介"></div>
+        <div class="deck" data-page="https://speakerdeck.com/player/b07a8c18db9444db891ff477fa860274" data-title="2015 Perlの上にも三年 〜 ずっとイケてるサービスを作り続ける技術 〜"></div>
+        <div class="deck" data-page="https://speakerdeck.com/player/014b6c21f0d845f1b52fd24f9b4985de" data-title="2017 はてなブログ最近の開発テクニックと最新の開発風景のご紹介"></div>
+        <div class="deck" data-page="https://speakerdeck.com/player/8ab15289b39b4e0299b3ec233fe51654" data-title="2025 「バイブス静的解析」でレガシーコードを分析・改善しよう"></div>
+        <div class="deck" data-page="https://speakerdeck.com/player/6b63e9d3dd36432793e014d0a59c963f" data-title="社内LT how to buy clothes"></div>
+        <div class="deck" data-page="https://speakerdeck.com/player/27cb04a012360130f91e12313d142636" data-title="2012 画面をチカチカさせるノウハウ"></div>
+      </div>
+    </section>
+
+    <section id="neta">
+      <h2>ネタが見つからない人へ <span class="time">必要なら</span></h2>
+      <div class="memo">手が止まっている人がいたら、どれか1つを再生する。切り口は、参加者が手元で開いて1つ引くこともできる。</div>
+      <div class="deck" data-page="kirikuchi.html" data-title="発表の切り口（1つ引く）"></div>
+      <h3>手元から探す</h3>
+      <div class="grid">
+        <div class="deck" data-src="hints/neta-shell-history.md" data-ending></div>
+        <div class="deck" data-src="hints/neta-photo-roll.md" data-ending></div>
+        <div class="deck" data-src="hints/neta-browser-tabs.md" data-ending></div>
+        <div class="deck" data-src="hints/neta-jibun-no-kiroku.md" data-ending></div>
+        <div class="deck" data-src="hints/neta-hamatta.md" data-ending></div>
+        <div class="deck" data-src="hints/neta-yapc-ni-noru.md" data-ending></div>
+      </div>
+    </section>
+
+    <section id="worktime">
+      <h2>資料作成タイム <span class="time">ここから最後まで</span></h2>
+      <div class="deck" data-src="slides/worktime.md" data-title="資料作成タイム"></div>
+      <h3>質問に答えるだけでスライドにする</h3>
+      <div class="memo">プレゼンツールがない人向け。スマホでも使える。答えを URL にして共有できる。</div>
+      <div class="deck" data-page="anaume.html" data-title="穴うめLT"></div>
+      <h3>資料を手早く作る</h3>
+      <div class="grid">
+        <div class="deck" data-src="hints/tebayaku-shashin-4mai.md"></div>
+        <div class="deck" data-src="hints/tebayaku-editor-ookiku.md"></div>
+        <div class="deck" data-src="hints/tebayaku-temoto-no-mono.md"></div>
+        <div class="deck" data-src="hints/tebayaku-3pun-maisu.md"></div>
+      </div>
+      <h3>話の始め方・終わり方</h3>
+      <div class="grid">
+        <div class="deck" data-src="hints/hajimekata-tsukami.md"></div>
+        <div class="deck" data-src="hints/hajimekata-owarikata.md"></div>
+        <div class="deck" data-src="hints/hajimekata-3pun-kata.md"></div>
+        <div class="deck" data-src="hints/hajimekata-makura.md"></div>
+      </div>
+      <h3>縛りを1つ足す</h3>
+      <div class="memo">決めることが多くて進まない人に。「次の人はこれで」と会場で引いても遊べる。</div>
+      <div class="deck" data-page="shibari.html" data-title="縛りガチャ"></div>
+    </section>
+
+    <section id="happyo">
+      <h2>発表タイム <span class="time">準備ができた人から</span></h2>
+      <div class="memo"><ul>
+        <li>発表のたびにタイマーを出す。3分は目安で、止めない</li>
+        <li>発表が途切れたら、下の心得か、はげましの一言を1つ出す</li>
+      </ul></div>
+      <div class="deck" data-page="hagemashi.html" data-title="はげましの一言"></div>
+      <h3>発表の心得</h3>
+      <div class="grid">
+        <div class="deck" data-src="hints/kokoroe-shiryo-wa-haikei.md"></div>
+        <div class="deck" data-src="hints/kokoroe-jibun-no-hanashi.md"></div>
+        <div class="deck" data-src="hints/kokoroe-kinchou.md"></div>
+        <div class="deck" data-src="hints/kokoroe-jikan-to-shitsumon.md"></div>
+        <div class="deck" data-src="hints/kokoroe-kikite.md"></div>
+      </div>
+    </section>
+
+    <section id="amari">
+      <h2>時間が余ったら <span class="time">1〜3分ずつ</span></h2>
+      <div class="memo">過去の YAPC のトークを数えたり並べたりしたもの。「締め切りの日」「何年のトーク？」は会場で見せやすい。</div>
+      <div class="deck" data-page="yapc-talks.html" data-title="YAPCトーク研究室"></div>
+      <h3>プレゼンカラオケ</h3>
+      <div class="memo">AIが作った初見のスライドを引いて、その場で読みながら3分話す。まず hitode909 が1本やってみせ、「1本やってみます」という人に渡す。</div>
+      <div class="deck" data-page="karaoke.html" data-title="プレゼンカラオケ"></div>
+      <h3>二軸プロット</h3>
+      <div class="memo">発表したタイトルをふせんにして、2本の軸の上に置く。置き場所の正しさより「なぜそこに置いたか」を話す。軸ガチャで、その場限りの軸に替えてもよい。</div>
+      <div class="deck" data-page="nijiku.html" data-title="二軸プロット"></div>
+      <div class="grid">
+        <div class="deck" data-src="hints/naze-ka-kininaru.md" data-ending></div>
+      </div>
+    </section>
+
+    <section id="owari">
+      <h2>最後に <span class="time">15:50ごろ</span></h2>
+      <div class="memo"><ul>
+        <li>ベスト即席LT賞を発表する。会場にいなければ順に繰り上げ</li>
+        <li>ふせんの壁の写真を撮る</li>
+      </ul></div>
+      <div class="deck" data-src="hints/community-chihou.md"></div>
+    </section>
+
+    <section id="zenbu">
+      <h2>小ネタ全部</h2>
+      <div class="grid" id="all"></div>
+    </section>
   </main>
 
-  <div id="player" hidden>
-    <div class="slide" id="slide"></div>
-    <div class="bar">
-      <a href="#">一覧へ戻る (Esc)</a>
-      <span id="page"></span>
-    </div>
-  </div>
-
   <script>
-    // 全部のヒントの最後に付けるページ
-    const ENDING = `## あなたの番です
-
-- 最近驚いたことは？
-- どうなると予想していた？
-- 次に同じことが起きたら、どうしたい？
-- そうすると、どうなると予想できる？`;
-
-    let hints = [];
-    const decks = {};
-
-    const escapeHTML = (s) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-    const inline = (s) => escapeHTML(s)
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\[(.+?)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-
-    // ページ単位の小さな Markdown 変換。見出し・箇条書き・段落・リンク・太字だけ扱う
-    const renderPage = (md) => {
-      const html = [];
-      let list = null;
-      const closeList = () => { if (list) { html.push(`<ul>${list.join('')}</ul>`); list = null; } };
-      for (const line of md.trim().split('\n')) {
-        if (line.startsWith('- ')) {
-          (list ||= []).push(`<li>${inline(line.slice(2))}</li>`);
-          continue;
-        }
-        closeList();
-        if (line.startsWith('# ')) html.push(`<h1>${inline(line.slice(2))}</h1>`);
-        else if (line.startsWith('## ')) html.push(`<h2>${inline(line.slice(3))}</h2>`);
-        else if (line.trim()) html.push(`<p>${inline(line)}</p>`);
-      }
-      closeList();
-      return html.join('');
-    };
-
-    const loadDeck = async (slug) => {
-      if (!decks[slug]) {
-        const md = await (await fetch(`hints/${slug}.md`)).text();
-        decks[slug] = [...md.split(/^---$/m), ENDING].map((p) => p.trim()).filter(Boolean);
-      }
-      return decks[slug];
-    };
-
-    const renderCards = () => {
-      document.getElementById('cards').innerHTML = hints.map((h) =>
-        `<a class="card" href="#/${h.slug}/1"><span class="play">▶</span>${escapeHTML(h.title)}</a>`
-      ).join('');
-    };
-
-    // URL は #/スラッグ/ページ番号
-    const route = async () => {
-      const m = location.hash.match(/^#\/([\w-]+)\/(\d+)$/);
-      document.getElementById('list').hidden = !!m;
-      document.getElementById('player').hidden = !m;
-      if (!m) return;
-      const pages = await loadDeck(m[1]);
-      const n = Math.min(Math.max(Number(m[2]), 1), pages.length);
-      const slide = document.getElementById('slide');
-      slide.innerHTML = renderPage(pages[n - 1]);
-      slide.classList.toggle('title', /^# [^\n]*$/.test(pages[n - 1]));
-      document.getElementById('page').textContent = `${n} / ${pages.length}`;
-    };
-
-    const move = (d) => {
-      const m = location.hash.match(/^#\/([\w-]+)\/(\d+)$/);
-      if (!m) return;
-      const pages = decks[m[1]];
-      const n = Number(m[2]) + d;
-      if (n < 1 || n > pages.length) return;
-      location.hash = `#/${m[1]}/${n}`;
-    };
-
-    document.addEventListener('keydown', (e) => {
-      if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); move(1); }
-      if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); move(-1); }
-      if (e.key === 'Escape') location.hash = '';
-    });
-    // 画面の左3分の1で戻る、それ以外で進む。リンクのクリックは除く
-    document.getElementById('player').addEventListener('click', (e) => {
-      if (e.target.closest('a')) return;
-      move(e.clientX < innerWidth / 3 ? -1 : 1);
-    });
-    document.getElementById('shuffle').addEventListener('click', () => {
-      hints.sort(() => Math.random() - 0.5);
-      renderCards();
-    });
-    document.getElementById('random').addEventListener('click', () => {
-      const h = hints[Math.floor(Math.random() * hints.length)];
-      location.hash = `#/${h.slug}/1`;
-    });
-    addEventListener('hashchange', route);
+    // 以前の再生ページのURL（#/スラッグ/ページ）は、1つだけ大きく出すページに移す
+    const old = location.hash.match(/^#\/([\w-]+)\/\d+$/);
+    if (old) location.replace(`deck.html?src=hints/${old[1]}.md`);
 
     (async () => {
-      hints = await (await fetch('hints/index.json')).json();
-      renderCards();
-      route();
+      const hints = await (await fetch('hints/index.json')).json();
+      const all = document.getElementById('all');
+      all.innerHTML = hints.map((h) => `<div class="deck" data-src="hints/${h.slug}.md"${/^(neta-|naze-)/.test(h.slug) ? ' data-ending' : ''}></div>`).join('');
+      window.mountDecks(all);
     })();
   </script>
 </body>

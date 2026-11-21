@@ -3,6 +3,7 @@
 // <div class="deck" data-src="hints/foo.md"></div>        Markdown のデッキ
 // <div class="deck" data-page="shibari.html"></div>       ページをそのまま枠に入れる
 // data-title で枠の上の見出しを変えられる
+// はみ出す1枚は文字を縮めて収める
 //
 // Markdown は、`---` の行があればそこで区切る。なければ `# ` の見出しごとに1枚にする
 // 扱う記法: # 見出し、## 小見出し、- 箇条書き、段落、[リンク](URL)、**太字**、`コード`、![画像](URL)
@@ -17,7 +18,7 @@
     .deck-frame { position: relative; aspect-ratio: 16 / 9; border: 2px solid #222; border-radius: 8px; background: #fff; overflow: hidden; container-type: inline-size; }
     .deck-frame:fullscreen { border: 0; border-radius: 0; aspect-ratio: auto; }
     .deck-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
-    .deck-slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5cqw 7cqw; font-size: 3.6cqw; line-height: 1.5; overflow: auto; cursor: pointer; user-select: none; color: #222; }
+    .deck-slide { --fit: 1; position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: safe center; padding: 5cqw 7cqw; font-size: calc(3.6cqw * var(--fit)); line-height: 1.5; overflow: auto; overflow-wrap: anywhere; cursor: pointer; user-select: none; color: #222; }
     .deck-slide.title { align-items: center; text-align: center; }
     .deck-slide h1, .deck-slide h2 { display: block; border: 0; padding: 0; font-weight: bold; }
     .deck-slide h1 { font-size: 1.6em; margin: 0 0 0.3em; line-height: 1.3; }
@@ -28,7 +29,7 @@
     .deck-slide h1 a, .deck-slide h2 a { font-size: inherit; }
     .deck-slide code { font-size: 0.9em; background: #f0ece0; padding: 0 0.2em; border-radius: 3px; }
     .deck-slide img { max-width: 100%; max-height: 60cqw; object-fit: contain; }
-    .deck-frame:fullscreen .deck-slide { font-size: min(3.6vw, 6.4vh); padding: 5vh 8vw; }
+    .deck-frame:fullscreen .deck-slide { font-size: calc(min(3.6vw, 6.4vh) * var(--fit)); padding: 5vh 8vw; }
     .deck-progress { position: absolute; left: 0; bottom: 0; height: 4px; background: #f0b400; transition: width 0.2s; }
   `;
 
@@ -62,6 +63,18 @@
   // 見出しだけ（と短い行が1つ）のページは、表紙として真ん中に置く
   const isTitle = (p) => /^# /.test(p) && p.split('\n').filter((l) => l.trim()).length <= 2 && !/^\s*- /m.test(p);
 
+  // はみ出したら文字を少しずつ縮める。MIN_FIT まで縮めても収まらなければ、縦にスクロールさせる
+  const MIN_FIT = 0.55;
+  const fit = (slide) => {
+    let f = 1;
+    slide.style.setProperty('--fit', f);
+    const over = () => slide.scrollHeight > slide.clientHeight + 1 || slide.scrollWidth > slide.clientWidth + 1;
+    while (over() && f > MIN_FIT) {
+      f = Math.max(MIN_FIT, f * 0.9);
+      slide.style.setProperty('--fit', f);
+    }
+  };
+
   let active = null;
   const decks = [];
 
@@ -92,8 +105,11 @@
       slide.scrollTop = 0;
       tools.querySelector('.deck-page').textContent = `${n + 1} / ${pages.length}`;
       frame.querySelector('.deck-progress').style.width = `${((n + 1) / pages.length) * 100}%`;
+      fit(slide);
+      slide.querySelectorAll('img').forEach((img) => img.addEventListener('load', () => fit(slide)));
     };
     const move = (d) => { n = Math.min(Math.max(n + d, 0), pages.length - 1); show(); };
+    new ResizeObserver(() => fit(slide)).observe(frame);
     tools.querySelectorAll('[data-d]').forEach((b) => (b.onclick = () => { active = move; move(Number(b.dataset.d)); }));
     tools.querySelector('[data-full]').onclick = () => { active = move; full(); };
     // 枠の左3分の1で戻る、それ以外で進む。リンクのクリックは除く

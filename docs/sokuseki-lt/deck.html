@@ -7,14 +7,19 @@
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; font-family: system-ui, sans-serif; background: #fff; color: #222; }
-    main { max-width: 1200px; margin: 0 auto; padding: 16px; }
+    main { padding: 12px 16px; }
+    main > p { margin: 0 0 6px; line-height: 22px; }
     .back { font-size: 14px; color: #777; }
+    /* 画面に入るいちばん大きい 16:9 にする。上の行（戻るリンクと見出し）と余白の分、約90pxを引く */
+    #deck { --h: calc(100vh - 90px); width: min(100%, calc(var(--h) * 16 / 9)); margin: 0 auto; }
+    @supports (height: 100dvh) { #deck { --h: calc(100dvh - 90px); } }
+    #deck.deck { margin-bottom: 0; }
   </style>
   <script src="deck.js"></script>
 </head>
 <body>
   <main>
-    <p><a class="back" href="./">即席LT大会へ</a></p>
+    <p><a class="back" href="index.html">即席LT大会へ</a></p>
     <div id="deck"></div>
   </main>
   <script>

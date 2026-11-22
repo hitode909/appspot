@@ -10,51 +10,53 @@ hitode909がこれまでの発表を振り返りながら、みなさまの発�
 
 # hitode909のこれまでの発表を分析
 
-# 2014 [Speaker Deck: Perlの静的解析入門とPerlリファクタリングツールApp::PRTのご紹介](https://speakerdeck.com/hitode909/perlfalsejing-de-jie-xi-ru-men-toperlrihuakutaringuturuapp-prtfalsegoshao-jie)
+# 2014 [Perlの静的解析入門とPerlリファクタリングツールApp::PRTのご紹介](https://speakerdeck.com/hitode909/perlfalsejing-de-jie-xi-ru-men-toperlrihuakutaringuturuapp-prtfalsegoshao-jie)
 
-きっかけ：Perlアプリケーションのコードベースのリファクタリングに苦戦していた
-当時、業務時間中に「20%デー」があり、宣言したテーマに取り組んでみようという試みがあった
-話題：20%デーから開発し始めたPerlのリファクタリングツールについて発表した。
-型：静的解析の入門から、静的解析ライブラリPPIの魅力を伝える。
+きっかけ：Perlのコードのリファクタリングに苦戦していた。宣言したテーマに業務時間で取り組む「20%デー」があった
+話題：20%デーから作り始めたPerlのリファクタリングツール
+型：静的解析の入門から、静的解析ライブラリPPIの魅力を伝える
 
-# 2015 [Speaker Deck: Perlの上にも三年 〜 ずっとイケてるサービスを作り続ける技術 〜](https://speakerdeck.com/hitode909/perlfalseshang-nimosan-nian-zututoiketerusabisuwozuo-risok-keruji-shu)
+# 2015 [Perlの上にも三年 〜 ずっとイケてるサービスを作り続ける技術 〜](https://speakerdeck.com/hitode909/perlfalseshang-nimosan-nian-zututoiketerusabisuwozuo-risok-keruji-shu)
 
-きっかけ：厚いフレームワークを使わない薄いフレームワークでの開発をしていたが、DBからの値の引き方や処理をどこに置くかなど日々議論しながら進めていた
-話題：社内フレームワークの歴史や、作りたい機能をどう書くか、どんな概念を使ってアプリケーションを構築するかという課題
+きっかけ：薄いフレームワークで、DBからの値の引き方や処理の置き場所を日々議論しながら開発していた
+話題：社内フレームワークの歴史、作りたい機能をどう書くか、どんな概念でアプリケーションを組み立てるか
 型：考えた軌跡を発信する
 
 # 2016 [はてなブログのAMP対応で学ぶウェブサービスのAMP対応](https://blog.sushi.money/entry/yapc8oji)
-きっかけ：Googleが提唱する「AMP」をはてなブログに導入する実装をしていたが、画像サイズをサーバーサイドで知っている必要があり苦労していた
-話題：AMPの紹介と、はてなブログでの対応方針、技術的な難しいことを紹介
-型：AMP対応しようとすると、こんなに苦しいことがあって、こうするしかない、というおもしろさを紹介
+きっかけ：はてなブログにAMPを入れていたが、画像サイズをサーバーサイドで知る必要があり苦労した
+話題：AMPの紹介、対応方針、技術的に難しかったところ
+型：「こんなに苦しくて、こうするしかない」というおもしろさを紹介
 
 ※ヤパチーなのですこし外れますが仲間枠
 
-# 2017 [Speaker Deck: はてなブログ最近の開発テクニックと最新の開発風景のご紹介](https://speakerdeck.com/hitode909/hatenaburoguzui-jin-falsekai-fa-tekunitukutozui-xin-falsekai-fa-feng-jing-falsegoshao-jie)
-きっかけ：バックエンドの設計以外にもこだわりポイントや、チームで開発するなかで工夫していることがいろいろとあった
-話題：デザイナも触るテンプレートの構造解析などのアプローチ、デザイナに対する開発環境の支援など、全員の環境を揃えて一定の開発体験を提供する
+# 2017 [はてなブログ最近の開発テクニックと最新の開発風景のご紹介](https://speakerdeck.com/hitode909/hatenaburoguzui-jin-falsekai-fa-tekunitukutozui-xin-falsekai-fa-feng-jing-falsegoshao-jie)
+きっかけ：バックエンドの設計以外にも、こだわりやチーム開発の工夫がいろいろあった
+話題：デザイナも触るテンプレートの構造解析、デザイナの開発環境の支援など、全員に同じ開発体験を届ける工夫
 型：「コツ」や「こだわった点」を紹介する
 
 # 2019 [WebVRで作品を作って展示しよう](https://blog.sushi.money/entry/yapc2019tokyo)
-きっかけ：プライベートでVRコンテンツを作って展示することがあり、それにむけてWebVRについて学んでいた
-話題：構築のための技術紹介、現地に展示するうえでの苦労や工夫
-型：技術の概要紹介→実践の紹介→会場の人たちにVRコンテンツを作ろうと呼びかけ
-参加者による作例： [A-Frameを使ってVRマニ車を回す #HTML - Qiita](https://qiita.com/silloi/items/b7755aa71788fa4f57b9)
+きっかけ：プライベートでVRコンテンツを展示することになり、WebVRを学んでいた
+話題：作るための技術、現地で展示するときの苦労や工夫
+型：技術の概要→実践→「みなさんも作りましょう」と呼びかけ
+参加者の作例： [A-Frameを使ってVRマニ車を回す #HTML - Qiita](https://qiita.com/silloi/items/b7755aa71788fa4f57b9)
 
 # 2019 [似ているけどちょっと違うものたちをモデリングする技術](https://scrapbox.io/hitode909/%E4%BC%BC%E3%81%A6%E3%81%84%E3%82%8B%E3%81%91%E3%81%A9%E3%81%A1%E3%82%87%E3%81%A3%E3%81%A8%E9%81%95%E3%81%86%E3%82%82%E3%81%AE%E3%81%9F%E3%81%A1%E3%82%92%E3%83%A2%E3%83%87%E3%83%AA%E3%83%B3%E3%82%B0%E3%81%99%E3%82%8B%E6%8A%80%E8%A1%93)
 
-きっかけ：GigaViewerではマルチテナントでさまざまな振る舞いのテナントがあり、どう表現するかを工夫していた
-話題：マルチテナントのモデリング方法、シチュエーションに応じた使い分け
-型：簡単な場合から難しい場合まで、という軸の上で、カタログとして紹介
+きっかけ：GigaViewerで、テナントごとの振る舞いの違いをどう表すか悩んでいた
+話題：マルチテナントのモデリング方法と、場面に応じた使い分け
+型：簡単な場合から難しい場合まで、カタログとして並べる
 
-現在：テナントごとの違いはDIで表現 [マンガビューワ「GigaViewer」をGoでリプレイスしようとしている話 | ドクセル](https://www.docswell.com/s/momochi29/5X6717-2025-10-31-hatena-go)
+現在：テナントごとの違いはDIで表現 [Goでリプレイスしている話](https://www.docswell.com/s/momochi29/5X6717-2025-10-31-hatena-go)
 
-# 2025 [Speaker Deck: 「バイブス静的解析」でレガシーコードを分析・改善しよう](https://speakerdeck.com/hitode909/baibusujing-de-jie-xi-deregasikodowofen-xi-gai-shan-siyou)
+# 2025 [「バイブス静的解析」でレガシーコードを分析・改善しよう](https://speakerdeck.com/hitode909/baibusujing-de-jie-xi-deregasikodowofen-xi-gai-shan-siyou)
 
-きっかけ：バイブコーディングした結果使えないコードが出てくることが多かった
-話題：コード自体をバイブコーディングするのではなくコードを書き換えるツールをバイブスで作ろうという呼びかけ
+きっかけ：バイブコーディングすると、使えないコードがよく出てきた
+話題：コードではなく、コードを書き換えるツールをバイブスで作ろう
 型：やってみませんか？
-思い出：急いで喋りすぎて、おまけのスライドをみながら会場の方たちとおしゃべりしたほうが思い出に残っている
+# 2025 の思い出
+
+急いで喋りすぎた
+おまけのスライドで会場とおしゃべりしたほうが記憶に残っている
 
 # hitode909の特徴
 

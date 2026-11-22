@@ -28,7 +28,7 @@
 <body>
   <main>
     <h1>即席LT大会</h1>
-    <p class="lead">その場で発表を作って、その場で発表する2時間のワークショップ。このページを上から順に進めると、会を開けます。途中の枠は、そのまま再生できるスライドや道具です。</p>
+    <p class="lead">その場で発表を作って、その場で発表する100分のワークショップ。このページを上から順に進めると、会を開けます。途中の枠は、そのまま再生できるスライドや道具です。</p>
     <nav class="toc">
       <a href="#junbi">準備</a>
       <a href="#hajimeni">はじめに</a>
@@ -173,7 +173,7 @@
     (async () => {
       const hints = await (await fetch('hints/index.json')).json();
       const all = document.getElementById('all');
-      all.innerHTML = hints.map((h) => `<div class="deck" data-src="hints/${h.slug}.md"${/^(neta-|naze-)/.test(h.slug) ? '' : ''}></div>`).join('');
+      all.innerHTML = hints.map((h) => `<div class="deck" data-src="hints/${h.slug}.md"></div>`).join('');
       window.mountDecks(all);
     })();
   </script>

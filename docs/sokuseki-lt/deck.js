@@ -108,10 +108,11 @@
       return;
     }
 
+    // 名前は読み込む前に、ページに並んだ順で決める。読み込みの終わる順に左右されないように
+    const id = deckId(el.dataset.src);
     const md = await (await fetch(el.dataset.src)).text();
     const pages = split(md);
     if (!title) el.querySelector('.deck-title').textContent = (pages[0].match(/^# (.+)$/m) || [, ''])[1].replace(/\[(.+?)\]\(.+?\)/g, '$1');
-    const id = deckId(el.dataset.src);
     const fromHash = location.hash.match(/^#([\w-]+)\/(\d+)$/);
     let n = fromHash && fromHash[1] === id ? Math.min(Number(fromHash[2]), pages.length) - 1 : 0;
     tools.innerHTML = `<button data-d="-1">←</button><span class="deck-page"></span><button data-d="1">→</button><button data-full>全画面</button><a href="deck.html?src=${encodeURIComponent(el.dataset.src)}" target="_blank" rel="noopener">別のタブで開く</a>`;

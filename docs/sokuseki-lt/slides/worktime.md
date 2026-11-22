@@ -11,7 +11,7 @@
 - スライド作成ツール
 - お使いの生成AIにお願いしてスライドを作ってもらう
 - テーマを伝えるとポン出ししてくれるアプリケーション
-  - https://share.gemini.google/QtEtaFY7pRCk
+  - [Gemini のアプリ](https://share.gemini.google/QtEtaFY7pRCk)
 - メモ帳やテキストエディット
 - ウェブサイトを開いて説明
 - 資料なしで喋る

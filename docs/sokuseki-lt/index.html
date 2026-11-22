@@ -11,9 +11,6 @@
     main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 120px; }
     h1 { margin: 0 0 4px; font-size: 30px; }
     .lead { margin: 0 0 16px; color: #555; }
-    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 40px; }
-    .toc a { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; color: inherit; text-decoration: none; font-size: 14px; background: #fff; }
-    .toc a:hover { background: #fff3c4; }
     section { margin: 0 0 56px; }
     h2 { margin: 0 0 8px; font-size: 24px; border-bottom: 2px solid #222; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
     h2 .time { font-size: 14px; font-weight: normal; color: #777; }
@@ -22,28 +19,42 @@
     .memo ul { margin: 0; padding-left: 1.2em; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 8px 20px; }
     .grid .deck-title { font-size: 14px; }
+    .howto-read { margin: 0 0 24px; padding: 10px 14px; background: #f6f6f6; border-radius: 8px; font-size: 14px; }
+    .howto-read p { margin: 0; }
+    .plan { width: 100%; border-collapse: collapse; margin: 0 0 40px; font-size: 15px; }
+    .plan th, .plan td { padding: 6px 8px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; }
+    .plan th { font-weight: normal; color: #777; white-space: nowrap; }
+    .plan a { color: inherit; }
+    .plan .step { vertical-align: 0; font-size: 14px; }
+    .step { display: inline-block; min-width: 1.6em; margin-right: 6px; padding: 0 6px; border-radius: 6px; background: #222; color: #fff; font-size: 16px; text-align: center; vertical-align: 3px; }
+    .say { font-weight: bold; }
+    .links { columns: 2 280px; padding-left: 1.2em; }
+    .links li { break-inside: avoid; }
   </style>
   <script src="deck.js"></script>
 </head>
 <body>
   <main>
     <h1>即席LT大会</h1>
-    <p class="lead">その場で発表を作って、その場で発表する100分のワークショップ。このページを上から順に進めると、会を開けます。途中の枠は、そのまま再生できるスライドや道具です。</p>
-    <nav class="toc">
-      <a href="#junbi">準備</a>
-      <a href="#hajimeni">はじめに</a>
-      <a href="#rules">ルール説明</a>
-      <a href="#howto">トークのつくりかた</a>
-      <a href="#neta">ネタが見つからない人へ</a>
-      <a href="#worktime">資料作成タイム</a>
-      <a href="#happyo">発表タイム</a>
-      <a href="#amari">時間が余ったら</a>
-      <a href="#owari">最後に</a>
-      <a href="#zenbu">小ネタ全部</a>
-    </nav>
+    <p class="lead">その場で発表を作って、その場で発表する100分のワークショップです。このページを上から順に進めると、会を開けます。</p>
+    <div class="howto-read">
+      <p>枠はスライドか道具です。クリックするか ← → キーでめくり、「全画面」で映します。<br>黄色の線のメモは司会のためのもので、映さなくて構いません。</p>
+    </div>
+
+    <table class="plan">
+      <tr><th>開始前</th><td><a href="#junbi"><span class="step">0</span>準備</a></td></tr>
+      <tr><th>0〜5分</th><td><a href="#hajimeni"><span class="step">1</span>はじめに</a></td></tr>
+      <tr><th>5〜10分</th><td><a href="#rules"><span class="step">2</span>第1部：ルール説明</a></td></tr>
+      <tr><th>10〜25分</th><td><a href="#howto"><span class="step">3</span>第2部：YAPCトークのつくりかた</a></td></tr>
+      <tr><th>25分〜</th><td><a href="#worktime"><span class="step">4</span>資料作成タイム＆発表タイム</a><br>
+        <small><a href="#neta">ネタが見つからない人へ</a> ／ <a href="#tebayaku">資料を手早く作る</a> ／ <a href="#hajimekata">話の始め方・終わり方</a> ／ <a href="#shibari">縛りを1つ足す</a> ／ <a href="#aida">発表と発表のあいだに</a></small></td></tr>
+      <tr><th>すき間に</th><td><a href="#amari"><span class="step">5</span>時間が余ったら</a></td></tr>
+      <tr><th>15:50ごろ</th><td><a href="#owari"><span class="step">6</span>最後に：ベスト即席LT賞</a></td></tr>
+      <tr><th></th><td><a href="#zenbu">付録：小ネタの一覧</a></td></tr>
+    </table>
 
     <section id="junbi">
-      <h2>準備 <span class="time">開始前</span></h2>
+      <h2><span><span class="step">0</span>準備</span> <span class="time">開始前</span></h2>
       <div class="memo"><ul>
         <li>ふせんとペンを前方に置く。発表した人がタイトルと名前を書いて貼る壁を決める</li>
         <li>発表者のPCのつなぎ方と、ハッシュタグの投稿を映す方法を決めておく</li>
@@ -52,21 +63,22 @@
     </section>
 
     <section id="hajimeni">
-      <h2>はじめに <span class="time">5分</span></h2>
+      <h2><span><span class="step">1</span>はじめに</span> <span class="time">0〜5分</span></h2>
       <div class="deck" data-src="slides/opening.md" data-title="オープニング"></div>
     </section>
 
     <section id="rules">
-      <h2>第1部：ルール説明 <span class="time">5分</span></h2>
+      <h2><span><span class="step">2</span>第1部：ルール説明</span> <span class="time">5〜10分</span></h2>
       <div class="deck" data-src="slides/rules.md" data-title="即席LT大会のルール"></div>
     </section>
 
     <section id="howto">
-      <h2>第2部：YAPCトークのつくりかた <span class="time">15分</span></h2>
+      <h2><span><span class="step">3</span>第2部：YAPCトークのつくりかた</span> <span class="time">10〜25分</span></h2>
       <div class="deck" data-src="slides/howto.md" data-title="YAPCトークのつくりかた"></div>
       <h3>hitode909 の過去の発表</h3>
-      <div class="memo">つくりかたの話の途中で、実物を1枚ずつめくって見せる。</div>
+      <div class="memo">つくりかたの話の途中で、実物を1枚ずつめくって見せる。上のスライドと同じ年の順。</div>
       <div class="grid">
+        <div class="deck" data-page="https://speakerdeck.com/player/27cb04a012360130f91e12313d142636" data-title="2012 画面をチカチカさせるノウハウ"></div>
         <div class="deck" data-page="https://speakerdeck.com/player/41215c801248013275035ab86563b68e" data-title="2014 Perlの静的解析入門とPerlリファクタリングツールApp::PRTのご紹介"></div>
         <div class="deck" data-page="https://speakerdeck.com/player/b07a8c18db9444db891ff477fa860274" data-title="2015 Perlの上にも三年 〜 ずっとイケてるサービスを作り続ける技術 〜"></div>
         <div class="deck" data-src="past/yapc8oji.md" data-title="2016 はてなブログのAMP対応で学ぶウェブサービスのAMP対応"></div>
@@ -75,15 +87,22 @@
         <div class="deck" data-src="past/yapc2019nagoya.md" data-title="2019 似ているけどちょっと違うものたちをモデリングする技術"></div>
         <div class="deck" data-page="https://speakerdeck.com/player/8ab15289b39b4e0299b3ec233fe51654" data-title="2025 「バイブス静的解析」でレガシーコードを分析・改善しよう"></div>
         <div class="deck" data-page="https://speakerdeck.com/player/6b63e9d3dd36432793e014d0a59c963f" data-title="社内LT how to buy clothes"></div>
-        <div class="deck" data-page="https://speakerdeck.com/player/27cb04a012360130f91e12313d142636" data-title="2012 画面をチカチカさせるノウハウ"></div>
       </div>
     </section>
 
-    <section id="neta">
-      <h2>ネタが見つからない人へ <span class="time">必要なら</span></h2>
-      <div class="memo">手が止まっている人がいたら、どれか1つを再生する。切り口は、参加者が手元で開いて1つ引くこともできる。</div>
+    <section id="worktime">
+      <h2><span><span class="step">4</span>資料作成タイム＆発表タイム</span> <span class="time">25分〜15:50</span></h2>
+      <div class="memo"><ul>
+        <li>このスライドを映して、資料作成を始めてもらう。このページの URL を伝えると、参加者が手元で道具を使える</li>
+        <li>会場を歩いて、手が止まっている人に声をかける。下の 4-1〜4-4 から合いそうなものを映すか、手元で開いてもらう</li>
+        <li>できた人から前に出て発表。<span class="say">準備ができたらふせんにタイトルと名前を書き、発表のあとで壁に貼ってもらう</span></li>
+        <li>発表が途切れたら 4-5 か、<a href="#amari">5 時間が余ったら</a>を1つ出す</li>
+      </ul></div>
+      <div class="deck" data-src="slides/worktime.md" data-title="資料作成タイム"></div>
+
+      <h3 id="neta">4-1 ネタが見つからない人へ</h3>
+      <div class="memo">切り口は、参加者が手元で開いて1つ引くこともできる。</div>
       <div class="deck" data-page="kirikuchi.html" data-title="発表の切り口（1つ引く）"></div>
-      <h3>手元から探す</h3>
       <div class="grid">
         <div class="deck" data-src="hints/neta-shell-history.md"></div>
         <div class="deck" data-src="hints/neta-photo-roll.md"></div>
@@ -92,40 +111,32 @@
         <div class="deck" data-src="hints/neta-hamatta.md"></div>
         <div class="deck" data-src="hints/neta-yapc-ni-noru.md"></div>
       </div>
-    </section>
 
-    <section id="worktime">
-      <h2>資料作成タイム <span class="time">ここから最後まで</span></h2>
-      <div class="deck" data-src="slides/worktime.md" data-title="資料作成タイム"></div>
-      <h3>質問に答えるだけでスライドにする</h3>
-      <div class="memo">プレゼンツールがない人向け。スマホでも使える。答えを URL にして共有できる。</div>
-      <div class="deck" data-page="anaume.html" data-title="穴うめLT"></div>
-      <h3>資料を手早く作る</h3>
+      <h3 id="tebayaku">4-2 資料を手早く作る</h3>
+      <div class="memo">穴うめLTはプレゼンツールがない人向け。スマホでも使え、答えを URL にして共有できる。</div>
+      <div class="deck" data-page="anaume.html" data-title="穴うめLT（質問に答えるとスライドになる）"></div>
       <div class="grid">
         <div class="deck" data-src="hints/tebayaku-shashin-4mai.md"></div>
         <div class="deck" data-src="hints/tebayaku-editor-ookiku.md"></div>
         <div class="deck" data-src="hints/tebayaku-temoto-no-mono.md"></div>
         <div class="deck" data-src="hints/tebayaku-3pun-maisu.md"></div>
       </div>
-      <h3>話の始め方・終わり方</h3>
+
+      <h3 id="hajimekata">4-3 話の始め方・終わり方</h3>
       <div class="grid">
         <div class="deck" data-src="hints/hajimekata-tsukami.md"></div>
         <div class="deck" data-src="hints/hajimekata-owarikata.md"></div>
         <div class="deck" data-src="hints/hajimekata-3pun-kata.md"></div>
         <div class="deck" data-src="hints/hajimekata-makura.md"></div>
       </div>
-      <h3>縛りを1つ足す</h3>
+
+      <h3 id="shibari">4-4 縛りを1つ足す</h3>
       <div class="memo">決めることが多くて進まない人に。「次の人はこれで」と会場で引いても遊べる。</div>
       <div class="deck" data-page="shibari.html" data-title="縛りガチャ"></div>
-    </section>
 
-    <section id="happyo">
-      <h2>発表タイム <span class="time">準備ができた人から</span></h2>
-      <div class="memo"><ul>
-        <li>発表が途切れたら、下の心得か、はげましの一言を1つ出す</li>
-      </ul></div>
+      <h3 id="aida">4-5 発表と発表のあいだに</h3>
+      <div class="memo">発表が途切れたら、はげましの一言か心得を1つ出して、次の人の背中を押す。</div>
       <div class="deck" data-page="hagemashi.html" data-title="はげましの一言"></div>
-      <h3>発表の心得</h3>
       <div class="grid">
         <div class="deck" data-src="hints/kokoroe-shiryo-wa-haikei.md"></div>
         <div class="deck" data-src="hints/kokoroe-jibun-no-hanashi.md"></div>
@@ -136,13 +147,15 @@
     </section>
 
     <section id="amari">
-      <h2>時間が余ったら <span class="time">1〜3分ずつ</span></h2>
+      <h2><span><span class="step">5</span>時間が余ったら</span> <span class="time">1〜3分ずつ</span></h2>
+      <div class="memo">発表と発表のすき間や、発表が出尽くしたときに。どれからでもよい。</div>
+      <h3>5-1 YAPCトーク研究室</h3>
       <div class="memo">過去の YAPC のトークを数えたり並べたりしたもの。「締め切りの日」「何年のトーク？」は会場で見せやすい。</div>
       <div class="deck" data-page="yapc-talks.html" data-title="YAPCトーク研究室"></div>
-      <h3>プレゼンカラオケ</h3>
+      <h3>5-2 プレゼンカラオケ</h3>
       <div class="memo">AIが作った初見のスライドを引いて、その場で読みながら3分話す。まず hitode909 が1本やってみせ、「1本やってみます」という人に渡す。</div>
       <div class="deck" data-page="karaoke.html" data-title="プレゼンカラオケ"></div>
-      <h3>二軸プロット</h3>
+      <h3>5-3 二軸プロット</h3>
       <div class="memo">発表したタイトルをふせんにして、2本の軸の上に置く。置き場所の正しさより「なぜそこに置いたか」を話す。軸ガチャで、その場限りの軸に替えてもよい。</div>
       <div class="deck" data-page="nijiku.html" data-title="二軸プロット"></div>
       <div class="grid">
@@ -151,17 +164,19 @@
     </section>
 
     <section id="owari">
-      <h2>最後に <span class="time">15:50ごろ</span></h2>
+      <h2><span><span class="step">6</span>最後に</span> <span class="time">15:50ごろ</span></h2>
       <div class="memo"><ul>
-        <li>ベスト即席LT賞を発表する。会場にいなければ順に繰り上げ</li>
+        <li>ベスト即席LT賞を発表する。会場にいなければ順に繰り上げ。16:10〜の Lightning Talks の前座に案内する</li>
         <li>ふせんの壁の写真を撮る</li>
+        <li>下のスライドで、YAPC の外でも発表しようと呼びかけて締める</li>
       </ul></div>
       <div class="deck" data-src="hints/community-chihou.md"></div>
     </section>
 
     <section id="zenbu">
-      <h2>小ネタ全部</h2>
-      <div class="grid" id="all"></div>
+      <h2>付録：小ネタの一覧</h2>
+      <div class="memo">上に並べた小ネタを、1つずつ大きく開けます。</div>
+      <ul class="links" id="all"></ul>
     </section>
   </main>
 
@@ -173,8 +188,7 @@
     (async () => {
       const hints = await (await fetch('hints/index.json')).json();
       const all = document.getElementById('all');
-      all.innerHTML = hints.map((h) => `<div class="deck" data-src="hints/${h.slug}.md"></div>`).join('');
-      window.mountDecks(all);
+      all.innerHTML = hints.map((h) => `<li><a href="deck.html?src=hints/${h.slug}.md">${h.title}</a></li>`).join('');
     })();
   </script>
 </body>

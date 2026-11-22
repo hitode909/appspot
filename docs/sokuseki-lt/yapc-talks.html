@@ -6,63 +6,82 @@
   <title>YAPCトーク研究室</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, sans-serif; background: #fff; color: #222; line-height: 1.6; }
+    /* 1画面に1枚。はみ出す分は次の1枚に送り、←→ でめくる。縦にスクロールさせない */
+    html, body { height: 100%; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fff; color: #222; line-height: 1.5; overflow: hidden;
+      --u: min(1vw, 1.78vh); font-size: max(13px, calc(1.9 * var(--u))); }
     a { color: #0a58ca; }
-    main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 80px; }
-    h1 { margin: 0 0 4px; font-size: 26px; }
-    h2 { margin: 0 0 4px; font-size: 22px; }
-    .lead { margin: 0 0 16px; color: #555; }
-    .note { margin: 0 0 16px; color: #777; font-size: 13px; }
-    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
-    .tabs a { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; color: inherit; text-decoration: none; font-size: 14px; background: #fff; }
+    main { height: 100%; display: flex; flex-direction: column; padding: calc(2 * var(--u)) calc(4 * var(--u)) calc(1.2 * var(--u)); }
+    h1 { margin: 0; font-size: 1em; color: #777; font-weight: normal; }
+    h2 { margin: 0 0 0.3em; font-size: 1.5em; line-height: 1.3; }
+    .lead { margin: 0 0 0.6em; color: #555; }
+    .note { margin: 0 0 0.6em; color: #777; font-size: 0.8em; }
+    .top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4em 1em; margin: 0 0 0.6em; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 0.3em; }
+    .tabs a { padding: 0.1em 0.7em; border: 1px solid #222; border-radius: 999px; color: inherit; text-decoration: none; font-size: 0.7em; background: #fff; }
+    #view { --fit: 1; flex: 1; min-height: 0; overflow: hidden; font-size: calc(1em * var(--fit)); }
+    #view.scroll-y { overflow-y: auto; }
+    .pager { display: flex; justify-content: flex-end; align-items: center; gap: 0.5em; font-size: 0.7em; color: #777; padding-top: 0.3em; }
+    .pager[hidden] { display: none; }
+    .pager-bar { flex: 1; height: 4px; background: #eee; border-radius: 2px; overflow: hidden; }
+    .pager-bar div { height: 100%; background: #f0b400; }
     .tabs a.on { background: #222; color: #fff; }
     button, input, select { font: inherit; }
     button { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; background: #fff; cursor: pointer; }
     button.on { background: #222; color: #fff; }
     button:disabled { opacity: 0.4; cursor: default; }
     button.on:disabled { opacity: 1; }
-    input[type=text], textarea, select { padding: 6px 10px; border: 1px solid #999; border-radius: 6px; background: #fff; }
-    input[type=text] { width: min(100%, 420px); }
-    textarea { width: 100%; font: inherit; }
-    .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 12px; }
-    .chips button { font-size: 13px; padding: 2px 10px; border-color: #999; }
+    input[type=text], textarea, select { padding: 0.2em 0.5em; border: 1px solid #999; border-radius: 6px; background: #fff; font-size: 0.9em; }
+    input[type=text] { width: min(100%, 22em); }
+    textarea { width: 100%; font: inherit; font-size: 0.9em; }
+    .row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em; margin: 0 0 0.5em; }
+    button { font-size: 0.85em; }
+    .chips button { font-size: 0.7em; padding: 0.1em 0.6em; border-color: #999; }
     svg { display: block; width: 100%; height: auto; }
     svg text { font-family: system-ui, sans-serif; }
-    .big { font-size: clamp(22px, 4vw, 36px); font-weight: bold; line-height: 1.4; margin: 8px 0 16px; }
     .talks { list-style: none; margin: 0; padding: 0; }
-    .talks li { padding: 8px 0; border-top: 1px solid #ddd; }
-    .talks .meta { font-size: 13px; color: #777; }
+    .talks li { padding: 0.3em 0; border-top: 1px solid #ddd; }
+    .talks .meta { font-size: 0.7em; color: #777; }
     .muted { color: #777; }
-    table { border-collapse: collapse; width: 100%; font-size: 14px; }
-    th, td { padding: 4px 6px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.75em; }
+    th, td { padding: 0.15em 0.4em; border-bottom: 1px solid #ddd; text-align: left; vertical-align: middle; }
     th { font-weight: normal; color: #777; }
     td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-    .heat td.cell { text-align: center; font-size: 12px; min-width: 36px; }
-    .heat tr:hover th { background: #fff3c4; cursor: pointer; }
-    .scroll { overflow-x: auto; }
-    .event { margin: 0 0 28px; }
-    .event h3 { margin: 0; font-size: 16px; }
-    .kata td.ex { color: #555; font-size: 13px; }
+    .heat { table-layout: fixed; }
+    .heat tr:first-child th:first-child { width: 7em; }
+    .heat td.cell, .heat th.num { text-align: center; padding: 0.15em 0; }
+    .heat tr[data-tech]:hover th { background: #fff3c4; cursor: pointer; }
+    .heat tr.open th { background: #fff3c4; }
+    .event p { margin: 0 0 0.6em; }
+    .kata td.ex { color: #555; max-width: 0; width: 45%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .kata tr.open td { background: #fff8dc; }
-    .gen li { font-size: 20px; padding: 4px 0; }
-    .quiz-q { font-size: clamp(24px, 4.5vw, 42px); font-weight: bold; line-height: 1.4; margin: 16px 0 20px; min-height: 3em; }
-    .ans { margin: 16px 0; font-size: 18px; }
-    .bar-bg { background: #eee; height: 6px; border-radius: 3px; }
-    .bar-fg { background: #f0b400; height: 6px; border-radius: 3px; }
+    .gen li { font-size: 1.1em; padding: 0.15em 0; }
+    .quiz-q { font-size: 2em; font-weight: bold; line-height: 1.35; margin: 0.4em 0 0.6em; }
+    .ans { margin: 0.6em 0; }
+    .ans p { font-size: 0.8em; margin: 0.3em 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .bar-bg { background: #eee; height: 4px; border-radius: 2px; }
+    .bar-fg { background: #f0b400; height: 4px; border-radius: 2px; }
   </style>
 </head>
 <body>
   <main>
-    <h1>YAPCトーク研究室</h1>
-    <p class="lead" id="lead">読み込み中…</p>
-    <nav class="tabs" id="tabs"></nav>
-    <section id="view"></section>
+    <div class="top"><h1>YAPCトーク研究室</h1><nav class="tabs" id="tabs"></nav></div>
+    <section id="view"><p class="lead">読み込み中…</p></section>
+    <div class="pager" id="pager" hidden><div class="pager-bar"><div></div></div><button data-page="-1">←</button><span></span><button data-page="1">→</button></div>
   </main>
 
   <script>
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
     const pct = (a, b) => (b ? Math.round((a / b) * 1000) / 10 : 0);
-    let D, talks = [], years = [];
+    let D, talks = [], years = [], intro = '';
+    // 長い一覧は PER 件ずつの1枚に分ける
+    const PER = 7;
+    const chunk = (list, n = PER) => { const out = []; for (let i = 0; i < list.length; i += n) out.push(list.slice(i, i + n)); return out; };
+    // 一覧を何枚かに分け、1枚ずつに見出しをつける
+    const listPages = (head, list, per = PER) => {
+      const cs = chunk(list, per);
+      return cs.map((c, i) => `<h2>${head}${cs.length > 1 ? ` <span class="muted" style="font-size:0.6em">${i + 1}/${cs.length}</span>` : ''}</h2><ul class="talks">${c.map(talkItem).join('')}</ul>`);
+    };
 
     const TABS = [
       ['shime', '締め切りの日'],
@@ -141,7 +160,7 @@
         }).join('');
         const px = pad + Math.round((Date.parse(peak[0]) - t0) / 864e5) * bw;
         return `<div class="event">
-          <h3>${esc(e.name)}</h3>
+          <h2>締め切りの日：${esc(e.name)}</h2>
           <p class="muted">応募 ${e.proposals}件。いちばん多い日（${peak[0]}）に <strong>${peak[1]}件</strong>（${pct(peak[1], e.proposals)}%）。この日の応募のうち ${peak[2]}件が採択されている${later ? `。それより後の日付の応募 ${later}件はグラフに入れていない` : ''}</p>
           <svg viewBox="0 0 ${W} ${H}">
             ${bars}
@@ -150,11 +169,11 @@
             <text x="${W - pad}" y="${H - 4}" font-size="12" fill="#777" text-anchor="end">${days[days.length - 1][0]}</text>
           </svg>
         </div>`;
-      }).join('');
-      return `<h2>締め切りの日</h2>
-        <p class="lead">YAPC のトーク応募が、日ごとに何件あったか。応募はいつも最後の日に集まります。</p>
-        <p class="note">fortee で応募の受け付け日時が公開されている回だけ。福岡2025は採択されたトークだけが公開されているので外しています。応募がいちばん多かった日から8日目以降の分は、LT の追加募集や企画など別の受け付けが混ざることがあるので、グラフから外しています。</p>
-        ${blocks}`;
+      });
+      return [`<h2>締め切りの日</h2>
+        <p class="gen" style="font-size:1.4em">YAPC のトーク応募が、日ごとに何件あったか。<br>応募はいつも最後の日に集まります。</p>
+        <p class="note">${esc(intro)}</p>
+        <p class="note">締め切りの日のグラフは、fortee で応募の受け付け日時が公開されている回だけ。福岡2025は採択されたトークだけが公開されているので外しています。応募がいちばん多かった日から8日目以降の分は、LT の追加募集や企画など別の受け付けが混ざることがあるので、グラフから外しています。</p>`, ...blocks];
     };
 
     // ---------- ことばの移り変わり ----------
@@ -184,38 +203,43 @@
         return { year: y, all, hit, share: pct(hit, all) };
       });
       const presets = ['Perl', 'Go', 'Rust', 'TypeScript', 'AI LLM', 'Docker', 'Kubernetes', 'テスト', '設計', 'チーム', '組織', 'キャリア', '入門', '個人開発', 'ゲーム', '話', '技術', '僕 私 俺'];
-      return `<h2>ことばの移り変わり</h2>
+      return [`<h2>ことばの移り変わり</h2>
         <p class="lead">トークのタイトルに、その言葉が入っている割合を年ごとに。スペースで区切るといずれかを含むものを数えます。</p>
-        <div class="row"><input type="text" id="word" value="${esc(word)}" placeholder="言葉を入れる"></div>
+        <div class="row"><input type="text" id="word" value="${esc(word)}" placeholder="言葉を入れる"> <span class="muted">${hits.length}件。→ で一覧</span></div>
         <div class="row chips">${presets.map((p) => `<button data-word="${esc(p)}" class="${p === word ? 'on' : ''}">${esc(p)}</button>`).join('')}</div>
-        <div id="kotoba-out">${yearChart(counts)}
-        <p class="muted">${hits.length}件</p>
-        <ul class="talks">${hits.slice().reverse().slice(0, 80).map(talkItem).join('')}</ul></div>`;
+        ${yearChart(counts)}`, ...listPages(`「${esc(word)}」を含むトーク`, hits.slice().reverse().slice(0, 70))];
     };
 
     // ---------- 技術の年表 ----------
+    let openTech = null;
     const heatView = () => {
       const all = years.map((y) => talks.filter((t) => t.year === y));
-      const rows = TECH.map(([label, re]) => {
+      const rowsOf = (part) => part.map(([label, re]) => {
         const cells = all.map((list) => {
           const n = list.filter((t) => re.test(t.title)).length;
           const s = list.length ? n / list.length : 0;
           return `<td class="cell" style="background: rgba(240,180,0,${Math.min(s * 5, 1)})" title="${n} / ${list.length}">${n || ''}</td>`;
         }).join('');
-        return `<tr data-tech="${esc(label)}"><th>${esc(label)}</th>${cells}</tr>`;
+        return `<tr data-tech="${esc(label)}" class="${openTech === label ? 'open' : ''}"><th>${esc(label)}</th>${cells}</tr>`;
       }).join('');
-      return `<h2>技術の年表</h2>
-        <p class="lead">タイトルに出てくる技術や話題を、年ごとに数えました。数字は件数、色の濃さはその年のトークに占める割合です。</p>
-        <p class="note">言葉で機械的に数えているので、取りこぼしや数えすぎがあります。行を押すと、その行の見分け方で数えたトークを出します。</p>
-        <div class="scroll"><table class="heat"><tr><th></th>${years.map((y) => `<th class="num">${y}</th>`).join('')}</tr>${rows}
-        <tr><th class="muted">トーク数</th>${all.map((l) => `<td class="cell muted">${l.length}</td>`).join('')}</tr></table></div>
-        <div id="heat-out"></div>`;
+      // 言語と、それ以外の話題で2枚に分ける
+      const LANGS = 9;
+      const table = (part) => `<table class="heat"><tr><th></th>${years.map((y) => `<th class="num">${y}</th>`).join('')}</tr>${rowsOf(part)}
+        <tr><th class="muted">トーク数</th>${all.map((l) => `<td class="cell muted">${l.length}</td>`).join('')}</tr></table>`;
+      const re = openTech && TECH.find((x) => x[0] === openTech)[1];
+      const list = re ? listPages(`${esc(openTech)}`, talks.filter((t) => re.test(t.title)).reverse()) : [];
+      const inLangs = openTech && TECH.findIndex((x) => x[0] === openTech) < LANGS;
+      return [`<h2>技術の年表：言語</h2>
+        <p class="note">タイトルに出てくる技術や話題を年ごとに数えました。数字は件数、色の濃さはその年のトークに占める割合。言葉で機械的に数えているので、取りこぼしや数えすぎがあります。行を押すと、その行のトークを次の1枚から出します。</p>
+        ${table(TECH.slice(0, LANGS))}`, ...(inLangs ? list : []),
+        `<h2>技術の年表：話題</h2>${table(TECH.slice(LANGS))}`, ...(inLangs ? [] : list)];
     };
 
     // ---------- タイトルの型 ----------
     let openKata = null, topic = '';
     const kataView = () => {
-      const rows = KATA.map(([label, re], i) => {
+      const rowsOf = (from, to) => KATA.slice(from, to).map(([label, re], j) => {
+        const i = from + j;
         const hits = talks.filter((t) => re.test(t.title));
         const ex = hits.length ? hits[Math.floor(Math.random() * hits.length)].title : '';
         const spark = years.map((y) => {
@@ -226,16 +250,20 @@
         const m = Math.max(...spark, 0.01);
         const svg = `<svg viewBox="0 0 ${years.length * 8} 20" style="width:${years.length * 8}px">${spark.map((h, j) => `<rect x="${j * 8}" y="${20 - (20 * h) / m}" width="6" height="${(20 * h) / m}" fill="#f0b400"/>`).join('')}</svg>`;
         return `<tr data-kata="${i}" class="${openKata === i ? 'open' : ''}" style="cursor:pointer">
-          <td>${esc(label)}</td><td class="num">${hits.length}</td><td>${svg}</td><td class="ex">${esc(ex)}</td></tr>
-          ${openKata === i ? `<tr><td colspan="4"><ul class="talks">${hits.slice().reverse().map(talkItem).join('')}</ul></td></tr>` : ''}`;
+          <td>${esc(label)}</td><td class="num">${hits.length}</td><td>${svg}</td><td class="ex">${esc(ex)}</td></tr>`;
       }).join('');
-      return `<h2>タイトルの型</h2>
-        <p class="lead">過去のタイトルを、よく使われる言い回しで分けました。行を押すと、その型のトークを全部出します。</p>
-        <div class="scroll"><table class="kata"><tr><th>型</th><th class="num">件数</th><th>${years[0]}〜${years[years.length - 1]}</th><th>例</th></tr>${rows}</table></div>
-        <h2 style="margin-top:32px">型を借りる</h2>
-        <p class="lead">話したいことを一言で入れると、上の型に当てはめたタイトルを並べます。</p>
+      const open = openKata !== null ? listPages(esc(KATA[openKata][0]), talks.filter((t) => KATA[openKata][1].test(t.title)).reverse()) : [];
+      const HALF = Math.ceil(KATA.length / 2);
+      const table = (from, to) => `<table class="kata"><tr><th>型</th><th class="num">件数</th><th>${years[0]}〜${years[years.length - 1]}</th><th>例</th></tr>${rowsOf(from, to)}</table>`;
+      const first = openKata !== null && openKata < HALF;
+      return [`<h2>タイトルの型 <span class="muted" style="font-size:0.6em">1/2</span></h2>
+        <p class="note">過去のタイトルを、よく使われる言い回しで分けました。行を押すと、その型のトークを次の1枚から出します。</p>
+        ${table(0, HALF)}`, ...(first ? open : []),
+        `<h2>タイトルの型 <span class="muted" style="font-size:0.6em">2/2</span></h2>${table(HALF, KATA.length)}`, ...(openKata !== null && !first ? open : []),
+        `<h2>型を借りる</h2>
+        <p class="lead">話したいことを一言で入れると、型に当てはめたタイトルを並べます。</p>
         <div class="row"><input type="text" id="topic" value="${esc(topic)}" placeholder="例：家の電気代"></div>
-        <ul class="talks gen" id="gen">${genList()}</ul>`;
+        <ul class="talks gen" id="gen">${genList()}</ul>`];
     };
     const genList = () => (topic.trim()
       ? KATA.filter((k) => k[2]).map((k) => `<li>${esc(k[2].replace('{x}', topic.trim()))}</li>`).join('')
@@ -248,14 +276,13 @@
       if (!quiz) nextQuiz();
       const t = quiz.t;
       const ans = quiz.answer;
-      return `<h2>何年のトーク？</h2>
+      return [`<h2>何年のトーク？ <span class="muted" style="font-size:0.6em">${score.ok} / ${score.all} 正解</span></h2>
         <p class="lead">YAPC に応募されたタイトルを1つ出します。何年のものか当ててください。</p>
-        <p class="muted">${score.ok} / ${score.all} 正解</p>
         <p class="quiz-q">${esc(t.title)}</p>
         <div class="row">${years.map((y) => `<button data-year="${y}" ${ans !== null ? 'disabled' : ''} class="${ans !== null && y === t.year ? 'on' : ''}">${y}</button>`).join('')}</div>
         ${ans !== null ? `<div class="ans">${ans === t.year ? '正解' : `ちがいます。${t.year}年`}：${esc(t.event)}${t.speaker ? `／${esc(t.speaker)}` : ''} ${t.url ? `<a href="${esc(t.url)}" target="_blank" rel="noopener">ページ</a>` : ''}
           ${t.abstract ? `<p class="muted">${esc(t.abstract)}</p>` : ''}</div>
-          <button data-next>次の問題</button>` : ''}`;
+          <button data-next>次の問題</button>` : ''}`];
     };
 
     // ---------- 似た話を探す ----------
@@ -296,19 +323,22 @@
         return { t: talks[i], s: dot / norm / qn };
       }).sort((a, b) => b.s - a.s).slice(0, 15);
     };
-    const niteruOut = () => {
-      if (!idea.trim()) return '';
-      const res = search(idea);
+    const niteruItems = (res) => {
       const max = res[0]?.s || 1;
-      return `<ul class="talks">${res.map(({ t, s }) => `<li>
+      return res.map(({ t, s }) => `<li>
         <div class="bar-bg"><div class="bar-fg" style="width:${Math.round((s / max) * 100)}%"></div></div>
-        ${talkBody(t)}</li>`).join('')}</ul>`;
+        ${talkBody(t)}</li>`);
     };
-    const niteruView = () => `<h2>似た話を探す</h2>
-      <p class="lead">話したいことを書くと、過去の YAPC のタイトルと概要から、言葉の近いものを15件出します。近い話が見つかったら、そのトークを入口にしたり、違うところを話の芯にしたりできます。</p>
-      <textarea id="idea" rows="3" placeholder="例：家の Wi-Fi が夜だけ遅いので、ルーターのログを集めて調べた">${esc(idea)}</textarea>
-      <div class="row" style="margin-top:8px"><button data-search>探す</button><button data-lucky>過去のタイトルを1つ入れてみる</button></div>
-      <div id="niteru-out">${niteruOut()}</div>`;
+    const niteruView = () => {
+      const res = idea.trim() ? niteruItems(search(idea)) : [];
+      const cs = chunk(res, 5);
+      return [`<h2>似た話を探す</h2>
+      <p class="lead">話したいことを書くと、過去の YAPC のタイトルと概要から、言葉の近いものを15件出します（→ で続き）。近い話が見つかったら、入口にしたり、違うところを話の芯にしたりできます。</p>
+      <textarea id="idea" rows="2" placeholder="例：家の Wi-Fi が夜だけ遅いので、ルーターのログを集めて調べた">${esc(idea)}</textarea>
+      <div class="row" style="margin-top:0.3em"><button data-search>探す</button><button data-lucky>過去のタイトルを1つ入れてみる</button></div>
+      ${cs[0] ? `<ul class="talks">${cs[0].join('')}</ul>` : ''}`,
+      ...cs.slice(1).map((c, i) => `<h2>似た話 <span class="muted" style="font-size:0.6em">${i + 2}/${cs.length}</span></h2><p class="muted">${esc(idea)}</p><ul class="talks">${c.join('')}</ul>`)];
+    };
 
     // ---------- タイトルの長さ ----------
     const nagasaView = () => {
@@ -329,30 +359,25 @@
           <text x="${x + bw / 2}" y="${H - 1}" font-size="10" text-anchor="middle" fill="#999">英語のみ ${s.en}%</text>`;
       }).join('')}</svg>`;
       const sorted = talks.slice().sort((a, b) => len(a) - len(b));
-      return `<h2>タイトルの長さ</h2>
+      return [`<h2>タイトルの長さ</h2>
         <p class="lead">タイトルの文字数の中央値を年ごとに。下の段は、英数字だけで書かれたタイトルの割合です。</p>
-        ${chart}
-        <h2 style="margin-top:24px">短いタイトル</h2>
-        <ul class="talks">${sorted.slice(0, 15).map(talkItem).join('')}</ul>
-        <h2 style="margin-top:24px">長いタイトル</h2>
-        <ul class="talks">${sorted.slice(-10).reverse().map(talkItem).join('')}</ul>`;
+        ${chart}`, ...listPages('短いタイトル', sorted.slice(0, 14)), ...listPages('長いタイトル', sorted.slice(-8).reverse(), 4)];
     };
 
     // ---------- 全部の一覧 ----------
-    let filter = { year: '', q: '' }, shown = 200;
-    const zenbuList = () => {
+    let filter = { year: '', q: '' };
+    // 絞り込みの欄は、どの1枚にも出す。めくった先でも絞り込める
+    const zenbuView = () => {
       const re = filter.q ? matcher(filter.q) : null;
       const list = talks.filter((t) => (!filter.year || t.year === Number(filter.year)) && (!re || re.test(`${t.title} ${t.speaker} ${t.abstract}`)));
-      return `<p class="muted">${list.length}件</p><ul class="talks">${list.slice(0, shown).map(talkItem).join('')}</ul>
-        ${list.length > shown ? '<button data-more>さらに表示</button>' : ''}`;
-    };
-    const zenbuView = () => `<h2>全部の一覧</h2>
-      <p class="lead">集めたトーク ${talks.length}件。2024年以降は、採択されなかった応募も含みます。</p>
+      const head = `<h2>全部の一覧 <span class="muted" style="font-size:0.6em">${list.length}件（全${talks.length}件。2024年以降は採択されなかった応募も含む）</span></h2>
       <div class="row">
         <select id="f-year"><option value="">すべての年</option>${years.map((y) => `<option ${String(y) === filter.year ? 'selected' : ''}>${y}</option>`).join('')}</select>
         <input type="text" id="f-q" value="${esc(filter.q)}" placeholder="タイトル・名前・概要で絞り込む">
-      </div>
-      <div id="zenbu-out">${zenbuList()}</div>`;
+      </div>`;
+      const cs = chunk(list, 6);
+      return cs.length ? cs.map((c) => `${head}<ul class="talks">${c.map(talkItem).join('')}</ul>`) : [head];
+    };
 
     // ---------- 共通 ----------
     const KIND = { lt: 'LT', keynote: '基調講演' };
@@ -361,12 +386,64 @@
     const talkItem = (t) => `<li>${talkBody(t)}</li>`;
 
     const VIEWS = { shime: shimeView, kotoba: kotobaView, heat: heatView, kata: kataView, quiz: quizView, niteru: niteruView, nagasa: nagasaView, zenbu: zenbuView };
-    const tab = () => (VIEWS[location.hash.slice(1)] ? location.hash.slice(1) : 'shime');
+    // URL は #タブ または #タブ/ページ番号
+    const tab = () => { const k = location.hash.slice(1).split('/')[0]; return VIEWS[k] ? k : 'shime'; };
+    const pageNo = {};
+    const fromHash = location.hash.match(/^#(\w+)\/(\d+)$/);
+    if (fromHash) pageNo[fromHash[1]] = Number(fromHash[2]) - 1;
+    const view = document.getElementById('view');
+    const pager = document.getElementById('pager');
+
+    // はみ出したら文字を少しずつ縮める。それでも入らなければ、その1枚だけ縦にスクロールさせる
+    const MIN_FIT = 0.6;
+    const fit = () => {
+      let f = 1;
+      view.classList.remove('scroll-y');
+      view.style.setProperty('--fit', f);
+      const over = () => view.scrollHeight > view.clientHeight + 1 || view.scrollWidth > view.clientWidth + 1;
+      while (over() && f > MIN_FIT) { f = Math.max(MIN_FIT, f * 0.92); view.style.setProperty('--fit', f); }
+      if (over()) view.classList.add('scroll-y');
+    };
+    new ResizeObserver(() => fit()).observe(view);
+
     const render = () => {
       const t = tab();
+      const pages = VIEWS[t]();
+      const n = (pageNo[t] = Math.min(Math.max(pageNo[t] || 0, 0), pages.length - 1));
       document.getElementById('tabs').innerHTML = TABS.map(([k, l]) => `<a href="#${k}" class="${k === t ? 'on' : ''}">${l}</a>`).join('');
-      document.getElementById('view').innerHTML = VIEWS[t]();
+      view.innerHTML = pages[n];
+      view.scrollTop = 0;
+      pager.hidden = pages.length < 2;
+      pager.querySelector('span').textContent = `${n + 1} / ${pages.length}`;
+      pager.querySelector('.pager-bar div').style.width = `${((n + 1) / pages.length) * 100}%`;
+      pager.querySelector('[data-page="-1"]').disabled = n === 0;
+      pager.querySelector('[data-page="1"]').disabled = n === pages.length - 1;
+      fit();
     };
+    const go = (d) => {
+      const t = tab();
+      pageNo[t] = (pageNo[t] || 0) + d;
+      render();
+      history.replaceState(null, '', `#${t}/${pageNo[t] + 1}`);
+    };
+    // 1枚目に戻して描き直す（言葉や絞り込みを変えたとき）
+    const reset = (t, keepFocus) => { pageNo[t] = 0; rerender(keepFocus); };
+    // スマホでは左右のスワイプでもめくる
+    let touch = null;
+    view.addEventListener('touchstart', (e) => { touch = e.touches[0]; }, { passive: true });
+    view.addEventListener('touchend', (e) => {
+      const t = e.changedTouches[0];
+      if (!touch || /input|textarea|select/i.test(e.target.tagName)) return;
+      const dx = t.clientX - touch.clientX, dy = t.clientY - touch.clientY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+      touch = null;
+    });
+    pager.addEventListener('click', (e) => { const b = e.target.closest('[data-page]'); if (b) go(Number(b.dataset.page)); });
+    addEventListener('keydown', (e) => {
+      if (/input|textarea|select/i.test(document.activeElement?.tagName || '')) return;
+      if (['ArrowRight', 'PageDown'].includes(e.key)) { e.preventDefault(); go(1); }
+      if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(-1); }
+    });
     const rerender = (keepFocus) => {
       const id = document.activeElement?.id;
       const pos = document.activeElement?.selectionStart;
@@ -374,49 +451,51 @@
       if (keepFocus && id) { const el = document.getElementById(id); el?.focus(); if (pos != null) el.setSelectionRange?.(pos, pos); }
     };
 
-    const view = document.getElementById('view');
     view.addEventListener('click', (e) => {
       const w = e.target.closest('[data-word]');
-      if (w) { word = w.dataset.word; rerender(); }
+      if (w) { word = w.dataset.word; reset('kotoba'); }
+      // 行を押したら、その行の一覧（次の1枚）へめくる
       const h = e.target.closest('[data-tech]');
-      if (h) {
-        const re = TECH.find((x) => x[0] === h.dataset.tech)[1];
-        const hits = talks.filter((t) => re.test(t.title));
-        document.getElementById('heat-out').innerHTML = `<h2 style="margin-top:24px">${esc(h.dataset.tech)}（${hits.length}件）</h2><ul class="talks">${hits.slice().reverse().map(talkItem).join('')}</ul>`;
-      }
+      if (h) { openTech = openTech === h.dataset.tech ? null : h.dataset.tech; render(); if (openTech) go(1); }
       const k = e.target.closest('[data-kata]');
-      if (k && !e.target.closest('a')) { const i = Number(k.dataset.kata); openKata = openKata === i ? null : i; rerender(); }
+      if (k && !e.target.closest('a')) { const i = Number(k.dataset.kata); openKata = openKata === i ? null : i; render(); if (openKata !== null) go(1); }
       const y = e.target.closest('[data-year]');
       if (y) { quiz.answer = Number(y.dataset.year); score.all++; if (quiz.answer === quiz.t.year) score.ok++; rerender(); }
       if (e.target.closest('[data-next]')) { nextQuiz(); rerender(); }
-      if (e.target.closest('[data-search]')) { idea = document.getElementById('idea').value; document.getElementById('niteru-out').innerHTML = niteruOut(); }
-      if (e.target.closest('[data-lucky]')) { idea = talks[Math.floor(Math.random() * talks.length)].title; rerender(); }
-      if (e.target.closest('[data-more]')) { shown += 200; document.getElementById('zenbu-out').innerHTML = zenbuList(); }
+      if (e.target.closest('[data-search]')) { idea = document.getElementById('idea').value; reset('niteru'); }
+      if (e.target.closest('[data-lucky]')) { idea = talks[Math.floor(Math.random() * talks.length)].title; reset('niteru'); }
     });
     view.addEventListener('input', (e) => {
       // 変換中に描き直すと入力欄が作り直されて変換が切れるので、確定（compositionend）まで待つ
-      if (e.target.id === 'word' && !e.isComposing) { word = e.target.value; rerender(true); }
-      if (e.target.id === 'topic') { topic = e.target.value; document.getElementById('gen').innerHTML = genList(); }
+      if (e.isComposing) return;
+      if (e.target.id === 'word') { word = e.target.value; reset('kotoba', true); }
+      if (e.target.id === 'topic') { topic = e.target.value; document.getElementById('gen').innerHTML = genList(); fit(); }
       if (e.target.id === 'f-q' || e.target.id === 'f-year') {
         filter = { year: document.getElementById('f-year').value, q: document.getElementById('f-q').value };
-        shown = 200;
-        document.getElementById('zenbu-out').innerHTML = zenbuList();
+        reset('zenbu', true);
       }
     });
     view.addEventListener('compositionend', (e) => {
-      if (e.target.id === 'word') { word = e.target.value; rerender(true); }
+      if (e.target.id === 'word') { word = e.target.value; reset('kotoba', true); }
+      if (e.target.id === 'topic') { topic = e.target.value; document.getElementById('gen').innerHTML = genList(); fit(); }
+      if (e.target.id === 'f-q') { filter.q = e.target.value; reset('zenbu', true); }
     });
     view.addEventListener('keydown', (e) => {
-      if (e.target.id === 'idea' && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { idea = e.target.value; document.getElementById('niteru-out').innerHTML = niteruOut(); }
+      if (e.target.id === 'idea' && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { idea = e.target.value; reset('niteru'); }
     });
-    addEventListener('hashchange', render);
+    // タブを押したとき（#タブ だけのとき）は、そのタブの1枚目から
+    addEventListener('hashchange', () => {
+      const m = location.hash.match(/^#(\w+)(?:\/(\d+))?$/);
+      if (m) pageNo[m[1]] = m[2] ? Number(m[2]) - 1 : 0;
+      render();
+    });
 
     (async () => {
       D = await (await fetch('data/yapc-talks.json')).json();
       talks = D.talks;
       years = [...new Set(talks.map((t) => t.year))].sort((a, b) => a - b);
       const events = new Set(talks.map((t) => t.event)).size;
-      document.getElementById('lead').textContent = `過去の YAPC ${events}回分、${talks.length}件のトークのタイトルを集めて、数えたり並べたりしてみました。手元でいじって遊んでください。2023年までは採択されたトーク、2024年以降は採択されなかった応募も含みます。LT のタイトルが公開されていない年もあります。`;
+      intro = `過去の YAPC ${events}回分、${talks.length}件のトークのタイトルを集めて、数えたり並べたりしてみました。2023年までは採択されたトーク、2024年以降は採択されなかった応募も含みます。LT のタイトルが公開されていない年もあります。上のタブで切り替え、←→ でめくります。`;
       render();
     })();
   </script>

@@ -21,7 +21,7 @@
     .deck-frame { position: relative; aspect-ratio: 16 / 9; border: 1px solid #222; background: #fff; overflow: hidden; container-type: inline-size; }
     .deck-frame:fullscreen { border: 0; aspect-ratio: auto; }
     .deck-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
-    .deck-slide { --fit: 1; position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: safe center; padding: 5cqw 7cqw; font-size: calc(3.6cqw * var(--fit)); line-height: 1.5; overflow: auto; overflow-wrap: anywhere; word-break: auto-phrase; cursor: pointer; user-select: none; color: #222; }
+    .deck-slide { --fit: 1; position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: safe center; padding: 5cqw 7cqw; font-size: calc(3.6cqw * var(--fit)); line-height: 1.5; overflow: auto; overflow-wrap: anywhere; word-break: auto-phrase; touch-action: pan-y; cursor: pointer; user-select: none; color: #222; }
     .deck-slide.title { align-items: center; text-align: center; }
     /* 折り返しは文節で（.deck-slide の auto-phrase）。見出しは行の長さもそろえて、最後の1文字だけが次の行に落ちないようにする */
     .deck-slide h1, .deck-slide h2 { display: block; border: 0; padding: 0; font-weight: bold; text-wrap: balance; }
@@ -172,15 +172,46 @@
       const r = slide.getBoundingClientRect();
       move(e.clientX - r.left < r.width / 3 ? -1 : 1);
     });
-    // スマホでは左右のスワイプでもめくる
+    // スマホでは左右のスワイプでもめくる。指を動かしている間、スライドが指についてくる
+    // 離したときに50px以上動いていれば、そのまま横に流して次の1枚を反対側から入れる。足りなければ元の位置に戻す
+    const SLIDE_MS = 150;
+    const shift = (x, animate) => {
+      slide.style.transition = animate ? `transform ${SLIDE_MS}ms ease-out` : 'none';
+      slide.style.transform = x ? `translateX(${x}px)` : '';
+    };
     let touch = null;
-    slide.addEventListener('touchstart', (e) => { touch = e.touches[0]; }, { passive: true });
-    slide.addEventListener('touchend', (e) => {
-      const t = e.changedTouches[0];
+    let dragging = false;
+    slide.addEventListener('touchstart', (e) => { touch = e.touches[0]; dragging = false; }, { passive: true });
+    slide.addEventListener('touchmove', (e) => {
       if (!touch) return;
-      const dx = t.clientX - touch.clientX, dy = t.clientY - touch.clientY;
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) { active = move; move(dx < 0 ? 1 : -1); }
+      const dx = e.touches[0].clientX - touch.clientX, dy = e.touches[0].clientY - touch.clientY;
+      // 横に動かし始めたと分かってから、ついていく。縦のスクロールは邪魔しない
+      if (!dragging && (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.5)) return;
+      dragging = true;
+      // 最初と最後の1枚では、その先がないことが分かるように、動きを小さくする
+      const edge = (dx > 0 && n === 0) || (dx < 0 && n === pages.length - 1);
+      shift(edge ? dx * 0.3 : dx, false);
+    }, { passive: true });
+    slide.addEventListener('touchend', (e) => {
+      if (touch && dragging) {
+        const dx = e.changedTouches[0].clientX - touch.clientX;
+        const d = dx < 0 ? 1 : -1;
+        if (Math.abs(dx) > 50 && n + d >= 0 && n + d < pages.length) {
+          const w = slide.clientWidth;
+          shift(-d * w, true);
+          setTimeout(() => {
+            active = move;
+            move(d);
+            shift(d * w, false);
+            slide.getBoundingClientRect();
+            shift(0, true);
+          }, SLIDE_MS);
+        } else {
+          shift(0, true);
+        }
+      }
       touch = null;
+      dragging = false;
     });
     decks.push(move);
     if (!active) active = move;

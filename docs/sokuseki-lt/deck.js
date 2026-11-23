@@ -172,6 +172,16 @@
       const r = slide.getBoundingClientRect();
       move(e.clientX - r.left < r.width / 3 ? -1 : 1);
     });
+    // スマホでは左右のスワイプでもめくる
+    let touch = null;
+    slide.addEventListener('touchstart', (e) => { touch = e.touches[0]; }, { passive: true });
+    slide.addEventListener('touchend', (e) => {
+      const t = e.changedTouches[0];
+      if (!touch) return;
+      const dx = t.clientX - touch.clientX, dy = t.clientY - touch.clientY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) { active = move; move(dx < 0 ? 1 : -1); }
+      touch = null;
+    });
     decks.push(move);
     if (!active) active = move;
     show();

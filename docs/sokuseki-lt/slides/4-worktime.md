@@ -2,7 +2,6 @@
 
 ここからは資料作成＆できた方から前方に来て発表
 ハッシュタグつきでXに投稿してくだされば私が映すことも可能
-記録のため、タイトルと名前をふせんにかいて前方の壁に貼ってください
 
 # プレゼン資料について
 
@@ -24,4 +23,4 @@
 - 手を挙げてくれたら、hitode909 が行きます
 
 道具はぜんぶここにあります
-**hitode909.github.io/appspot/sokuseki-lt/**
+**[hitode909.github.io/appspot/sokuseki-lt/](https://hitode909.github.io/appspot/sokuseki-lt/)**

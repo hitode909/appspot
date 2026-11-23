@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>手元カメラ</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #fff; color: #222; line-height: 1.6; }
+    main { display: flex; flex-direction: column; height: 100%; padding: 12px 16px; }
+    button, select { font: inherit; padding: 6px 14px; border: 1px solid #222; background: #fff; color: inherit; cursor: pointer; }
+    button.on { background: #222; color: #fff; }
+    select { max-width: 40%; }
+
+    .nav { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; }
+    .nav .title { font-weight: bold; }
+    .nav .step { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .nav[hidden] { display: none; }
+
+    /* 映像は、切り取らずに枠いっぱいに出す。左右は反転しないので、紙の文字がそのまま読める */
+    .stage { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+    .stage.live { background: #222; }
+    video { display: block; width: 100%; height: 100%; object-fit: contain; }
+    video.mirror { transform: scaleX(-1); }
+    video[hidden] { display: none; }
+
+    .start { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; padding: 16px; text-align: center; }
+    .start[hidden] { display: none; }
+    .start h1 { margin: 0; font-size: 26px; }
+    .start p { margin: 0; color: #555; }
+    .start button { padding: 12px 32px; border-color: #222; background: #222; color: #fff; font-size: 24px; font-weight: bold; }
+    .start .error { color: #b00020; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="nav" id="nav" hidden>
+      <span class="title">手元カメラ</span>
+      <div class="step">
+        <select id="devices" aria-label="カメラを選ぶ"></select>
+        <button data-freeze>止める</button>
+        <button data-mirror>左右反転</button>
+        <button data-stop>カメラを切る</button>
+      </div>
+    </div>
+    <div class="stage" id="stage">
+      <video id="video" autoplay playsinline muted hidden></video>
+      <div class="start" id="start">
+        <h1>手元カメラ</h1>
+        <p>紙に書いた文字や手元のものを、カメラでそのまま映します。<br>鏡のように左右が反転しないので、文字が読める向きで映ります。</p>
+        <button data-start>カメラを起動する</button>
+        <p class="error" id="error"></p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const video = document.getElementById('video');
+    const devices = document.getElementById('devices');
+    const live = (on) => {
+      document.getElementById('nav').hidden = !on;
+      document.getElementById('start').hidden = on;
+      document.getElementById('stage').classList.toggle('live', on);
+      video.hidden = !on;
+    };
+    const stop = () => { video.srcObject?.getTracks().forEach((t) => t.stop()); video.srcObject = null; };
+
+    // 選んだカメラで映す。deviceId がなければ、ブラウザが選んだカメラになる
+    const start = async (deviceId) => {
+      stop();
+      try {
+        video.srcObject = await navigator.mediaDevices.getUserMedia({
+          video: { deviceId: deviceId ? { exact: deviceId } : undefined, width: { ideal: 1920 }, height: { ideal: 1080 } },
+        });
+      } catch (e) {
+        live(false);
+        document.getElementById('error').textContent = e.name === 'NotAllowedError'
+          ? 'カメラの使用が許可されていません。ブラウザのアドレスバーから許可してください。'
+          : `カメラを起動できませんでした（${e.name}）`;
+        return;
+      }
+      document.getElementById('error').textContent = '';
+      freeze(false);
+      live(true);
+      // カメラの名前は、許可されたあとでないと取れない
+      const now = video.srcObject.getVideoTracks()[0].getSettings().deviceId;
+      const list = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput');
+      devices.replaceChildren(...list.map((d, i) => new Option(d.label || `カメラ ${i + 1}`, d.deviceId, false, d.deviceId === now)));
+      devices.hidden = list.length < 2;
+    };
+
+    // 止めると、その瞬間の映像が残る。紙を持ったままにしなくてよい
+    const freeze = (on) => {
+      if (on) video.pause(); else video.play();
+      const b = document.querySelector('[data-freeze]');
+      b.classList.toggle('on', on);
+      b.textContent = on ? '動かす' : '止める';
+    };
+
+    document.querySelector('main').addEventListener('click', (e) => {
+      if (e.target.closest('[data-start]')) start();
+      if (e.target.closest('[data-stop]')) { stop(); live(false); }
+      if (e.target.closest('[data-freeze]')) freeze(!video.paused);
+      const m = e.target.closest('[data-mirror]');
+      if (m) m.classList.toggle('on', video.classList.toggle('mirror'));
+    });
+    devices.addEventListener('change', () => start(devices.value));
+    // ページを離れるときはカメラを切る
+    addEventListener('pagehide', stop);
+  </script>
+</body>
+</html>

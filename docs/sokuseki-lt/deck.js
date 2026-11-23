@@ -14,26 +14,29 @@
     .deck-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 0 0 6px; }
     .deck-title { font-weight: bold; font-size: 16px; }
     .deck-tools { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #777; white-space: nowrap; }
-    .deck-tools button { font: inherit; padding: 2px 10px; border: 1px solid #999; border-radius: 999px; background: #fff; cursor: pointer; color: #222; }
+    .deck-tools button { font: inherit; padding: 2px 10px; border: 1px solid #999; background: #fff; cursor: pointer; color: #222; }
     .deck-tools a { color: #777; }
-    .deck-frame { position: relative; aspect-ratio: 16 / 9; border: 2px solid #222; border-radius: 8px; background: #fff; overflow: hidden; container-type: inline-size; }
-    .deck-frame:fullscreen { border: 0; border-radius: 0; aspect-ratio: auto; }
+    /* 何枚目かの表示は、桁が変わっても幅が変わらないようにする。幅は全体の枚数の桁から決める */
+    .deck-page { display: inline-block; text-align: center; font-variant-numeric: tabular-nums; }
+    .deck-frame { position: relative; aspect-ratio: 16 / 9; border: 1px solid #222; background: #fff; overflow: hidden; container-type: inline-size; }
+    .deck-frame:fullscreen { border: 0; aspect-ratio: auto; }
     .deck-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
-    .deck-slide { --fit: 1; position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: safe center; padding: 5cqw 7cqw; font-size: calc(3.6cqw * var(--fit)); line-height: 1.5; overflow: auto; overflow-wrap: anywhere; cursor: pointer; user-select: none; color: #222; }
+    .deck-slide { --fit: 1; position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: safe center; padding: 5cqw 7cqw; font-size: calc(3.6cqw * var(--fit)); line-height: 1.5; overflow: auto; overflow-wrap: anywhere; word-break: auto-phrase; cursor: pointer; user-select: none; color: #222; }
     .deck-slide.title { align-items: center; text-align: center; }
-    .deck-slide h1, .deck-slide h2 { display: block; border: 0; padding: 0; font-weight: bold; }
+    /* 折り返しは文節で（.deck-slide の auto-phrase）。見出しは行の長さもそろえて、最後の1文字だけが次の行に落ちないようにする */
+    .deck-slide h1, .deck-slide h2 { display: block; border: 0; padding: 0; font-weight: bold; text-wrap: balance; }
     .deck-slide h1 { font-size: 1.6em; margin: 0 0 0.3em; line-height: 1.3; }
     .deck-slide h2 { font-size: 1.25em; margin: 0 0 0.5em; line-height: 1.3; }
     .deck-slide ul { margin: 0 0 0.5em; padding-left: 1.2em; }
     .deck-slide p { margin: 0 0 0.5em; }
     .deck-slide a { color: #0a58ca; font-size: 0.7em; }
     .deck-slide h1 a, .deck-slide h2 a { font-size: inherit; }
-    .deck-slide code { font-size: 0.9em; background: #f0ece0; padding: 0 0.2em; border-radius: 3px; }
+    .deck-slide code { font-size: 0.9em; background: #eee; padding: 0 0.2em; }
     .deck-slide img { max-width: 100%; max-height: 60cqw; object-fit: contain; }
     .deck-slide.image { padding: 0; }
     .deck-slide.image img { display: block; width: 100%; max-height: none; }
     .deck-frame:fullscreen .deck-slide { font-size: calc(min(3.6vw, 6.4vh) * var(--fit)); padding: 5vh 8vw; }
-    .deck-progress { position: absolute; left: 0; bottom: 0; height: 4px; background: #f0b400; transition: width 0.2s; }
+    .deck-progress { position: absolute; left: 0; bottom: 0; height: 4px; background: #222; transition: width 0.2s; }
   `;
 
   const esc = (s) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -70,6 +73,21 @@
 
   // はみ出したら文字を少しずつ縮める。MIN_FIT まで縮めても収まらなければ、縦にスクロールさせる
   const MIN_FIT = 0.55;
+  // 2行以上に折り返していて、最後の行が2文字ぶんほどしかない段落・箇条書き・見出しの数
+  const ORPHAN_EM = 2.5;
+  const ORPHAN_SHRINK = 0.88;
+  const orphans = (slide) => [...slide.querySelectorAll('h1, h2, p, li')].filter((el) => {
+    if (el.querySelector('img')) return false;
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const rects = [...range.getClientRects()].filter((r) => r.width > 0);
+    if (!rects.length) return false;
+    const em = parseFloat(getComputedStyle(el).fontSize);
+    const lastTop = Math.max(...rects.map((r) => r.top));
+    if (lastTop - Math.min(...rects.map((r) => r.top)) < em * 0.6) return false;
+    const last = rects.filter((r) => lastTop - r.top < em * 0.6);
+    return Math.max(...last.map((r) => r.right)) - Math.min(...last.map((r) => r.left)) < em * ORPHAN_EM;
+  }).length;
   const fit = (slide) => {
     let f = 1;
     slide.style.setProperty('--fit', f);
@@ -79,6 +97,16 @@
       f = Math.max(MIN_FIT, f * 0.9);
       slide.style.setProperty('--fit', f);
     }
+    // 最後の行に1〜2文字だけ落ちる段落があれば、文字をもう少しだけ縮めて前の行に収める
+    // いちばん少なくなる大きさを選び、減らせなければ元の大きさのままにする
+    let best = f;
+    let least = orphans(slide);
+    for (let g = f * 0.98; least > 0 && g >= Math.max(MIN_FIT, f * ORPHAN_SHRINK); g *= 0.98) {
+      slide.style.setProperty('--fit', g);
+      const n = orphans(slide);
+      if (n < least) { least = n; best = g; }
+    }
+    slide.style.setProperty('--fit', best);
   };
 
   // めくった位置を URL の #デッキ名/ページ番号 に残す。リロードや共有で同じ1枚から始まる
@@ -118,6 +146,7 @@
     tools.innerHTML = `<button data-d="-1">←</button><span class="deck-page"></span><button data-d="1">→</button><button data-full>全画面</button><a href="deck.html?src=${encodeURIComponent(el.dataset.src)}" target="_blank" rel="noopener">別のタブで開く</a>`;
     frame.innerHTML = '<div class="deck-slide"></div><div class="deck-progress"></div>';
     const slide = frame.querySelector('.deck-slide');
+    tools.querySelector('.deck-page').style.minWidth = `${String(pages.length).length * 2 + 3}ch`;
     const show = () => {
       slide.innerHTML = renderPage(pages[n]);
       slide.classList.toggle('image', isImage(pages[n]));

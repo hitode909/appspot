@@ -11,17 +11,17 @@
     main { max-width: 900px; margin: 0 auto; padding: 24px 16px 80px; }
     h1 { margin: 0 0 4px; font-size: 26px; }
     .lead { margin: 0 0 24px; color: #555; }
-    button { font: inherit; padding: 6px 14px; border: 1px solid #222; border-radius: 999px; background: #fff; color: inherit; cursor: pointer; }
+    button { font: inherit; padding: 6px 14px; border: 1px solid #222; background: #fff; color: inherit; cursor: pointer; }
     button:disabled { opacity: 0.3; cursor: default; }
 
     /* 一覧 */
     .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
-    .toc a { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; color: inherit; text-decoration: none; font-size: 14px; background: #fff; }
-    h2 { margin: 40px 0 4px; font-size: 22px; border-bottom: 2px solid #222; padding-bottom: 4px; }
+    .toc a { padding: 4px 12px; border: 1px solid #222; color: inherit; text-decoration: none; font-size: 14px; background: #fff; }
+    h2 { margin: 40px 0 4px; font-size: 22px; border-bottom: 1px solid #222; padding-bottom: 4px; }
     .chapter-lead { margin: 0 0 12px; color: #555; font-size: 14px; }
     .rules { list-style: none; margin: 0; padding: 0; }
     .rules a { display: block; padding: 10px 12px; border-bottom: 1px solid #ddd; color: inherit; text-decoration: none; }
-    .rules a:hover { background: #fff3c4; }
+    .rules a:hover { background: #eee; }
     .rules .text { font-size: 18px; }
     .rules .why { font-size: 14px; color: #555; }
 
@@ -29,6 +29,8 @@
     .nav { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 14px; }
     .nav a { color: #555; }
     .nav .step { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    /* 何番目かの表示は、桁が変わっても幅が変わらないようにする。幅は全体の数の桁から決める */
+    .nav .count { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
     .filter { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 32px; font-size: 14px; }
     .filter button { padding: 2px 10px; border-color: #999; }
     .filter button.on { background: #222; border-color: #222; color: #fff; }
@@ -37,7 +39,7 @@
     .word { margin: 8px 0 16px; font-size: clamp(28px, 6vw, 60px); font-weight: bold; line-height: 1.4; }
     .double .word { font-size: clamp(26px, 5vw, 46px); }
     .plus { margin: 0 0 24px; font-size: 28px; font-weight: bold; color: #777; }
-    .next { margin: 0; padding: 16px 20px; border: 2px solid #222; border-radius: 16px; background: #fff; }
+    .next { margin: 0; padding: 16px 20px; border: 1px solid #222; background: #fff; }
     .next .label { margin: 0 0 4px; font-size: 14px; color: #777; }
     .next .body { margin: 0; font-size: clamp(18px, 3vw, 26px); }
   </style>
@@ -81,7 +83,7 @@
           <button data-double>ダブル縛り</button>
           ${ws.length === 1 ? `
           <button data-go="${i - 1}" ${i <= 0 ? 'disabled' : ''}>←</button>
-          <span>${i + 1} / ${p.length}</span>
+          <span class="count" style="min-width: ${String(flat.length).length * 2 + 3}ch">${i + 1} / ${p.length}</span>
           <button data-go="${i + 1}" ${i < 0 || i >= p.length - 1 ? 'disabled' : ''}>→</button>` : ''}
         </div>
       </div>

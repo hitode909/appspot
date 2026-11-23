@@ -18,20 +18,22 @@
     .note { margin: 0 0 0.6em; color: #777; font-size: 0.8em; }
     .top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4em 1em; margin: 0 0 0.6em; }
     .tabs { display: flex; flex-wrap: wrap; gap: 0.3em; }
-    .tabs a { padding: 0.1em 0.7em; border: 1px solid #222; border-radius: 999px; color: inherit; text-decoration: none; font-size: 0.7em; background: #fff; }
+    .tabs a { padding: 0.1em 0.7em; border: 1px solid #222; color: inherit; text-decoration: none; font-size: 0.7em; background: #fff; }
     #view { --fit: 1; flex: 1; min-height: 0; overflow: hidden; font-size: calc(1em * var(--fit)); }
     #view.scroll-y { overflow-y: auto; }
     .pager { display: flex; justify-content: flex-end; align-items: center; gap: 0.5em; font-size: 0.7em; color: #777; padding-top: 0.3em; }
     .pager[hidden] { display: none; }
-    .pager-bar { flex: 1; height: 4px; background: #eee; border-radius: 2px; overflow: hidden; }
-    .pager-bar div { height: 100%; background: #f0b400; }
+    /* 何枚目かの表示は、桁が変わっても幅が変わらないようにする。幅は全体の枚数の桁から決める */
+    .pager span { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .pager-bar { flex: 1; height: 4px; background: #eee; overflow: hidden; }
+    .pager-bar div { height: 100%; background: #222; }
     .tabs a.on { background: #222; color: #fff; }
     button, input, select { font: inherit; }
-    button { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; background: #fff; cursor: pointer; }
+    button { padding: 4px 12px; border: 1px solid #222; background: #fff; cursor: pointer; }
     button.on { background: #222; color: #fff; }
     button:disabled { opacity: 0.4; cursor: default; }
     button.on:disabled { opacity: 1; }
-    input[type=text], textarea, select { padding: 0.2em 0.5em; border: 1px solid #999; border-radius: 6px; background: #fff; font-size: 0.9em; }
+    input[type=text], textarea, select { padding: 0.2em 0.5em; border: 1px solid #999; background: #fff; font-size: 0.9em; }
     input[type=text] { width: min(100%, 22em); }
     textarea { width: 100%; font: inherit; font-size: 0.9em; }
     .row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em; margin: 0 0 0.5em; }
@@ -50,17 +52,17 @@
     .heat { table-layout: fixed; }
     .heat tr:first-child th:first-child { width: 7em; }
     .heat td.cell, .heat th.num { text-align: center; padding: 0.15em 0; }
-    .heat tr[data-tech]:hover th { background: #fff3c4; cursor: pointer; }
-    .heat tr.open th { background: #fff3c4; }
+    .heat tr[data-tech]:hover th { background: #eee; cursor: pointer; }
+    .heat tr.open th { background: #eee; }
     .event p { margin: 0 0 0.6em; }
     .kata td.ex { color: #555; max-width: 0; width: 45%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .kata tr.open td { background: #fff8dc; }
+    .kata tr.open td { background: #eee; }
     .gen li { font-size: 1.1em; padding: 0.15em 0; }
     .quiz-q { font-size: 2em; font-weight: bold; line-height: 1.35; margin: 0.4em 0 0.6em; }
     .ans { margin: 0.6em 0; }
     .ans p { font-size: 0.8em; margin: 0.3em 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-    .bar-bg { background: #eee; height: 4px; border-radius: 2px; }
-    .bar-fg { background: #f0b400; height: 4px; border-radius: 2px; }
+    .bar-bg { background: #eee; height: 4px; }
+    .bar-fg { background: #222; height: 4px; }
   </style>
 </head>
 <body>
@@ -188,7 +190,7 @@
       return `<svg viewBox="0 0 ${W} ${H}">${counts.map((c, i) => {
         const h = ((H - 60) * c.share) / max;
         const x = pad + i * bw;
-        return `<rect x="${x + 3}" y="${H - 30 - h}" width="${bw - 6}" height="${h}" fill="#f0b400"><title>${c.year}：${c.hit} / ${c.all}</title></rect>
+        return `<rect x="${x + 3}" y="${H - 30 - h}" width="${bw - 6}" height="${h}" fill="#222"><title>${c.year}：${c.hit} / ${c.all}</title></rect>
           <text x="${x + bw / 2}" y="${H - 34 - h}" font-size="13" text-anchor="middle">${c.hit ? `${c.share}%` : ''}</text>
           <text x="${x + bw / 2}" y="${H - 14}" font-size="12" text-anchor="middle" fill="#555">${c.year}</text>
           <text x="${x + bw / 2}" y="${H - 1}" font-size="10" text-anchor="middle" fill="#999">${c.hit}/${c.all}</text>`;
@@ -248,7 +250,7 @@
           return h;
         });
         const m = Math.max(...spark, 0.01);
-        const svg = `<svg viewBox="0 0 ${years.length * 8} 20" style="width:${years.length * 8}px">${spark.map((h, j) => `<rect x="${j * 8}" y="${20 - (20 * h) / m}" width="6" height="${(20 * h) / m}" fill="#f0b400"/>`).join('')}</svg>`;
+        const svg = `<svg viewBox="0 0 ${years.length * 8} 20" style="width:${years.length * 8}px">${spark.map((h, j) => `<rect x="${j * 8}" y="${20 - (20 * h) / m}" width="6" height="${(20 * h) / m}" fill="#222"/>`).join('')}</svg>`;
         return `<tr data-kata="${i}" class="${openKata === i ? 'open' : ''}" style="cursor:pointer">
           <td>${esc(label)}</td><td class="num">${hits.length}</td><td>${svg}</td><td class="ex">${esc(ex)}</td></tr>`;
       }).join('');
@@ -353,7 +355,7 @@
       const chart = `<svg viewBox="0 0 ${W} ${H}">${stats.map((s, i) => {
         const h = ((H - 60) * s.med) / max;
         const x = pad + i * bw;
-        return `<rect x="${x + 3}" y="${H - 30 - h}" width="${bw - 6}" height="${h}" fill="#f0b400"/>
+        return `<rect x="${x + 3}" y="${H - 30 - h}" width="${bw - 6}" height="${h}" fill="#222"/>
           <text x="${x + bw / 2}" y="${H - 34 - h}" font-size="13" text-anchor="middle">${s.med}字</text>
           <text x="${x + bw / 2}" y="${H - 14}" font-size="12" text-anchor="middle" fill="#555">${s.year}</text>
           <text x="${x + bw / 2}" y="${H - 1}" font-size="10" text-anchor="middle" fill="#999">英語のみ ${s.en}%</text>`;
@@ -415,6 +417,7 @@
       view.scrollTop = 0;
       pager.hidden = pages.length < 2;
       pager.querySelector('span').textContent = `${n + 1} / ${pages.length}`;
+      pager.querySelector('span').style.minWidth = `${String(pages.length).length * 2 + 3}ch`;
       pager.querySelector('.pager-bar div').style.width = `${((n + 1) / pages.length) * 100}%`;
       pager.querySelector('[data-page="-1"]').disabled = n === 0;
       pager.querySelector('[data-page="1"]').disabled = n === pages.length - 1;

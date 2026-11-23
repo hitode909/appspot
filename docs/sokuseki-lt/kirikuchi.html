@@ -14,25 +14,29 @@
 
     /* 一覧 */
     .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
-    .toc a { padding: 4px 12px; border: 1px solid #222; border-radius: 999px; color: inherit; text-decoration: none; font-size: 14px; background: #fff; }
-    h2 { margin: 40px 0 4px; font-size: 22px; border-bottom: 2px solid #222; padding-bottom: 4px; }
+    .toc a { padding: 4px 12px; border: 1px solid #222; color: inherit; text-decoration: none; font-size: 14px; background: #fff; }
+    h2 { margin: 40px 0 4px; font-size: 22px; border-bottom: 1px solid #222; padding-bottom: 4px; }
     .chapter-lead { margin: 0 0 12px; color: #555; font-size: 14px; }
     .angles { list-style: none; margin: 0; padding: 0; }
     .angles a { display: block; padding: 10px 12px; border-bottom: 1px solid #ddd; color: inherit; text-decoration: none; font-size: 18px; }
-    .angles a:hover { background: #fff3c4; }
+    .angles a:hover { background: #eee; }
 
     /* 切り口 */
     .nav { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 14px; }
     .nav a { color: #555; }
     .nav .step { display: flex; gap: 8px; }
-    .nav button { font: inherit; padding: 6px 14px; border: 1px solid #222; border-radius: 999px; background: #fff; cursor: pointer; }
+    .nav button { font: inherit; padding: 6px 14px; border: 1px solid #222; background: #fff; cursor: pointer; }
     .nav button:disabled { opacity: 0.3; cursor: default; }
+    /* 何番目かの表示は、桁が変わっても幅が変わらないようにする。幅は全体の数の桁から決める */
+    .nav .count { align-self: center; text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    /* 引くボタンは、ここだけ押せばよいと分かるように目立たせる */
+    .nav button[data-omikuji=""] { padding: 8px 24px; border-color: #222; background: #222; color: #fff; font-size: 1.3em; font-weight: bold; }
     .chapter-name { margin: 0; font-size: 14px; color: #777; }
     .question { margin: 8px 0 16px; font-size: clamp(26px, 5vw, 46px); font-weight: bold; line-height: 1.4; }
     .parts { margin: 0 0 20px; font-size: 14px; }
     .parts div { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
     .parts .label { width: 5em; color: #777; }
-    .parts button { font: inherit; padding: 2px 10px; border: 1px solid #999; border-radius: 999px; background: #fff; cursor: pointer; }
+    .parts button { font: inherit; padding: 2px 10px; border: 1px solid #999; background: #fff; cursor: pointer; }
     .parts button.on { background: #222; border-color: #222; color: #fff; }
     .who summary { margin: 0 0 8px; font-size: 14px; color: #777; cursor: pointer; }
     .examples { list-style: none; margin: 0; padding: 0; }
@@ -77,7 +81,7 @@
           <button data-omikuji>もう1つ</button>
           <button data-omikuji="chapter">この章からもう1つ</button>
           <button data-go="${a.n - 1}" ${a.n === 1 ? 'disabled' : ''}>← 前</button>
-          <span>${a.n} / ${flat.length}</span>
+          <span class="count" style="min-width: ${String(flat.length).length * 2 + 3}ch">${a.n} / ${flat.length}</span>
           <button data-go="${a.n + 1}" ${a.n === flat.length ? 'disabled' : ''}>次 →</button>
         </div>
       </div>

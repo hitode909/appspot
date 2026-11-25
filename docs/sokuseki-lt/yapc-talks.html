@@ -94,6 +94,7 @@
       ['niteru', '似た話を探す'],
       ['nagasa', 'タイトルの長さ'],
       ['zenbu', '全部の一覧'],
+      ['shutten', '出典'],
     ];
 
     // 技術の年表に並べる言葉。左が表示名、右がタイトルに対する正規表現
@@ -381,13 +382,23 @@
       return cs.length ? cs.map((c) => `${head}<ul class="talks">${c.map(talkItem).join('')}</ul>`) : [head];
     };
 
+    // ---------- 出典 ----------
+    const shuttenView = () => [`<h2>出典</h2>
+      <p class="lead">トークのタイトル・登壇者名・概要は、各回の YAPC が公開しているページから集めました。書いたのは、それぞれの登壇者・応募者です。</p>
+      <ul>
+        <li>2024年以降：<a href="https://fortee.jp/" target="_blank" rel="noopener">fortee</a> で公開されているタイムテーブルと応募</li>
+        <li>2016〜2023年：<a href="https://yapcjapan.org/" target="_blank" rel="noopener">yapcjapan.org</a> の各回のサイト。ヤパチーは <a href="https://github.com/hachiojipm/yapcasia-8oji-2016mid-timetable" target="_blank" rel="noopener">GitHub のタイムテーブル</a></li>
+        <li>2006〜2015年：<a href="https://yapcasia.org/" target="_blank" rel="noopener">yapcasia.org</a> の各回のサイト</li>
+      </ul>
+      <p class="note">概要は冒頭の200文字までを載せています。トークのタイトルを押すと、元のページが開きます。全${talks.length}件。</p>`];
+
     // ---------- 共通 ----------
     const KIND = { lt: 'LT', keynote: '基調講演' };
     const talkBody = (t) => `<div>${t.url ? `<a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.title)}</a>` : esc(t.title)}</div>
       <div class="meta">${esc(t.event)}${t.speaker ? `／${esc(t.speaker)}` : ''}${KIND[t.kind] ? `／${KIND[t.kind]}` : ''}${t.length ? `／${t.length}分` : ''}</div>`;
     const talkItem = (t) => `<li>${talkBody(t)}</li>`;
 
-    const VIEWS = { shime: shimeView, kotoba: kotobaView, heat: heatView, kata: kataView, quiz: quizView, niteru: niteruView, nagasa: nagasaView, zenbu: zenbuView };
+    const VIEWS = { shime: shimeView, kotoba: kotobaView, heat: heatView, kata: kataView, quiz: quizView, niteru: niteruView, nagasa: nagasaView, zenbu: zenbuView, shutten: shuttenView };
     // URL は #タブ または #タブ/ページ番号
     const tab = () => { const k = location.hash.slice(1).split('/')[0]; return VIEWS[k] ? k : 'shime'; };
     const pageNo = {};

@@ -89,7 +89,7 @@
       ['shime', '締め切りの日'],
       ['kotoba', 'ことばの移り変わり'],
       ['heat', '技術の年表'],
-      ['kata', 'タイトルの型'],
+      ['kata', 'タイトルのパターン'],
       ['quiz', '何年のトーク？'],
       ['niteru', '似た話を探す'],
       ['nagasa', 'タイトルの長さ'],
@@ -120,7 +120,7 @@
       ['個人開発・趣味', /個人開発|趣味|自作|作ってみた|遊び/i],
     ];
 
-    // タイトルの型。左が名前、真ん中が見分け方、右が自分の話題を入れるときの形（{x} が話題）
+    // タイトルのパターン。左が名前、真ん中が見分け方、右が自分の話題を入れるときの形（{x} が話題）
     const KATA = [
       ['〜した話', /(した|してる|している|しました|やった|やってみた)話/, '{x}をやってみた話'],
       ['〜を作った', /(作った|作ってみた|作りました|つくった|作る)/, '{x}を作った'],
@@ -238,7 +238,7 @@
         `<h2>技術の年表：話題</h2>${table(TECH.slice(LANGS))}`, ...(inLangs ? [] : list)];
     };
 
-    // ---------- タイトルの型 ----------
+    // ---------- タイトルのパターン ----------
     let openKata = null, topic = '';
     const kataView = () => {
       const rowsOf = (from, to) => KATA.slice(from, to).map(([label, re], j) => {
@@ -257,14 +257,14 @@
       }).join('');
       const open = openKata !== null ? listPages(esc(KATA[openKata][0]), talks.filter((t) => KATA[openKata][1].test(t.title)).reverse()) : [];
       const HALF = Math.ceil(KATA.length / 2);
-      const table = (from, to) => `<table class="kata"><tr><th>型</th><th class="num">件数</th><th>${years[0]}〜${years[years.length - 1]}</th><th>例</th></tr>${rowsOf(from, to)}</table>`;
+      const table = (from, to) => `<table class="kata"><tr><th>パターン</th><th class="num">件数</th><th>${years[0]}〜${years[years.length - 1]}</th><th>例</th></tr>${rowsOf(from, to)}</table>`;
       const first = openKata !== null && openKata < HALF;
-      return [`<h2>タイトルの型 <span class="muted" style="font-size:0.6em">1/2</span></h2>
-        <p class="note">過去のタイトルを、よく使われる言い回しで分けました。行を押すと、その型のトークを次の1枚から出します。</p>
+      return [`<h2>タイトルのパターン <span class="muted" style="font-size:0.6em">1/2</span></h2>
+        <p class="note">過去のタイトルを、よく使われる言い回しで分けました。行を押すと、そのパターンのトークを次の1枚から出します。</p>
         ${table(0, HALF)}`, ...(first ? open : []),
-        `<h2>タイトルの型 <span class="muted" style="font-size:0.6em">2/2</span></h2>${table(HALF, KATA.length)}`, ...(openKata !== null && !first ? open : []),
-        `<h2>型を借りる</h2>
-        <p class="lead">話したいことを一言で入れると、型に当てはめたタイトルを並べます。</p>
+        `<h2>タイトルのパターン <span class="muted" style="font-size:0.6em">2/2</span></h2>${table(HALF, KATA.length)}`, ...(openKata !== null && !first ? open : []),
+        `<h2>パターンを借りる</h2>
+        <p class="lead">話したいことを一言で入れると、パターンに当てはめたタイトルを並べます。</p>
         <div class="row"><input type="text" id="topic" value="${esc(topic)}" placeholder="例：家の電気代"></div>
         <ul class="talks gen" id="gen">${genList()}</ul>`];
     };
